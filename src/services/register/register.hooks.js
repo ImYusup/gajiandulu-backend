@@ -1,7 +1,10 @@
 const validate = function(...fields) {
   return function validate(context) {
     fields.map(field => {
-      if (context.data[field] === '' || typeof field === 'undefined') {
+      if (
+        context.data[field] === '' ||
+        typeof context.data[field] === 'undefined'
+      ) {
         throw new Error(`${field} is required!`);
       }
     });
