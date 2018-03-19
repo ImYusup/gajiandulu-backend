@@ -31,6 +31,23 @@ module.exports = {
       family_phone: {
         allowNull: false,
         type: Sequelize.STRING
+      },
+      family_id: {
+        allowNull: true,
+        foreignKey: true,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id'
+        }
+      },
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATE
+      },
+      updated_at: {
+        allowNull: false,
+        type: Sequelize.DATE
       }
     });
   },

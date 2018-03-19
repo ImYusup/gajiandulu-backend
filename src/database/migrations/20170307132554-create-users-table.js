@@ -52,33 +52,6 @@ module.exports = {
           key: 'id'
         }
       },
-      occupation_id: {
-        allowNull: true,
-        foreignKey: true,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'occupations',
-          key: 'id'
-        }
-      },
-      identity_card_id: {
-        allowNull: true,
-        foreignKey: true,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'identity_cards',
-          key: 'id'
-        }
-      },
-      family_id: {
-        allowNull: true,
-        foreignKey: true,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'user_family',
-          key: 'id'
-        }
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE
