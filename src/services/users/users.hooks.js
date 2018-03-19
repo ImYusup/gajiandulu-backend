@@ -26,7 +26,7 @@ module.exports = {
     find: [],
     get: [],
     create: [],
-    update: [validate('hash', 'phone', 'consent')],
+    update: [validate('hash', 'pin')],
     patch: [validate('hash', 'phone', 'consent')],
     remove: []
   },

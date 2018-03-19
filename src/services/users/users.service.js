@@ -88,7 +88,7 @@ module.exports = function(app) {
     '/users',
     userService(
       createUserModel(app),
-      app.get('facebook'),
+      app.get('facebook'), // get facebook configuration from config folder
       createAccessToken(app)
     )
   );
