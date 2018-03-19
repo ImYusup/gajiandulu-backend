@@ -1,8 +1,8 @@
-const response = (msg, data, included, link) => ({
-  message: `${msg} successfully!`,
+const response = (status, msg, data, included) => ({
+  status,
+  msg,
   data,
-  included,
-  link
+  included
 });
 
 module.exports = response;

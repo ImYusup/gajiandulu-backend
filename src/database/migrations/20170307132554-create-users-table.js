@@ -2,13 +2,6 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) =>
-    /*
-      Add altering commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.createTable('users', { id: Sequelize.INTEGER });
-    */
     queryInterface.createTable('users', {
       id: {
         allowNull: false,
@@ -37,14 +30,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATEONLY
       },
-      phone_id: {
+      phone: {
         allowNull: true,
-        foreignKey: true,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'phones',
-          key: 'id'
-        }
+        type: Sequelize.STRING,
+        unique: true
       },
       is_active_notif: {
         type: Sequelize.BOOLEAN,
@@ -54,7 +43,15 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
-      facebookId: { type: Sequelize.STRING },
+      role_id: {
+        allowNull: true,
+        foreignKey: true,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'roles',
+          key: 'id'
+        }
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE
@@ -65,13 +62,5 @@ module.exports = {
       }
     }),
 
-  down: queryInterface =>
-    /*
-      Add reverting commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.dropTable('users');
-    */
-    queryInterface.dropTable('users')
+  down: queryInterface => queryInterface.dropTable('users')
 };

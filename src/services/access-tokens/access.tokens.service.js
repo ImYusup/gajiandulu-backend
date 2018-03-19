@@ -34,7 +34,6 @@ const accessTokenService = (AccessToken, User, secret) => ({
         provider: data.provider,
         user_id: user.id
       };
-      console.log('TOKEN', token);
       const accessToken = await AccessToken.create(payload);
       return response('Login', accessToken, user, null);
     }

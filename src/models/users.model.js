@@ -29,9 +29,8 @@ module.exports = function(app) {
               'Username must start with a letter, have no spaces, and be at less than 40 characters.'
           },
           is: {
-            args: /^[A-Za-z][A-Za-z0-9-]+$/i, // must start with letter and only have letters, numbers, dashes
-            msg:
-              'Username must start with a letter, have no spaces, and be 3 - 40 characters.'
+            args: /^[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]+$/gi, // must start with letter and only have letters, numbers, dashes
+            msg: 'Username must start with a letter and be 3 - 40 characters.'
           },
           notEmpty: { msg: 'Please input username' }
         }
@@ -59,9 +58,9 @@ module.exports = function(app) {
           isDate: true
         }
       },
-      phone_id: {
+      phone: {
         allowNull: true,
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
       },
       is_active_notif: {
         type: DataTypes.BOOLEAN,
@@ -71,8 +70,21 @@ module.exports = function(app) {
         type: DataTypes.BOOLEAN,
         defaultValue: false
       },
-      facebookId: {
-        type: Sequelize.STRING
+      role_id: {
+        allowNull: true,
+        type: Sequelize.INTEGER
+      },
+      occupation_id: {
+        allowNull: true,
+        type: Sequelize.INTEGER
+      },
+      identity_card_id: {
+        allowNull: true,
+        type: Sequelize.INTEGER
+      },
+      family_id: {
+        allowNull: true,
+        type: Sequelize.INTEGER
       },
       created_at: {
         allowNull: false,
@@ -85,6 +97,10 @@ module.exports = function(app) {
     },
     {
       hooks: {
+        beforeFind: function(options) {
+          options.attributes.exclude = ['pin', 'password'];
+          return options;
+        },
         beforeCount(options) {
           options.raw = true;
         }
@@ -96,7 +112,17 @@ module.exports = function(app) {
   User.associate = function(models) {
     // Define associations here
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
-    // models.phones.hasOne(User, { foreignKey: 'phone_id' });
+    // User.belongsTo(models.identityCard, { foreignKey: 'identity_card_id' });
+    // User.belongsTo(models.role, { foreignKey: 'role_id' });
+    // User.belongsTo(models.occupation, { foreignKey: 'occupation_id' });
+    // User.belongsTo(models.userFamily, { foreignKey: 'family_id' });
+  };
+
+  User.prototype.toJSON = function() {
+    const values = Object.assign({}, this.get());
+
+    delete values.password;
+    return values;
   };
 
   return User;
