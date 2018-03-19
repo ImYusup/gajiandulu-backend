@@ -35,6 +35,11 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true
       },
+      hash: {
+        allowNull: true,
+        type: Sequelize.STRING,
+        unique: true
+      },
       is_active_notif: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
