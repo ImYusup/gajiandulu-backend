@@ -9,8 +9,14 @@ const registerService = User => ({
   get: async (id, params) => {},
 
   create: async (data, params) => {
-    const hashPassword = crypt.hashSync(data.password, 15);
-    const payload = Object.assign({}, data, { password: hashPassword });
+    const hashPassword = crypt.hashSync(data.password + data.email, 15);
+    const hash = crypt.hashSync(new Date().toString() + data.email, 10);
+    const payload = Object.assign(
+      {},
+      data,
+      { password: hashPassword },
+      { hash }
+    );
     const user = await User.create(payload);
     return response(true, 'User has been registered successfully', user, null);
   },
