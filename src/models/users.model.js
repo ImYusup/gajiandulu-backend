@@ -74,18 +74,18 @@ module.exports = function(app) {
         allowNull: true,
         type: Sequelize.INTEGER
       },
-      occupation_id: {
-        allowNull: true,
-        type: Sequelize.INTEGER
-      },
-      identity_card_id: {
-        allowNull: true,
-        type: Sequelize.INTEGER
-      },
-      family_id: {
-        allowNull: true,
-        type: Sequelize.INTEGER
-      },
+      // occupation_id: {
+      //   allowNull: true,
+      //   type: Sequelize.INTEGER
+      // },
+      // identity_card_id: {
+      //   allowNull: true,
+      //   type: Sequelize.INTEGER
+      // },
+      // family_id: {
+      //   allowNull: true,
+      //   type: Sequelize.INTEGER
+      // },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE
@@ -98,8 +98,8 @@ module.exports = function(app) {
     {
       hooks: {
         beforeFind: function(options) {
-          options.attributes.exclude = ['pin', 'password'];
-          return options;
+          // options.attributes.exclude = ['pin', 'password'];
+          // return options;
         },
         beforeCount(options) {
           options.raw = true;
