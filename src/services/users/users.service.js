@@ -1,99 +1,184 @@
+require('module-alias/register');
+const { response } = require('@helpers');
+const { users: User, access_tokens: AccessToken } = require('@models');
 const axios = require('axios');
-const createUserModel = require('../../models/users.model');
-const createAccessToken = require('../../models/access.tokens.model.js');
-const hooks = require('./users.hooks.js');
-const response = require('../response');
+const crypt = require('bcrypt');
+const config = require('config');
 
-const userService = (User, facebook, AccessToken) => ({
-  find: async params => {
-    const user = await User.all();
-    return response(true, 'User retrieved successfully', user, null);
+const userService = {
+  find: async (req, res) => {
+    try {
+      const user = await User.all();
+      return res
+        .status(200)
+        .json(response(true, 'User retrieved successfully', user, null));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
   },
 
-  get: async (id, params) => {
-    const user = await User.findOne({ where: { id } });
-    if (user === null) {
-      throw new Error(false, 'User not found!');
+  get: async (req, res) => {
+    const userId = req.params.id;
+    try {
+      const user = await User.findOne({ where: { id: userId } });
+      if (user === null) {
+        return res
+          .status(400)
+          .json(response(false, `User with id ${userId} not found`));
+      }
+      return res
+        .status(200)
+        .json(response(true, 'User retrieved successfully', user, null));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
     }
-    return response(true, 'User retrieved successfully', user, null);
+  },
+
+  /**
+   * Save user to database
+   *
+   */
+  create: async (req, res) => {
+    const { password, email, full_name, date_of_birth } = req.body;
+    try {
+      // second parameter is salt for hash
+      const hashPassword = crypt.hashSync(password, 15);
+      const hash = crypt.hashSync(new Date().toString() + email, 10);
+      const payload = Object.assign(
+        {},
+        {
+          full_name,
+          email,
+          date_of_birth,
+          password: hashPassword,
+          hash
+        }
+      );
+
+      const user = await User.create(payload);
+      return res
+        .status(201)
+        .json(
+          response(true, 'User has been registered successfully', user, null)
+        );
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
   },
 
   /**
    * Update user phone data
    * Check if hash same with stored one
    *
-   * @param  {INTEGER}  id
-   * @param  {OBJECT}  data
-   * @param  {OBJECT}  params
-   * @return {Mixed}
    */
-  patch: async (id, data, params) => {
-    let user = await User.findOne({ where: { id: id } });
-    if (user === null) {
-      return response(false, `User with id ${id} not found`);
-    }
-    // Hash checking
-    if (user.hash !== data.data.hash) {
-      return response(false, 'Hash is mismatched');
-    }
-    const updatedUser = await User.update(data.data, { where: { id: id } });
-    if (updatedUser[0] === 0) {
-      return response(false, 'User update was failed');
-    }
+  patch: async (req, res) => {
+    const userId = req.params.id;
+    const { data } = req.body;
+    try {
+      let user = await User.findOne({ where: { id: userId } });
+      if (user === null) {
+        res
+          .status(400)
+          .json(response(false, `User with id ${userId} not found`));
+      }
+      // Hash checking
+      if (user.hash !== data.hash) {
+        return res.status(422).json(response(false, 'Hash is mismatched'));
+      }
+      const updatedUser = await User.update(data, { where: { id: userId } });
+      if (updatedUser[0] === 0) {
+        return res.status(400).json(response(false, 'User update was failed'));
+      }
 
-    user = await User.findOne({ where: { id: id } });
+      user = await User.findOne({ where: { id: userId } });
 
-    return response(true, 'User updated successfully', user, null);
+      return res
+        .status(200)
+        .json(response(true, 'User updated successfully', user, null));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
   },
 
-  update: async (id, data, param) => {
-    let user = await User.findOne({ where: { id: id } });
-    if (user === null) {
-      return response(false, `User with id ${id} not found`);
-    }
-    // Hash checking
-    if (user.hash !== data.data.hash) {
-      return response(false, 'Hash is mismatched');
-    }
-    // Check pin to facebook graph server
-    const { clientID, clientSecret, graphUri } = facebook;
+  /**
+   * Check authorization_code from account kit client
+   * if the authorization_code valid facebook graph should return
+   * access token
+   *
+   */
+  put: async (req, res) => {
+    const userId = req.params.id;
+    const { data } = req.body;
+    try {
+      let user = await User.findOne({ where: { id: userId } });
+      if (user === null) {
+        return res
+          .status(400)
+          .json(response(false, `User with id ${userId} not found`));
+      }
+      // Hash checking
+      if (user.hash !== data.hash) {
+        return res.status(404).json(response(false, 'Hash is mismatched'));
+      }
+      // Check authorization code to facebook graph server
+      const { clientID, clientSecret, graphUri } = config.facebook;
+      const accountKitResponse = await axios.get(
+        `${graphUri}access_token?grant_type=authorization_code&code=${
+          data.data.pin
+        }&access_token=AA${clientID}${clientSecret}`
+      );
 
-    const response = await axios.get(
-      `${graphUri}access_token?grant_type=authorization_code&code=${
-        data.pin
-      }&access_token=${clientID}${clientSecret}`
-    );
+      if (accountKitResponse) {
+        const payload = {
+          access_token: accountKitResponse.access_token,
+          refresh_token: accountKitResponse.token_refresh_interval_sec,
+          provider: 'account-kit',
+          user_id: user.id
+        };
+        const accessToken = await AccessToken.create(payload);
+        return res
+          .status(200)
+          .json(response(true, 'Pin validation success', accessToken, user));
+      }
 
-    const payload = {
-      access_token: response.access_token,
-      refresh_token: response.token_refresh_interval_sec,
-      provider: 'account-kit',
-      user_id: user.id
-    };
-    const accessToken = await AccessToken.create(payload);
-    return response(true, 'Pin validation success', accessToken, user);
+      return res.status(422).json(response(false, 'Pin validation failed'));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
   },
 
-  remove: async (id, params) => {
-    const user = await User.destroy({ where: { id: id } });
-    if (user === 0) {
-      throw new Error(`User with id ${id} not found`);
+  remove: async (req, res) => {
+    const userId = req.params.id;
+    try {
+      const user = await User.destroy({ where: { id: userId } });
+      if (user === 0) {
+        return res
+          .status(400)
+          .json(response(false, `User with id ${userId} not found`));
+      }
+      return null;
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
     }
-    return null;
   }
-});
-
-module.exports = function(app) {
-  app.use(
-    '/users',
-    userService(
-      createUserModel(app),
-      app.get('facebook'), // get facebook configuration from config folder
-      createAccessToken(app)
-    )
-  );
-  // Get our initialized service so that we can register hooks and filters
-  const service = app.service('users');
-
-  service.hooks(hooks);
 };
+
+module.exports = userService;

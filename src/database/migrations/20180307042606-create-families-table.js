@@ -9,7 +9,7 @@ module.exports = {
       Example:
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
-    return queryInterface.createTable('user_family', {
+    return queryInterface.createTable('families', {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -24,15 +24,16 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      family_address: {
+      address: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      family_phone: {
+      phone: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
-      family_id: {
+      user_id: {
         allowNull: true,
         foreignKey: true,
         type: Sequelize.INTEGER,
@@ -53,6 +54,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('user_family');
+    return queryInterface.dropTable('families');
   }
 };

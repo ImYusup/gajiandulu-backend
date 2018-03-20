@@ -1,11 +1,5 @@
-// See http://docs.sequelizejs.com/en/latest/docs/models-definition/
-// for more of what you can do here.
-const Sequelize = require('sequelize');
-const DataTypes = Sequelize.DataTypes;
-
-module.exports = function(app) {
-  const sequelizeClient = app.get('sequelizeClient');
-  const AccessToken = sequelizeClient.define(
+module.exports = function(sequelize, DataTypes) {
+  const AccessToken = sequelize.define(
     'access_tokens',
     {
       id: {
@@ -57,11 +51,8 @@ module.exports = function(app) {
       }
     },
     {
-      hooks: {
-        beforeCount(options) {
-          options.raw = true;
-        }
-      }
+      timestamps: true,
+      underscored: true
     }
   );
 

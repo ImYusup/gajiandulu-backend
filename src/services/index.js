@@ -1,13 +1,13 @@
-const users = require('./users/users.service.js');
-const registerUser = require('./register/register.service.js');
-const accessToken = require('./access-tokens/access.tokens.service.js');
-const occupations = require('./occupations/occupations.service.js');
-const identityCards = require('./identity-cards/identity.cards.service.js');
+const userService = require('./users/users.service.js');
+const accessTokenService = require('./access-tokens/access.tokens.service.js');
+const familyService = require('./families/families.service.js');
+const identityCardService = require('./identity-cards/identity.cards.service');
+const occupationService = require('./occupations/occupations.service');
 // eslint-disable-next-line no-unused-vars
-module.exports = function(app) {
-  app.configure(users);
-  app.configure(registerUser);
-  app.configure(accessToken);
-  app.configure(occupations);
-  app.configure(identityCards);
+module.exports = {
+  userService,
+  familyService,
+  accessTokenService,
+  identityCardService,
+  occupationService
 };

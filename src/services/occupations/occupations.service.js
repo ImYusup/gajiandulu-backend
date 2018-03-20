@@ -1,35 +1,32 @@
-// Import model here
-const createOccupationModel = require('../../models/occupations.model');
+require('module-alias/register');
+const { response } = require('@helpers');
+const { occupations: Occupation } = require('@models');
 
-const jwtHelpers = require('../helpers');
-const hooks = require('./occupations.hooks');
-const response = require('../response');
+const occupationService = {
+  create: async (req, res) => {
+    const { data } = req.body;
+    const { id: userId } = res.local.users;
+    try {
+      const payload = Object.assign({}, data, {
+        user_id: userId
+      });
 
-const occupationService = (Occupation, secret) => ({
-  create: async ({data}, params) => {
-    const verifiedData = jwtHelpers.verifyJWT(params.headers.authorization, secret);
-    const occupationData = Object.assign({}, data, { user_id: verifiedData.id });
+      const occupation = await Occupation.create(payload);
 
-    await Occupation.create(occupationData);
-
-    return response(true, 'Occupation succesfully saved');
+      return res
+        .status(201)
+        .json(response(true, 'Occupation succesfully saved', occupation, null));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
   },
 
   update: async (id, data, params) => {
-    return response(false, 'not yet available');
+    // return response(false, 'not yet available');
   }
-});
-
-module.exports = function(app) {
-  app.use('/occupations', function(req, res, next) {
-    req.feathers.headers = req.headers;
-    next();
-  }, occupationService(
-    createOccupationModel(app),
-    app.get('authentication').secret
-  ));
-  // Get our initialized service so that we can register hooks and filters
-  const service = app.service('occupations');
-  
-  service.hooks(hooks);
 };
+
+module.exports = occupationService;

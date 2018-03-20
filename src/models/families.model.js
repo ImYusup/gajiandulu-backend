@@ -1,6 +1,6 @@
 module.exports = function(sequelize, DataTypes) {
-  const User = sequelize.define(
-    'users',
+  const UserFamily = sequelize.define(
+    'families',
     {
       id: {
         allowNull: false,
@@ -8,7 +8,16 @@ module.exports = function(sequelize, DataTypes) {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      full_name: {
+      user_id: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'users',
+          key: 'id'
+        }
+      },
+      name: {
         allowNull: false,
         type: DataTypes.STRING,
         validate: {
@@ -29,48 +38,27 @@ module.exports = function(sequelize, DataTypes) {
           notEmpty: { msg: 'Please input username' }
         }
       },
-      email: {
+      relative_type: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: { msg: 'Please input relative_type' }
+        }
+      },
+      address: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        validate: {
+          notEmpty: { msg: 'Please input address' }
+        }
+      },
+      phone: {
         allowNull: false,
         type: DataTypes.STRING,
         unique: true,
         validate: {
-          isEmail: true
+          notEmpty: { msg: 'Please input phone' }
         }
-      },
-      pin: {
-        allowNull: true,
-        type: DataTypes.STRING
-      },
-      password: {
-        allowNull: false,
-        type: DataTypes.STRING
-      },
-      date_of_birth: {
-        allowNull: false,
-        type: DataTypes.DATEONLY,
-        validate: {
-          isDate: true
-        }
-      },
-      phone: {
-        allowNull: true,
-        type: DataTypes.STRING
-      },
-      is_active_notif: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
-      is_confirmed_email: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
-      role_id: {
-        allowNull: true,
-        type: DataTypes.INTEGER
-      },
-      hash: {
-        allowNull: false,
-        type: DataTypes.STRING
       },
       created_at: {
         allowNull: false,
@@ -88,21 +76,10 @@ module.exports = function(sequelize, DataTypes) {
   );
 
   // eslint-disable-next-line no-unused-vars
-  User.associate = function(models) {
+  UserFamily.associate = function(models) {
     // Define associations here
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
-    // User.belongsTo(models.identityCard, { foreignKey: 'identity_card_id' });
-    // User.belongsTo(models.role, { foreignKey: 'role_id' });
-    // User.belongsTo(models.occupation, { foreignKey: 'occupation_id' });
-    // User.belongsTo(models.userFamily, { foreignKey: 'family_id' });
   };
 
-  User.prototype.toJSON = function() {
-    const values = Object.assign({}, this.get());
-
-    delete values.password;
-    return values;
-  };
-
-  return User;
+  return UserFamily;
 };
