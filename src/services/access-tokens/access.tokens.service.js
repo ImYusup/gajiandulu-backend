@@ -1,44 +1,63 @@
+require('module-alias/register');
+const { jwtHelpers, response } = require('@helpers');
+const { users: User, access_tokens: AccessToken } = require('@models');
 const crypt = require('bcrypt');
-const createAccessToken = require('../../models/access.tokens.model.js');
-const createUserModel = require('../../models/users.model.js');
-const jwtHelpers = require('../helpers.js');
-const hooks = require('./access.tokens.hooks');
-const response = require('../response');
+const config = require('config');
 
-const accessTokenService = (AccessToken, User, secret) => ({
-  find: async params => {},
-
-  get: async (id, params) => {
-    const accessToken = await AccessToken.findOne({ where: { id } });
-    return response('Access token retrieved', accessToken, {}, null);
+const accessTokenService = {
+  get: async (req, res) => {
+    const { token } = req.headers;
+    try {
+      const accessToken = await AccessToken.findOne({ where: { token } });
+      return res
+        .status(200)
+        .json(response(true, 'Access token retrieved', accessToken, null));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
   },
 
-  create: async ({ data }, params) => {
-    const user = await User.findOne({ where: { email: data.email } });
-    if (user === null) {
-      throw new Error('User email not found!');
-    }
+  create: async (req, res) => {
+    const { data } = req.body;
 
-    if (crypt.compareSync(data.password, user.password)) {
-      const token = jwtHelpers.createJWT(
-        Object.assign({
-          email: user.email,
-          id: user.id,
-          full_name: user.full_name
-        }),
-        secret
-      );
-      const payload = {
-        access_token: token,
-        refresh_token: jwtHelpers.refreshToken(),
-        provider: data.provider,
-        user_id: user.id
-      };
-      const accessToken = await AccessToken.create(payload);
-      return response('Login', accessToken, user, null);
-    }
+    try {
+      const user = await User.findOne({ where: { email: data.email } });
 
-    return new Error('Password mismatch');
+      if (user === null) {
+        return res.status(400).json(response(false, 'User email not found!'));
+      }
+
+      if (crypt.compareSync(data.password, user.password)) {
+        const token = jwtHelpers.createJWT(
+          Object.assign({
+            email: user.email,
+            id: user.id,
+            full_name: user.full_name
+          }),
+          config.authentication.secret
+        );
+        const payload = {
+          access_token: token,
+          refresh_token: jwtHelpers.refreshToken(),
+          provider: data.provider,
+          user_id: user.id
+        };
+        const accessToken = await AccessToken.create(payload);
+        return res
+          .status(200)
+          .json(response(true, 'Login successfully', accessToken, null));
+      }
+
+      return res.status(422).json(response(false, 'Password mismatch'));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
   },
 
   update: async (id, data, params) => {
@@ -48,21 +67,6 @@ const accessTokenService = (AccessToken, User, secret) => ({
   remove: async (id, params) => {
     //
   }
-});
-
-module.exports = function(app) {
-  // Initialize our service with any options it requires
-  app.use(
-    '/login',
-    accessTokenService(
-      createAccessToken(app),
-      createUserModel(app),
-      app.get('authentication').secret
-    )
-  );
-
-  // Get our initialized service so that we can register hooks and filters
-  const service = app.service('login');
-
-  service.hooks(hooks);
 };
+
+module.exports = accessTokenService;

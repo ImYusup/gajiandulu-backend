@@ -14,9 +14,9 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "bibitnomic",
-    "password": "b1b1tn0m1c",
-    "database": "bibitnomic_db",
+    "username": "root",
+    "password": null,
+    "database": "database_production",
     "host": "127.0.0.1",
     "dialect": "mysql"
   }
