@@ -25,6 +25,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.BIGINT
       },
+      position: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       loan_purpose: {
         allowNull: false,
         type: Sequelize.STRING
