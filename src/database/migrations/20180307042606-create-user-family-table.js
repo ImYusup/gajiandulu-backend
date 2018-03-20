@@ -24,15 +24,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      family_address: {
+      address: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      family_phone: {
+      phone: {
         allowNull: false,
         type: Sequelize.STRING
       },
-      family_id: {
+      user_id: {
         allowNull: true,
         foreignKey: true,
         type: Sequelize.INTEGER,
