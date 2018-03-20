@@ -55,23 +55,31 @@ const userService = (User, facebook, AccessToken) => ({
     if (user.hash !== data.data.hash) {
       return response(false, 'Hash is mismatched');
     }
-    // Check pin to facebook graph server
+    // Check authorization code to facebook graph server
     const { clientID, clientSecret, graphUri } = facebook;
 
-    const response = await axios.get(
-      `${graphUri}access_token?grant_type=authorization_code&code=${
-        data.pin
-      }&access_token=${clientID}${clientSecret}`
-    );
+    try {
+      const response = await axios.get(
+        `${graphUri}access_token?grant_type=authorization_code&code=${
+          data.data.pin
+        }&access_token=AA${clientID}${clientSecret}`
+      );
 
-    const payload = {
-      access_token: response.access_token,
-      refresh_token: response.token_refresh_interval_sec,
-      provider: 'account-kit',
-      user_id: user.id
-    };
-    const accessToken = await AccessToken.create(payload);
-    return response(true, 'Pin validation success', accessToken, user);
+      if (response) {
+        const payload = {
+          access_token: response.access_token,
+          refresh_token: response.token_refresh_interval_sec,
+          provider: 'account-kit',
+          user_id: user.id
+        };
+        const accessToken = await AccessToken.create(payload);
+        return response(true, 'Pin validation success', accessToken, user);
+      }
+    } catch (error) {
+      return response(false, error.message);
+    }
+
+    return response(false, 'Pin validation failed');
   },
 
   remove: async (id, params) => {
@@ -88,7 +96,7 @@ module.exports = function(app) {
     '/users',
     userService(
       createUserModel(app),
-      app.get('facebook'), // get facebook configuration from config folder
+      app.get('authentication').facebook, // get facebook configuration from config folder
       createAccessToken(app)
     )
   );
