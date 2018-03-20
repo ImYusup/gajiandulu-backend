@@ -1,5 +1,5 @@
 require('module-alias/register');
-const { auth } = require('@helpers');
+const { auth, notFound } = require('@helpers');
 // const path = require('path');
 // const favicon = require('serve-favicon');
 const compress = require('compression');
@@ -30,5 +30,7 @@ app.use('/users', auth, routes.users);
 app.use('/family', auth, routes.family);
 app.use('/identity-cards', auth, routes.identityCard);
 app.use('/occupations', auth, routes.occupation);
+
+app.use(notFound());
 
 module.exports = app;
