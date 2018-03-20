@@ -26,9 +26,9 @@ jwtHelpers.createJWT = (data, secret) => {
  * parse JWT with specified options.
  * @param {String} token
  */
-jwtHelpers.verifyJWT = token => {
+jwtHelpers.verifyJWT = (token, secret) => {
   try {
-    const payload = jwt.verify(token, process.env.SECRET, options);
+    const payload = jwt.verify(token, secret, options);
     return payload;
   } catch (error) {
     throw Error(error);
