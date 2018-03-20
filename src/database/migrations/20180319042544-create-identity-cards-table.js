@@ -16,18 +16,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      identity_number: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      identity_address: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      city: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
       user_id: {
         allowNull: true,
         foreignKey: true,
@@ -36,6 +24,18 @@ module.exports = {
           model: 'users',
           key: 'id'
         }
+      },
+      identity_number: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      address: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      city: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       created_at: {
         allowNull: false,
