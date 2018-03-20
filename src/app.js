@@ -23,10 +23,12 @@ app.use(express.urlencoded({ extended: true }));
 // app.use('/', express.static(app.get('public')));
 
 // Route for API
-// auth is middleware authentication
+// auth is middleware for authentication
 app.use('/register', routes.register);
 app.use('/login', routes.login);
 app.use('/users', auth, routes.users);
 app.use('/family', auth, routes.family);
+app.use('/identity-cards', auth, routes.identityCard);
+app.use('/occupations', auth, routes.occupation);
 
 module.exports = app;
