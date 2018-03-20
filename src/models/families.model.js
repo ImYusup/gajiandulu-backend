@@ -1,12 +1,6 @@
-// See http://docs.sequelizejs.com/en/latest/docs/models-definition/
-// for more of what you can do here.
-const Sequelize = require('sequelize');
-const DataTypes = Sequelize.DataTypes;
-
-module.exports = function(app) {
-  const sequelizeClient = app.get('sequelizeClient');
-  const UserFamily = sequelizeClient.define(
-    'user_family',
+module.exports = function(sequelize, DataTypes) {
+  const UserFamily = sequelize.define(
+    'families',
     {
       id: {
         allowNull: false,
@@ -61,25 +55,23 @@ module.exports = function(app) {
       phone: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: true,
         validate: {
           notEmpty: { msg: 'Please input phone' }
         }
       },
       created_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DataTypes.DATE
       },
       updated_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DataTypes.DATE
       }
     },
     {
-      hooks: {
-        beforeCount(options) {
-          options.raw = true;
-        }
-      }
+      timestamps: true,
+      underscored: true
     }
   );
 

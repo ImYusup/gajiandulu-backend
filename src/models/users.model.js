@@ -1,11 +1,5 @@
-// See http://docs.sequelizejs.com/en/latest/docs/models-definition/
-// for more of what you can do here.
-const Sequelize = require('sequelize');
-const DataTypes = Sequelize.DataTypes;
-
-module.exports = function(app) {
-  const sequelizeClient = app.get('sequelizeClient');
-  const User = sequelizeClient.define(
+module.exports = function(sequelize, DataTypes) {
+  const User = sequelize.define(
     'users',
     {
       id: {
@@ -72,27 +66,24 @@ module.exports = function(app) {
       },
       role_id: {
         allowNull: true,
-        type: Sequelize.INTEGER
+        type: DataTypes.INTEGER
       },
       hash: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: DataTypes.STRING
       },
       created_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DataTypes.DATE
       },
       updated_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: DataTypes.DATE
       }
     },
     {
-      hooks: {
-        beforeCount(options) {
-          options.raw = true;
-        }
-      }
+      timestamps: true,
+      underscored: true
     }
   );
 
