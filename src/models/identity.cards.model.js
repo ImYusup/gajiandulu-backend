@@ -56,7 +56,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       type: DataTypes.DATE
     }
-  });
+  },
+  {
+    timestamps: true,
+    underscored: true
+  }
+  );
 
   IdentityCard.associate = function(models) {
     IdentityCard.belongsTo(models.users, { foreignKey: 'user_id' });

@@ -13,7 +13,6 @@ router.post(
       .withMessage('must be a valid email'),
     check('*.password', 'passwords must be at least 5 chars long')
       .isLength({ min: 5 })
-      .matches(/\d/)
   ],
   (req, res) => {
     const errors = validationResult(req);
