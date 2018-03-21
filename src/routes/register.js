@@ -19,7 +19,6 @@ router.post(
     check('date_of_birth').isISO8601(),
     check('password', 'passwords must be at least 5 chars long')
       .isLength({ min: 5 })
-      .matches(/\d/)
   ],
   (req, res) => {
     const errors = validationResult(req);

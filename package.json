@@ -4,12 +4,16 @@
   "version": "0.1.0",
   "homepage": "bibitnomic.id",
   "main": "src",
-  "keywords": ["bibitnomic"],
+  "keywords": [
+    "bibitnomic"
+  ],
   "author": {
     "name": "Krisrp",
     "email": "kristoforusrp@gmail.com"
   },
-  "contributors": ["Refactory.id"],
+  "contributors": [
+    "Refactory.id"
+  ],
   "bugs": {},
   "directories": {
     "lib": "src",
