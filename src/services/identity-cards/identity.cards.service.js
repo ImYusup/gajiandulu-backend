@@ -80,26 +80,6 @@ const identityCardService = {
     }
   },
 
-  put: async (req, res) => {
-    const identityCardId = req.params.id;
-    const { data } = req.body;
-    //TODO: Wait for the put spec mechanism
-    try {
-      let identityCard = await IdentityCard.findOne({ where: { id: identityCardId } });
-      if (identityCard === null) {
-        res
-          .status(400)
-          .json(response(false, `Identity Card with id ${identityCardId} not found`));
-      }
-      return response(false, 'Not yet', data);
-    } catch (error) {
-      if (error.errors) {
-        return res.status(400).json(response(false, error.errors));
-      }
-      return res.status(400).json(response(false, error.message));
-    }
-  },
-
   remove: async (req, res) => {
     //
   }

@@ -77,27 +77,7 @@ const occupationService = {
       return res.status(400).json(response(false, error.message));
     }
   },
-
-  put: async (req, res) => {
-    const occupationId = req.params.id;
-    const { data } = req.body;
-    // TODO: Wait for the put spec mechanism
-    try {
-      let occupation = await Occupation.findOne({ where: { id: occupationId } });
-      if (occupation === null) {
-        return res
-          .status(400)
-          .json(response(false, `Occupation with id ${occupationId} not found`));
-      }
-      return response(false, 'Not yet', data);
-    } catch (error) {
-      if (error.errors) {
-        return res.status(400).json(response(false, error.errors));
-      }
-      return res.status(400).json(response(false, error.message));
-    }
-  },
-
+  
   remove: async (req, res) => {
     //
   }

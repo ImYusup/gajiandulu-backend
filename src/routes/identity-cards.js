@@ -57,24 +57,6 @@ router.patch(
   }
 );
 
-router.put(
-  '/:id',
-  [
-    check('*.identity_number', 'name should only has chars and space').isLength(
-      { min: 3 }
-    ),
-    check('*.address', 'address should be present in request body').exists(),
-    check('*.city', 'city should be present in request body').exists()
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json(response(false, errors.array()));
-    }
-    identityCardService.put(req, res);
-  }
-);
-
 router.delete('/:id', (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
