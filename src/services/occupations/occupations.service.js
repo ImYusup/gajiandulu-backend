@@ -98,10 +98,6 @@ const occupationService = {
     }
   },
 
-  update: async (req, res) => {
-    //
-  },
-
   remove: async (req, res) => {
     //
   }

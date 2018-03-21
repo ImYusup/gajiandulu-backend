@@ -100,10 +100,6 @@ const identityCardService = {
     }
   },
 
-  update: async (req, res) => {
-    //
-  },
-
   remove: async (req, res) => {
     //
   }
