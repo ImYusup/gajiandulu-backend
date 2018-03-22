@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 
 const options = {
-  expiresIn: 3 * 60 * 60,
+  expiresIn: 365 * 24 * 60 * 60,
   issuer: 'bibitnomic-api',
   jwtid: 'bibitnomic.user',
   subject: 'bibitnomic-access-token'
