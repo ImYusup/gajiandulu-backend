@@ -40,10 +40,6 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true
       },
-      is_active_notif: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
-      },
       is_confirmed_email: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
@@ -55,7 +51,8 @@ module.exports = {
         references: {
           model: 'roles',
           key: 'id'
-        }
+        },
+        defaultValue: 2
       },
       created_at: {
         allowNull: false,
