@@ -67,7 +67,6 @@ const digitalAssetService = {
 
     try {
       const path = req.file.path.split('/')[1];
-      console.log('path', path);
       const payload = {
         user_id,
         type: req.body.type,
