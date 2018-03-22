@@ -4,8 +4,9 @@ const { families: Family } = require('@models');
 
 const familyService = {
   find: async (req, res) => {
+    const { id: user_id } = res.local.users;
     try {
-      const family = await Family.all();
+      const family = await Family.findAll({ where: { user_id: user_id } });
       return res
         .status(200)
         .json(response(true, 'Family retrieved successfully', family, null));
