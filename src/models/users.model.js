@@ -56,10 +56,6 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
         type: DataTypes.STRING
       },
-      is_active_notif: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
       is_confirmed_email: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
