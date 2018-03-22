@@ -30,6 +30,7 @@ app.use('/users', auth, routes.users);
 app.use('/family', auth, routes.family);
 app.use('/identity-cards', auth, routes.identityCard);
 app.use('/occupations', auth, routes.occupation);
+app.use('/me', auth, routes.me);
 
 app.use(notFound());
 
