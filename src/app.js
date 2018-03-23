@@ -34,6 +34,7 @@ app.use('/identity-cards', auth, routes.identityCard);
 app.use('/occupations', auth, routes.occupation);
 app.use('/me', auth, routes.me);
 app.use('/digital-assets', auth, routes.digitalAsset);
+app.use('/feedbacks/conversation', auth, routes.FeedbackConversation);
 
 app.use(notFound());
 

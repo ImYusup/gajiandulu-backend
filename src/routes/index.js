@@ -6,6 +6,7 @@ const identityCard = require('./identity-cards');
 const occupation = require('./occupations');
 const me = require('./me');
 const digitalAsset = require('./digital-assets');
+const FeedbackConversation = require('./feedback-conversations');
 
 module.exports = {
   register,
@@ -15,5 +16,6 @@ module.exports = {
   identityCard,
   occupation,
   me,
-  digitalAsset
+  digitalAsset,
+  FeedbackConversation
 };
