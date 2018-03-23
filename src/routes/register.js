@@ -8,17 +8,16 @@ const { check, validationResult } = require('express-validator/check');
 router.post(
   '/',
   [
-    check('full_name', 'name should only has chars and space')
-      .isLength({ min: 3 })
-      .matches(
-        /^[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]+$/gi
-      ),
+    check('full_name', 'name should only has chars and space').isLength({
+      min: 3
+    }),
     check('email')
       .isEmail()
       .withMessage('must be a valid email'),
     check('date_of_birth').isISO8601(),
-    check('password', 'passwords must be at least 5 chars long')
-      .isLength({ min: 5 })
+    check('password', 'passwords must be at least 5 chars long').isLength({
+      min: 5
+    })
   ],
   (req, res) => {
     const errors = validationResult(req);
