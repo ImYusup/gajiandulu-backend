@@ -1,10 +1,31 @@
 require('module-alias/register');
 const { response } = require('@helpers');
-const { meService } = require('@services');
+const { meService, feedbackService } = require('@services');
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator/check');
 
+/*
+ * End-points for /me/feedback
+ */
+router.post(
+  '/feedbacks',
+  [
+    check('*.summary', 'feedback summary is required')
+      .exists()
+      .trim(),
+    check('*.message', 'feedback message is required')
+      .exists()
+      .trim(),
+  ],
+  (req, res) => {
+    feedbackService.post(req, res);
+  }
+);
+
+/*
+ * End-points for /me
+ */
 router.get('/', (req, res) => {
   meService.find(req, res);
 });
