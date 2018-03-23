@@ -40,9 +40,7 @@ const feedbackService = {
     try {
       // TODO: Need response body following spec      
       const feedback = await Feedback.create({ user_id: userId, summary: data.summary });
-      console.log("feedbacks", feedback);
       const feedbackConversation = await FeedbackConversation.create({ feedback_id: feedback.dataValues.id, commentable_id: userId, body: data.message });
-      console.log("feedback conversation", feedbackConversation);      
       if (feedback) {
         return res
           .status(200)

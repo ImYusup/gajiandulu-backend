@@ -14,7 +14,7 @@ router.get(
     if (!errors.isEmpty()) {
       return res.status(422).json(response(false, errors.array()));
     }
-    feedbackService.get(req, res)
+    feedbackService.get(req, res);
   }
 );
 
