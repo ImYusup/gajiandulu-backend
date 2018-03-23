@@ -23,7 +23,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       commentable_type: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: 'user'
       },
       body: {
         allowNull: false,

@@ -18,16 +18,16 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
       ticket_number: {
-        allowNull: false,
-        type: DataTypes.BIGINT
+        allowNull: true,
+        type: DataTypes.STRING,
       },
       summary: {
         allowNull: false,
         type: DataTypes.STRING
       },
       status: {
-        allowNull: false,
-        type: DataTypes.TINYINT
+        type: DataTypes.ENUM('pending', 'verified'),
+        defaultValue: 'pending'
       },
       created_at: {
         allowNull: false,
@@ -40,8 +40,17 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       timestamps: true,
-      underscored: true
-    });
+      underscored: true,
+      hooks: {
+        afterCreate: (feedback, options) => {
+          feedbacks.update(
+            { ticket_number: '#'+feedback.id },
+            { where: { id: feedback.id } }
+          );
+        }
+      }
+    }
+  );
   feedbacks.associate = function(models) {
     // associations can be defined here
   };

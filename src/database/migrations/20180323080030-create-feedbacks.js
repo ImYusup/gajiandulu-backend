@@ -18,8 +18,8 @@ module.exports = {
         }
       },
       ticket_number: {
-        allowNull: false,
-        type: Sequelize.BIGINT
+        allowNull: true,
+        type: Sequelize.STRING,
       },
       summary: {
         allowNull: false,
@@ -27,7 +27,8 @@ module.exports = {
       },
       status: {
         allowNull: false,
-        type: Sequelize.TINYINT
+        type: Sequelize.ENUM('pending', 'verified'),
+        defaultValue: 'pending'        
       },
       created_at: {
         allowNull: false,

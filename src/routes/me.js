@@ -57,6 +57,7 @@ router.put(
     check('*.new_password_confirmation', 'new password confirmation must be the same as new password')
       .custom((value, { req }) => value === req.body.data.new_password),
     check('*.family.name', 'family name required')
+      .optional({ nullable: true })
       .custom((value, { req }) => {
         if (req.body.data.family.relative_type && req.body.data.family.address && req.body.data.family.phone) {
           return value ? true : false;
@@ -70,6 +71,7 @@ router.put(
         return true;
       }).withMessage('family name must be alphabethical'),
     check('*.family.relative_type', 'family relative type required')
+      .optional({ nullable: true })
       .custom((value, { req }) => {
         if (req.body.data.family.name) {
           return value ? true : false;
@@ -83,6 +85,7 @@ router.put(
         return true;
       }).withMessage('family relative type must be alphabethical'),
     check('*.family.address', 'family address required')
+      .optional({ nullable: true })
       .custom((value, { req }) => {
         if (req.body.data.family.name) {
           return value ? true : false;
@@ -90,6 +93,7 @@ router.put(
         return true;
       }),
     check('*.family.phone', 'family phone required')
+      .optional({ nullable: true })
       .custom((value, { req }) => {
         if (req.body.data.family.name) {
           return value ? true : false;

@@ -9,12 +9,12 @@ const feedbackConversationService = {
   get: async (req, res) => {
     const { id: feedback_id } = req.params;
     try {
-      const family = await FeedbackConversation.findOne({
+      const feedback = await FeedbackConversation.findOne({
         where: { id: feedback_id }
       });
-      if (family === null) {
+      if (feedback === null) {
         return res
-          .status(200)
+          .status(422)
           .json(
             response(
               false,
@@ -28,7 +28,7 @@ const feedbackConversationService = {
           response(
             true,
             'FeedbackConversation retrieved successfully',
-            family,
+            feedback,
             null
           )
         );
