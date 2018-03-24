@@ -1,10 +1,31 @@
 require('module-alias/register');
 const { response } = require('@helpers');
-const { meService } = require('@services');
+const { meService, feedbackService } = require('@services');
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator/check');
 
+/*
+ * End-points for /me/feedback
+ */
+router.post(
+  '/feedbacks',
+  [
+    check('*.summary', 'feedback summary is required')
+      .exists()
+      .trim(),
+    check('*.message', 'feedback message is required')
+      .exists()
+      .trim(),
+  ],
+  (req, res) => {
+    feedbackService.post(req, res);
+  }
+);
+
+/*
+ * End-points for /me
+ */
 router.get('/', (req, res) => {
   meService.find(req, res);
 });
@@ -36,6 +57,7 @@ router.put(
     check('*.new_password_confirmation', 'new password confirmation must be the same as new password')
       .custom((value, { req }) => value === req.body.data.new_password),
     check('*.family.name', 'family name required')
+      .optional({ nullable: true })
       .custom((value, { req }) => {
         if (req.body.data.family.relative_type && req.body.data.family.address && req.body.data.family.phone) {
           return value ? true : false;
@@ -49,6 +71,7 @@ router.put(
         return true;
       }).withMessage('family name must be alphabethical'),
     check('*.family.relative_type', 'family relative type required')
+      .optional({ nullable: true })
       .custom((value, { req }) => {
         if (req.body.data.family.name) {
           return value ? true : false;
@@ -62,6 +85,7 @@ router.put(
         return true;
       }).withMessage('family relative type must be alphabethical'),
     check('*.family.address', 'family address required')
+      .optional({ nullable: true })
       .custom((value, { req }) => {
         if (req.body.data.family.name) {
           return value ? true : false;
@@ -69,6 +93,7 @@ router.put(
         return true;
       }),
     check('*.family.phone', 'family phone required')
+      .optional({ nullable: true })
       .custom((value, { req }) => {
         if (req.body.data.family.name) {
           return value ? true : false;

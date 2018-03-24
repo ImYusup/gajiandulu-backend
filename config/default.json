@@ -1,7 +1,8 @@
 {
   "host": "localhost",
-  "port": 3030,
-  "public": "../public/",
+  "port": 3000,
+  "public": "public",
+  "uploads": "public/uploads",
   "paginate": {
     "default": 10,
     "max": 50
