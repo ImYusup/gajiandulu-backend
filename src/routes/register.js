@@ -28,4 +28,23 @@ router.post(
   }
 );
 
+router.put(
+  '/otp',
+  [
+    check(
+      '*.authorization_code',
+      'authorization_code should be present'
+    ).exists(),
+    check('*.hash', 'hash should be present').exists(),
+    check('*.user_id', 'user_id should be present').exists()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    userService.put(req, res);
+  }
+);
+
 module.exports = router;

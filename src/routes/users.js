@@ -32,22 +32,4 @@ router.patch(
   }
 );
 
-router.put(
-  '/:id',
-  [
-    body(
-      '*.authorization_code',
-      'authorization_code should be present'
-    ).exists(),
-    body('*.hash', 'hash should be present').exists()
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json(response(false, errors.array()));
-    }
-    userService.put(req, res);
-  }
-);
-
 module.exports = router;

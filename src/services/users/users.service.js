@@ -119,8 +119,8 @@ const userService = {
    *
    */
   put: async (req, res) => {
-    const userId = req.params.id;
     const { data } = req.body;
+    const { user_id: userId } = data;
     try {
       let user = await User.findOne({ where: { id: userId } });
       if (user === null) {
