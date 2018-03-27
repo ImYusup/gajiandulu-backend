@@ -8,9 +8,12 @@ const { check, validationResult } = require('express-validator/check');
 router.post(
   '/',
   [
-    check('full_name', 'name should only has chars and space').isLength({
-      min: 3
-    }),
+    check('full_name', 'name should only has chars and space')
+      .isLength({min: 3})
+      
+      //for regex name must have any space
+    .matches(/^[A-zA-Z]+(?:[\s.]+[a-zA-Z]+)(\s\g)*/g),
+  
     check('email')
       .isEmail()
       .withMessage('must be a valid email'),
