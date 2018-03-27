@@ -136,10 +136,11 @@ const userService = {
       const { clientID, clientSecret, graphUri } = config.facebook;
       const accountKitResponse = await axios.get(
         `${graphUri}access_token?grant_type=authorization_code&code=${
-          data.data.pin
+          data.authorization_code
         }&access_token=AA${clientID}${clientSecret}`
       );
-
+      console.log("THIS ISSSSSSSSSS = ", data)
+      
       if (accountKitResponse) {
         const payload = {
           access_token: accountKitResponse.access_token,
