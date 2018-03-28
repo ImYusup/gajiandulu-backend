@@ -7,6 +7,7 @@ const meService = require('./me/me.service.js');
 const digitalAssetService = require('./digital-assets/digital.assets.service');
 const feedbackService = require('./feedbacks/feedbacks.service.js');
 const feedbackConversationService = require('./feedback_conversations/feedback.conversation.service');
+const loanService = require('./loans/loans.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = {
   userService,
@@ -17,5 +18,6 @@ module.exports = {
   meService,
   digitalAssetService,
   feedbackService,
-  feedbackConversationService
+  feedbackConversationService,
+  loanService
 };

@@ -7,6 +7,7 @@ const occupation = require('./occupations');
 const me = require('./me');
 const digitalAsset = require('./digital-assets');
 const feedback = require('./feedbacks');
+const loan = require('./loans');
 
 module.exports = {
   register,
@@ -17,5 +18,6 @@ module.exports = {
   occupation,
   me,
   digitalAsset,
-  feedback
+  feedback,
+  loan
 };
