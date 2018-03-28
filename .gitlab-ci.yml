@@ -11,9 +11,9 @@ job1:
 
 test:
   stage: test
-  script: 
+  script:
     - npm install
-    - npm test
+    # - npm test
   artifacts:
     paths:
       - dist/

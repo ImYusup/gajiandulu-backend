@@ -1,5 +1,5 @@
 require('module-alias/register');
-const { response } = require('@helpers');
+const { response, jwtHelpers } = require('@helpers');
 const { users: User, access_tokens: AccessToken } = require('@models');
 const axios = require('axios');
 const crypt = require('bcrypt');
@@ -119,8 +119,9 @@ const userService = {
    *
    */
   put: async (req, res) => {
-    const userId = req.params.id;
     const { data } = req.body;
+
+    const { user_id: userId } = data;
     try {
       let user = await User.findOne({ where: { id: userId } });
       if (user === null) {
@@ -132,28 +133,48 @@ const userService = {
       if (user.hash !== data.hash) {
         return res.status(404).json(response(false, 'Hash is mismatched'));
       }
+
       // Check authorization code to facebook graph server
-      const { clientID, clientSecret, graphUri } = config.facebook;
-      const accountKitResponse = await axios.get(
-        `${graphUri}access_token?grant_type=authorization_code&code=${
-          data.data.pin
-        }&access_token=AA${clientID}${clientSecret}`
+      const {
+        clientID,
+        clientSecret,
+        graphUri
+      } = config.authentication.facebook;
+
+      const fbAccessToken = await axios.get(
+        `${graphUri}/access_token?grant_type=authorization_code&code=${
+          data.authorization_code
+        }&access_token=AA|${clientID}|${clientSecret}`
       );
 
-      if (accountKitResponse) {
-        const payload = {
-          access_token: accountKitResponse.access_token,
-          refresh_token: accountKitResponse.token_refresh_interval_sec,
-          provider: 'account-kit',
-          user_id: user.id
-        };
-        const accessToken = await AccessToken.create(payload);
-        return res
-          .status(200)
-          .json(response(true, 'Pin validation success', accessToken, user));
+      if (!fbAccessToken || fbAccessToken.error) {
+        return res.status(512).json(response(false, fbAccessToken.error));
       }
 
-      return res.status(422).json(response(false, 'Pin validation failed'));
+      const token = jwtHelpers.createJWT(
+        Object.assign({
+          email: user.email,
+          id: user.id,
+          full_name: user.full_name
+        }),
+        config.authentication.secret
+      );
+      const payload = {
+        access_token: token,
+        refresh_token: jwtHelpers.refreshToken(),
+        provider: 'account-kit',
+        user_id: user.id
+      };
+      const accessToken = await AccessToken.create(payload);
+
+      if (accessToken) {
+        return res
+          .status(200)
+          .json(
+            response(true, 'Phone number validation success', accessToken, user)
+          );
+      }
+      return res.status(422).json(response(false, 'Unprocessable entity'));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
