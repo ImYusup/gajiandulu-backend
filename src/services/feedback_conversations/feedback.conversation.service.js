@@ -41,6 +41,7 @@ const feedbackConversationService = {
   },
 
   create: async (req, res) => {
+    const { id: userId } = res.local.users;
     const { data } = req.body;
     try {
       const feedback = await Feedback.findOne({
@@ -53,7 +54,15 @@ const feedbackConversationService = {
             response(true, `Feedback with id ${data.feedback_id} is not found`)
           );
       }
-      let feedbackConversation = await FeedbackConversation.create(data);
+      const payload = Object.assign(
+        {}, 
+        {
+          feedback_id:data.feedback_id,
+          commentable_id: userId,
+          body: data.message
+        }
+      );
+      let feedbackConversation = await FeedbackConversation.create(payload);
       if (feedbackConversation) {
         return res
           .status(200)
