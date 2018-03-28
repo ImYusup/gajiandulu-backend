@@ -3,7 +3,7 @@ const { response } = require('@helpers');
 const { userService } = require('@services');
 const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require('express-validator/check');
+const { check, body, validationResult } = require('express-validator/check');
 
 router.post(
   '/',
@@ -31,12 +31,12 @@ router.post(
 router.put(
   '/otp',
   [
-    check(
+    body(
       '*.authorization_code',
       'authorization_code should be present'
     ).exists(),
-    check('*.hash', 'hash should be present').exists(),
-    check('*.user_id', 'user_id should be present').exists()
+    body('*.hash', 'hash should be present').exists(),
+    body('*.user_id', 'user_id should be present').exists()
   ],
   (req, res) => {
     const errors = validationResult(req);
