@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes) {
               'Username must start with a letter, have no spaces, and be at less than 40 characters.'
           },
           is: {
-            args: /^[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]+$/gi, // must start with letter and only have letters, numbers, dashes
+            args: /^[A-Za-z]*\s?[A-Za-z0-9-]*\s?[A-Za-z]*\s?[A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]+$/gi, // must start with letter and only have letters, numbers, dashes
             msg: 'Username must start with a letter and be 3 - 40 characters.'
           },
           notEmpty: { msg: 'Please input username' }
