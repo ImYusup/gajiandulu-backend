@@ -1,6 +1,6 @@
 {
   "host": "localhost",
-  "port": 3000,
+  "port": 3002,
   "public": "public",
   "uploads": "public/uploads",
   "paginate": {
@@ -28,8 +28,8 @@
       "passwordField": "password"
     },
     "facebook": {
-      "clientID": "347923105693895",
-      "clientSecret": "b7d7d8caf2e62c4605c09fd70607df29",
+      "clientID": "154380921909272",
+      "clientSecret": "2ad5198b2c9badb3f8e7cf16cf7c2cdd",
       "successRedirect": "/",
       "scope": ["public_profile", "email"],
       "profileFields": [
@@ -44,7 +44,7 @@
         "picture",
         "permissions"
       ],
-      "graphUri": "https://graph.accountkit.com/v1.3/"
+      "graphUri": "https://graph.accountkit.com/v1.3"
     },
     "cookie": {
       "enabled": true,
