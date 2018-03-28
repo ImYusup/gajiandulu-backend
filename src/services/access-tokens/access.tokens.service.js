@@ -47,13 +47,24 @@ const accessTokenService = {
           provider: data.provider,
           user_id: user.id
         };
-        const accessToken = await AccessToken.findOrCreate(payload);
+        const accessToken = await AccessToken.findOrCreate({
+          where: { user_id: user.id },
+          defaults: payload
+        });
         if (!accessToken) {
           return res.status(400).json(response(true, 'Login failed'));
         }
+
         return res
           .status(200)
-          .json(response(true, 'Login successfully', accessToken, null));
+          .json(
+            response(
+              true,
+              'Login successfully',
+              accessToken.length > 0 ? accessToken[0] : accessToken,
+              null
+            )
+          );
       }
 
       return res.status(422).json(response(false, 'Password mismatch'));
