@@ -89,7 +89,7 @@ module.exports = function(sequelize, DataTypes) {
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
     User.hasMany(models.feedbacks, { foreignKey: 'user_id' });
     User.belongsTo(models.roles, { foreignKey: 'role_id' });
-    // User.belongsTo(models.occupation, { foreignKey: 'occupation_id' });
+    User.belongsTo(models.occupations, { foreignKey: 'occupation_id' });
     // User.belongsTo(models.userFamily, { foreignKey: 'family_id' });
   };
 
