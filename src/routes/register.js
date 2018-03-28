@@ -12,7 +12,7 @@ router.post(
       .isLength({min: 4})
       
       //for regex name must have any space
-      .matches(/^[A-Za-z]*\s?[A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]+$/gi),
+      .matches(/^[A-Za-z]*\s?[A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z]*\s?[A-Za-z0-9-]+$/gi),
   
     check('email')
       .isEmail()
