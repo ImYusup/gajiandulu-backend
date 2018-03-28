@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const feedbacks = sequelize.define(
-    'feedbacks', 
+  const Feedback = sequelize.define(
+    'feedbacks',
     {
       id: {
         allowNull: false,
@@ -16,10 +16,6 @@ module.exports = (sequelize, DataTypes) => {
           model: 'users',
           key: 'id'
         }
-      },
-      ticket_number: {
-        allowNull: true,
-        type: DataTypes.STRING,
       },
       summary: {
         allowNull: false,
@@ -40,19 +36,16 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       timestamps: true,
-      underscored: true,
-      hooks: {
-        afterCreate: (feedback, options) => {
-          feedbacks.update(
-            { ticket_number: '#'+feedback.id },
-            { where: { id: feedback.id } }
-          );
-        }
-      }
+      underscored: true
     }
   );
-  feedbacks.associate = function(models) {
+  Feedback.associate = function(models) {
     // associations can be defined here
+    Feedback.belongsTo(models.users, { foreignKey: 'user_id' });
+    Feedback.hasMany(models.feedback_conversations, {
+      foreignKey: 'feedback_id',
+      as: 'conversations'
+    });
   };
-  return feedbacks;
+  return Feedback;
 };

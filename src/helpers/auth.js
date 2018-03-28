@@ -9,7 +9,7 @@ const auth = async (req, res, next) => {
   if (!authorization) {
     return res
       .status(403)
-      .json(response(false, 'Authotization header is not present'));
+      .json(response(false, 'Authorization header is not present'));
   }
 
   try {
