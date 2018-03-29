@@ -54,8 +54,6 @@ const digitalAssetService = {
     }
   },
 
-  patch: async (req, res) => {},
-
   create: async (req, res) => {
     // res.local.users from auth middleware
     // check src/helpers/auth.js
@@ -75,7 +73,7 @@ const digitalAssetService = {
         mime_type: req.file.mimetype,
         url: `${host}${path}/${req.file.filename}`
       };
-      let digitalAsset = await DigitalAsset.create(payload);
+      const digitalAsset = await DigitalAsset.create(payload);
       if (digitalAsset) {
         return res
           .status(201)

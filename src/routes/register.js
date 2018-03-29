@@ -3,7 +3,7 @@ const { response } = require('@helpers');
 const { userService } = require('@services');
 const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require('express-validator/check');
+const { check, body, validationResult } = require('express-validator/check');
 
 router.post(
   '/',
@@ -28,6 +28,25 @@ router.post(
       return res.status(422).json(response(false, errors.array()));
     }
     userService.create(req, res);
+  }
+);
+
+router.put(
+  '/otp',
+  [
+    body(
+      '*.authorization_code',
+      'authorization_code should be present'
+    ).exists(),
+    body('*.hash', 'hash should be present').exists(),
+    body('*.user_id', 'user_id should be present').exists()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    userService.put(req, res);
   }
 );
 

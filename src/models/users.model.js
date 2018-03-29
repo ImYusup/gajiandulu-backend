@@ -87,9 +87,9 @@ module.exports = function(sequelize, DataTypes) {
   User.associate = function(models) {
     // Define associations here
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
-    // User.belongsTo(models.identityCard, { foreignKey: 'identity_card_id' });
-    // User.belongsTo(models.role, { foreignKey: 'role_id' });
-    // User.belongsTo(models.occupation, { foreignKey: 'occupation_id' });
+    User.hasMany(models.feedbacks, { foreignKey: 'user_id' });
+    User.belongsTo(models.roles, { foreignKey: 'role_id' });
+    User.belongsTo(models.occupations, { foreignKey: 'occupation_id' });
     // User.belongsTo(models.userFamily, { foreignKey: 'family_id' });
   };
 
