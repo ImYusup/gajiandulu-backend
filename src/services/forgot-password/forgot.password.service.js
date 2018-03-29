@@ -9,11 +9,14 @@ const forgotPasswordService = {
    *
    */
   create: async (req, res) => {
-    const { password, email, hash } = req.body.data;
-
+    const { email, hash } = req.body.data;
+    // Send this password to email later
+    const password = Math.random()
+      .toString(36)
+      .substring(3);
     try {
       const user = await User.findOne({ where: { email: email } });
-      const hashPassword = crypt.hashSync(password, 15);
+      const hashPassword = crypt.hashSync(password, 5);
 
       if (user === null) {
         return res.status(400).json(response(false, 'User email not found!'));

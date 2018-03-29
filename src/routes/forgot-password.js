@@ -11,10 +11,7 @@ router.post(
     check('*.email')
       .isEmail()
       .withMessage('must be a valid email'),
-    check('*.hash').exists(),
-    check('*.password', 'passwords must be at least 5 chars long').isLength({
-      min: 5
-    })
+    check('*.hash').exists()
   ],
   (req, res) => {
     const errors = validationResult(req);
