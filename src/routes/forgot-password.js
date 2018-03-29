@@ -8,11 +8,11 @@ const { check, validationResult } = require('express-validator/check');
 router.post(
   '/',
   [
-    check('email')
+    check('*.email')
       .isEmail()
       .withMessage('must be a valid email'),
-    check('hash').exists(),
-    check('password', 'passwords must be at least 5 chars long').isLength({
+    check('*.hash').exists(),
+    check('*.password', 'passwords must be at least 5 chars long').isLength({
       min: 5
     })
   ],

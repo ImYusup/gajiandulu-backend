@@ -9,7 +9,7 @@ const forgotPasswordService = {
    *
    */
   create: async (req, res) => {
-    const { password, email, hash } = req.body;
+    const { password, email, hash } = req.body.data;
 
     try {
       const user = await User.findOne({ where: { email: email } });
@@ -19,7 +19,8 @@ const forgotPasswordService = {
         return res.status(400).json(response(false, 'User email not found!'));
       }
 
-      if (crypt.compareSync(hash, user.hash)) {
+      // crypt.compareSync(hash, user.hash)
+      if (hash === user.hash) {
         await User.update(
           {
             password: hashPassword
@@ -36,7 +37,7 @@ const forgotPasswordService = {
           );
       }
 
-      return res.status(422).json(response(false, 'Date of birth mismatch'));
+      return res.status(422).json(response(false, 'hash mismatch'));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
