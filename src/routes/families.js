@@ -27,7 +27,7 @@ router.post(
     check('*.name', 'name should only has chars and space')
       .isLength({ min: 3 })
       .matches(
-        /^[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]+$/gi
+        /^[A-Za-z]*\s?[A-Za-z0-9-]*\s?[A-Za-z]*\s?[A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]+$/gi
       ),
     check(
       '*.relative_type',
