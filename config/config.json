@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "root",
-    "password": "secret",
-    "database": "bibitnomic_dev",
+    "password": "root",
+    "database": "gajian_dulu",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
