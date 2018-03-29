@@ -3,6 +3,8 @@ const { jwtHelpers, response } = require('@helpers');
 const { users: User, access_tokens: AccessToken } = require('@models');
 const crypt = require('bcrypt');
 const config = require('config');
+const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 
 const accessTokenService = {
   get: async (req, res) => {
@@ -47,10 +49,29 @@ const accessTokenService = {
           provider: data.provider,
           user_id: user.id
         };
-        const accessToken = await AccessToken.findOrCreate({
-          where: { user_id: user.id },
-          defaults: payload
+
+        let accessToken = await AccessToken.findOne({
+          where: {
+            [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
+          }
         });
+
+        if (!accessToken) {
+          await AccessToken.create(payload);
+        } else {
+          await AccessToken.update(payload, {
+            where: {
+              [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
+            }
+          });
+        }
+
+        accessToken = await AccessToken.findOne({
+          where: {
+            [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
+          }
+        });
+
         if (!accessToken) {
           return res.status(400).json(response(true, 'Login failed'));
         }

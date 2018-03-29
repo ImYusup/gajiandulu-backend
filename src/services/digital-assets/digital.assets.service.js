@@ -2,6 +2,8 @@ require('module-alias/register');
 const { response } = require('@helpers');
 const { digital_assets: DigitalAsset } = require('@models');
 const config = require('config');
+const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 
 const digitalAssetService = {
   find: async (req, res) => {
@@ -63,29 +65,60 @@ const digitalAssetService = {
         ? `http://${config.host}:${config.port}/`
         : config.host;
 
+    const path = req.file.path.split('/')[1];
+
+    const payload = {
+      user_id,
+      type: req.body.type,
+      path: req.file.path,
+      filename: req.file.filename,
+      mime_type: req.file.mimetype,
+      url: `${host}${path}/${req.file.filename}`
+    };
     try {
-      const path = req.file.path.split('/')[1];
-      const payload = {
-        user_id,
-        type: req.body.type,
-        path: req.file.path,
-        filename: req.file.filename,
-        mime_type: req.file.mimetype,
-        url: `${host}${path}/${req.file.filename}`
-      };
-      const digitalAsset = await DigitalAsset.create(payload);
-      if (digitalAsset) {
+      let digitalAsset = await DigitalAsset.findOne({
+        where: {
+          [Op.and]: [{ user_id: user_id }, { type: req.body.type }]
+        }
+      });
+
+      if (!digitalAsset) {
+        digitalAsset = await DigitalAsset.create(payload);
+      } else {
+        digitalAsset = await DigitalAsset.update(payload, {
+          where: {
+            [Op.and]: [{ user_id: user_id }, { type: req.body.type }]
+          }
+        });
+      }
+
+      digitalAsset = await DigitalAsset.findOne({
+        where: {
+          [Op.and]: [{ user_id: user_id }, { type: req.body.type }]
+        }
+      });
+
+      if (!digitalAsset) {
         return res
-          .status(201)
+          .status(400)
           .json(
             response(
               true,
-              'Digital assets created successfully',
-              digitalAsset,
-              null
+              `Sorry, digital assets type ${req.body.type} not created!`
             )
           );
       }
+
+      return res
+        .status(201)
+        .json(
+          response(
+            true,
+            'Digital assets created successfully',
+            digitalAsset,
+            null
+          )
+        );
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
