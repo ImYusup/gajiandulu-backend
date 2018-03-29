@@ -5,11 +5,11 @@ const crypt = require('bcrypt');
 
 const forgotPasswordService = {
   /**
-   * Forgot password 
+   * Forgot password
    *
    */
   create: async (req, res) => {
-    const { password, email, date_of_birth } = req.body;
+    const { password, email, hash } = req.body;
 
     try {
       const user = await User.findOne({ where: { email: email } });
@@ -19,14 +19,21 @@ const forgotPasswordService = {
         return res.status(400).json(response(false, 'User email not found!'));
       }
 
-      if (date_of_birth == user.date_of_birth) {
-        const payload = {
-          password: hashPassword
-        };
-        await User.update(payload, { where: { email: email } });
+      if (crypt.compareSync(hash, user.hash)) {
+        await User.update(
+          {
+            password: hashPassword
+          },
+          { where: { email: email, hash: hash } }
+        );
         return res
           .status(200)
-          .json(response(true, 'Password successfully reset, please check your email'));
+          .json(
+            response(
+              true,
+              'Password successfully reset, please check your email'
+            )
+          );
       }
 
       return res.status(422).json(response(false, 'Date of birth mismatch'));
@@ -36,8 +43,7 @@ const forgotPasswordService = {
       }
       return res.status(400).json(response(false, error.message));
     }
-  },
-
+  }
 };
 
 module.exports = forgotPasswordService;
