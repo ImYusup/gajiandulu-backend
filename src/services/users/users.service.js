@@ -8,8 +8,8 @@ const {
 const axios = require('axios');
 const crypt = require('bcrypt');
 const config = require('config');
-const Sequelize = require('sequelize');
-const { Op } = Sequelize;
+// const Sequelize = require('sequelize');
+// const { Op } = Sequelize;
 
 const userService = {
   find: async (req, res) => {
@@ -196,6 +196,10 @@ const userService = {
       const accessToken = await AccessToken.create(payload);
 
       if (accessToken) {
+        await User.update(
+          { registration_complete: true },
+          { where: { id: user.id } }
+        );
         return res
           .status(200)
           .json(

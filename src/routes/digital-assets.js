@@ -43,13 +43,6 @@ router.post('/', (req, res) => {
     if (error) {
       return res.status(422).json(response(false, error.message));
     }
-    if (!req.file) {
-      return res
-        .status(422)
-        .json(
-          response(false, 'Are you sure already choosen an image or file?')
-        );
-    }
 
     if (!req.body.type) {
       return res
@@ -61,6 +54,7 @@ router.post('/', (req, res) => {
           )
         );
     }
+
     digitalAssetService.create(req, res);
   });
 });

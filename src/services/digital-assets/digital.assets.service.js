@@ -4,6 +4,8 @@ const { digital_assets: DigitalAsset } = require('@models');
 const config = require('config');
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
+const path = require('path');
+const fs = require('fs');
 
 const digitalAssetService = {
   find: async (req, res) => {
@@ -56,6 +58,7 @@ const digitalAssetService = {
     }
   },
 
+  // @TODO refactor later for better readybility
   create: async (req, res) => {
     // res.local.users from auth middleware
     // check src/helpers/auth.js
@@ -65,16 +68,42 @@ const digitalAssetService = {
         ? `http://${config.host}:${config.port}/`
         : config.host;
 
-    const path = req.file.path.split('/')[1];
+    let location;
 
-    const payload = {
+    let payload = {
       user_id,
-      type: req.body.type,
-      path: req.file.path,
-      filename: req.file.filename,
-      mime_type: req.file.mimetype,
-      url: `${host}${path}/${req.file.filename}`
+      type: req.body.type
     };
+
+    // This will handle file as encoded base64 from client
+    if (!req.file) {
+      const base64Data = req.body.file.replace(/^data:image\/png;base64,/, '');
+      const filename = Date.now() + '.png';
+
+      location = path.join(__dirname + '/../../../public/uploads/' + filename);
+
+      fs.writeFile(location, base64Data, 'base64', error => {
+        if (error) {
+          return new Error('Something went wrong when save your image!');
+        }
+      });
+      payload['filename'] = filename;
+      payload['mime_type'] = 'image/png';
+      payload['path'] = 'public/uploads/' + filename;
+      payload['url'] = host + 'uploads/' + filename;
+    }
+
+    // This will handle file as blob from client
+    if (req.file) {
+      location = req.file.path.split('/')[1];
+
+      payload['path'] = req.file.path;
+      payload['filename'] = req.file.filename;
+      payload['mime_type'] = req.file.mimetype;
+      payload['url'] = `${host}${location}/${req.file.filename}`;
+    }
+
+    // Find if existing type already exists
     try {
       let digitalAsset = await DigitalAsset.findOne({
         where: {
@@ -82,21 +111,26 @@ const digitalAssetService = {
         }
       });
 
+      // Create new record if a user does not have the type of digital assets
       if (!digitalAsset) {
         digitalAsset = await DigitalAsset.create(payload);
-      } else {
+      }
+
+      // Update the record if type already exists
+      if (digitalAsset) {
         digitalAsset = await DigitalAsset.update(payload, {
           where: {
             [Op.and]: [{ user_id: user_id }, { type: req.body.type }]
           }
         });
-      }
 
-      digitalAsset = await DigitalAsset.findOne({
-        where: {
-          [Op.and]: [{ user_id: user_id }, { type: req.body.type }]
-        }
-      });
+        // since update not returning the record we need to get the record
+        digitalAsset = await DigitalAsset.findOne({
+          where: {
+            [Op.and]: [{ user_id: user_id }, { type: req.body.type }]
+          }
+        });
+      }
 
       if (!digitalAsset) {
         return res
