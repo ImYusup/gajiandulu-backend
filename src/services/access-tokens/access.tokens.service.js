@@ -34,6 +34,19 @@ const accessTokenService = {
         return res.status(400).json(response(false, 'User email not found!'));
       }
 
+      if (!user.registration_complete) {
+        return res
+          .status(400)
+          .json(response(false, 'Please complete your registration first!'));
+      }
+
+      // @TODO Uncomment this when email service activated
+      // if (!user.is_confirmed_email) {
+      //   return res
+      //     .status(400)
+      //     .json(response(false, 'We sent you an email confirmation, please do confirm your email first!'));
+      // }
+
       if (crypt.compareSync(data.password, user.password)) {
         const token = jwtHelpers.createJWT(
           Object.assign({
