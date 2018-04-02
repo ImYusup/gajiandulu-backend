@@ -50,13 +50,14 @@ router.post('/', (req, res) => {
           response(false, 'Are you sure already choosen an image or file?')
         );
     }
+
     if (!req.body.type) {
       return res
         .status(422)
         .json(
           response(
             false,
-            'Please specify the type first, type can be signature, photo, card, etc'
+            'Please specify the type first, type can be signature, avatar, card, etc'
           )
         );
     }

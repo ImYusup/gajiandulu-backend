@@ -35,7 +35,10 @@ app.use('/occupations', auth, routes.occupation);
 app.use('/me', auth, routes.me);
 app.use('/digital-assets', auth, routes.digitalAsset);
 app.use('/feedbacks', auth, routes.feedback);
+
 app.use('/loans', auth, routes.loan);
+app.use('/forgot-password', routes.forgotPassword);
+
 
 app.use(notFound());
 

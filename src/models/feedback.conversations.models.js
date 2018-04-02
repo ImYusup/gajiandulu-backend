@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const feedback_conversations = sequelize.define(
-    'feedback_conversations', 
+  const FeedbackConversation = sequelize.define(
+    'feedback_conversations',
     {
       id: {
         allowNull: false,
@@ -45,9 +45,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  feedback_conversations.associate = function(models) {
+  FeedbackConversation.associate = function(models) {
     // associations can be defined here
+    FeedbackConversation.belongsTo(models.feedbacks, {
+      foreignKey: 'feedback_id'
+    });
   };
 
-  return feedback_conversations;
+  return FeedbackConversation;
 };

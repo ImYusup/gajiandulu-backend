@@ -3,12 +3,16 @@ const { jwtHelpers, response } = require('@helpers');
 const { users: User, access_tokens: AccessToken } = require('@models');
 const crypt = require('bcrypt');
 const config = require('config');
+const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 
 const accessTokenService = {
   get: async (req, res) => {
     const { token } = req.headers;
     try {
-      const accessToken = await AccessToken.findOne({ where: { token } });
+      const accessToken = await AccessToken.findOne({
+        where: { token: token }
+      });
       return res
         .status(200)
         .json(response(true, 'Access token retrieved', accessToken, null));
@@ -30,6 +34,19 @@ const accessTokenService = {
         return res.status(400).json(response(false, 'User email not found!'));
       }
 
+      if (!user.registration_complete) {
+        return res
+          .status(400)
+          .json(response(false, 'Please complete your registration first!'));
+      }
+
+      // @TODO Uncomment this when email service activated
+      // if (!user.is_confirmed_email) {
+      //   return res
+      //     .status(400)
+      //     .json(response(false, 'We sent you an email confirmation, please do confirm your email first!'));
+      // }
+
       if (crypt.compareSync(data.password, user.password)) {
         const token = jwtHelpers.createJWT(
           Object.assign({
@@ -45,10 +62,43 @@ const accessTokenService = {
           provider: data.provider,
           user_id: user.id
         };
-        const accessToken = await AccessToken.create(payload);
+
+        let accessToken = await AccessToken.findOne({
+          where: {
+            [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
+          }
+        });
+
+        if (!accessToken) {
+          await AccessToken.create(payload);
+        } else {
+          await AccessToken.update(payload, {
+            where: {
+              [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
+            }
+          });
+        }
+
+        accessToken = await AccessToken.findOne({
+          where: {
+            [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
+          }
+        });
+
+        if (!accessToken) {
+          return res.status(400).json(response(true, 'Login failed'));
+        }
+
         return res
           .status(200)
-          .json(response(true, 'Login successfully', accessToken, null));
+          .json(
+            response(
+              true,
+              'Login successfully',
+              accessToken.length > 0 ? accessToken[0] : accessToken,
+              null
+            )
+          );
       }
 
       return res.status(422).json(response(false, 'Password mismatch'));
