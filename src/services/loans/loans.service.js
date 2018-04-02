@@ -94,7 +94,7 @@ const loanService = {
       due_date, promo_code, promo_discount, paid, status } = req.body.data;
 
     const { id: user_id } = res.local.users;
-    const total =  parseInt(amount)  +  parseInt(service_charge);
+    const total =  Number(amount)  +  Number(service_charge);
     try {
       const payload = Object.assign(
         {},
