@@ -11,7 +11,7 @@ module.exports = {
       },
       name: {
         allowNull: false,
-        type: Sequelize.ENUM('pelajar', 'pegawai', 'pengusaha', 'polisi-tni', 'irt', 'none')
+        type: Sequelize.STRING
       },
       annual_salary_range_max: {
         allowNull: false,

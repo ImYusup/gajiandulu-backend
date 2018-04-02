@@ -47,7 +47,7 @@ module.exports = {
       },
       purpose:{
         allowNull: false,
-        type: Sequelize.ENUM('pendidikan', 'konsumsi', 'modal', 'liburan', 'menikah', 'medis', 'kendaraan', 'lainnya')
+        type: Sequelize.STRING
       },
       materai_charge:{
         allowNull: false,

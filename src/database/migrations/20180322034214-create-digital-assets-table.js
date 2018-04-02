@@ -20,7 +20,7 @@ module.exports = {
       },
       type: {
         allowNull: false,
-        type: Sequelize.ENUM('Buku_tabungan', 'jaminan_emas', 'profil', 'gaji', 'kartu_identitas', 'signature', 'selfie')
+        type: Sequelize.STRING
       },
       path: {
         allowNull: false,
