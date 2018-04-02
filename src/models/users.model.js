@@ -68,6 +68,19 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: false,
         type: DataTypes.STRING
       },
+      registration_complete: {
+        allowNull: false,
+        type: DataTypes.STRING,
+        defaultValue: false
+      },
+      identity_card_id: {
+        allowNull: true,
+        type: DataTypes.INTEGER
+      },
+      occupation_id: {
+        allowNull: true,
+        type: DataTypes.INTEGER
+      },
       created_at: {
         allowNull: false,
         type: DataTypes.DATE
@@ -87,10 +100,30 @@ module.exports = function(sequelize, DataTypes) {
   User.associate = function(models) {
     // Define associations here
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
-    User.hasMany(models.feedbacks, { foreignKey: 'user_id' });
-    User.belongsTo(models.roles, { foreignKey: 'role_id' });
-    User.belongsTo(models.occupations, { foreignKey: 'occupation_id' });
-    // User.belongsTo(models.userFamily, { foreignKey: 'family_id' });
+    User.hasMany(models.feedbacks, {
+      foreignKey: 'user_id',
+      onDelete: 'CASCADE'
+    });
+    User.belongsTo(models.roles, {
+      foreignKey: 'role_id',
+      onDelete: 'CASCADE'
+    });
+    User.hasOne(models.access_tokens, {
+      foreignKey: 'user_id',
+      onDelete: 'CASCADE'
+    });
+    User.hasOne(models.occupations, {
+      foreignKey: 'user_id',
+      onDelete: 'CASCADE'
+    });
+    User.hasOne(models.families, {
+      foreignKey: 'user_id',
+      onDelete: 'CASCADE'
+    });
+    User.hasOne(models.digital_assets, {
+      foreignKey: 'user_id',
+      onDelete: 'CASCADE'
+    });
   };
 
   User.prototype.toJSON = function() {

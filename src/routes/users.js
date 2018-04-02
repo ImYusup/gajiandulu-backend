@@ -3,7 +3,7 @@ const { response } = require('@helpers');
 const { userService } = require('@services');
 const express = require('express');
 const router = express.Router();
-const { body, check, validationResult } = require('express-validator/check');
+const { check, validationResult } = require('express-validator/check');
 
 router.get('/', (req, res) => {
   userService.find(req, res);

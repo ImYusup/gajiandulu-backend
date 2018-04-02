@@ -1,9 +1,15 @@
 require('module-alias/register');
 const { response, jwtHelpers } = require('@helpers');
-const { users: User, access_tokens: AccessToken } = require('@models');
+const {
+  users: User,
+  access_tokens: AccessToken,
+  families: Family
+} = require('@models');
 const axios = require('axios');
 const crypt = require('bcrypt');
 const config = require('config');
+const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 
 const userService = {
   find: async (req, res) => {
@@ -50,6 +56,28 @@ const userService = {
       // second parameter is salt for hash
       const hashPassword = crypt.hashSync(password, 15);
       const hash = crypt.hashSync(new Date().toString() + email, 10);
+      // Additional requirement:
+      // if user is not completed their registration step delete the all user related record
+      // and created new user
+      let user = await User.findOne({ where: { email: email } });
+      if (user) {
+        // Delete the user if `is_confirmed_email` false
+        // this should do cascade delete on associate models
+        if (!user.registration_complete) {
+          await AccessToken.destroy({ where: { user_id: user.id } });
+          await Family.destroy({ where: { user_id: user.id } });
+          await User.destroy({ where: { id: user.id } });
+        } else {
+          return res
+            .status(422)
+            .json(
+              response(
+                false,
+                'You have completed registration process please do login!'
+              )
+            );
+        }
+      }
       const payload = Object.assign(
         {},
         {
@@ -61,7 +89,7 @@ const userService = {
         }
       );
 
-      const user = await User.create(payload);
+      user = await User.create(payload);
       return res
         .status(201)
         .json(
