@@ -60,7 +60,9 @@ module.exports = function(sequelize, DataTypes) {
   AccessToken.associate = function(models) {
     // Define associations here
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
-    AccessToken.belongsTo(models.users, { foreignKey: 'user_id' });
+    AccessToken.belongsTo(models.users, {
+      foreignKey: 'user_id'
+    });
   };
 
   return AccessToken;

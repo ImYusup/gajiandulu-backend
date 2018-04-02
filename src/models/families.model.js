@@ -79,6 +79,9 @@ module.exports = function(sequelize, DataTypes) {
   UserFamily.associate = function(models) {
     // Define associations here
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
+    UserFamily.belongsTo(models.users, {
+      foreignKey: 'user_id'
+    });
   };
 
   return UserFamily;
