@@ -149,7 +149,10 @@ const loanService = {
           )
         );
     }
-    if (!user.identity_card_id) {
+    const ktp = await DigitalAsset.findOne({
+      where: { [Op.and]: [{ user_id: user_id }, { type: 'kartu_identitas' }] }
+    });
+    if (!ktp || !ktp.is_verified) {
       return res
         .status(400)
         .json(
@@ -159,10 +162,10 @@ const loanService = {
           )
         );
     }
-    const digitalAsset = await DigitalAsset.findOne({
+    const tabungan = await DigitalAsset.findOne({
       where: { [Op.and]: [{ user_id: user_id }, { type: 'buku_tabungan' }] }
     });
-    if (!digitalAsset || !digitalAsset.is_verified) {
+    if (!tabungan) {
       return res
         .status(400)
         .json(
@@ -178,6 +181,9 @@ const loanService = {
       const discount = await Promo.findOne({
         where: { promo_code: promo_code }
       });
+      if(!discount) {
+        return res.status(400).json(false, 'Promo code not found!');
+      }
       const amount = Number(discount);
       total =
         Number(amount) + Number(service_charge) * (amount !== 0 ? amount : 1);
