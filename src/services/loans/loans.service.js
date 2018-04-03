@@ -1,6 +1,8 @@
 require('module-alias/register');
 const { response } = require('@helpers');
 const { loans: Loan } = require('@models');
+const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 
 const loanService = {
   find: async (req, res) => {
@@ -23,7 +25,8 @@ const loanService = {
     const { id: user_id } = res.local.users;
 
     try {
-      const loan = await Loan.findOne({ where: {id: loanId } && {user_id: user_id} });
+      const loan = await Loan.findOne({ where:
+        [Op.and] [{id: loanId}, {user_id: user_id}] });
       if (loan === null) {
         return res
           .status(200)
@@ -48,7 +51,7 @@ const loanService = {
 
     const { id: user_id } = res.local.users;
     const { id: loanId } = req.params;
-    const total =  parseInt(amount)  +  parseInt(service_charge);
+    const total =  Number(amount)  +  Number(service_charge);
 
     const payload = Object.assign(
       {},
