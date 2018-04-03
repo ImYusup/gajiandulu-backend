@@ -12,6 +12,7 @@ const promo = require('./promos');
 const loan = require('./loans');
 
 const forgotPassword = require('./forgot-password');
+const bankData = require('./bank-data');
 
 module.exports = {
   register,
@@ -25,6 +26,6 @@ module.exports = {
   feedback,
   loan,
   forgotPassword,
-  promo
-
+  promo,
+  bankData
 };

@@ -35,6 +35,7 @@ app.use('/family', auth, routes.family);
 app.use('/identity-cards', auth,  routes.identityCard);
 app.use('/occupations', auth, routes.occupation);
 app.use('/me', auth, routes.me);
+app.use('/me/banks', auth, routes.bankData);
 app.use('/digital-assets', auth, routes.digitalAsset);
 app.use('/feedbacks', auth, routes.feedback);
 app.use('/promos', routes.promo);
