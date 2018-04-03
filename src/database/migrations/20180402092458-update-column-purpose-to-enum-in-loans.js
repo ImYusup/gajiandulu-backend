@@ -9,11 +9,15 @@ module.exports = {
       Example:
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
-    return queryInterface.sequelize.query(
-      'ALTER TABLE digital_assets MODIFY COLUMN type ENUM(' +
-        '\'pendidikan\',\'konsumsi\',\'modal\',\'liburan\',\'menikah\',\'medis\',\'lainnya\'' +
-        ');'
-    );
+    return queryInterface.sequelize
+      .query('ALTER TABLE digital_assets DROP COLUMN type')
+      .then(() =>
+        queryInterface.sequelize.query(
+          'ALTER TABLE digital_assets MODIFY COLUMN type ENUM(' +
+            '\'pendidikan\',\'konsumsi\',\'modal\',\'liburan\',\'menikah\',\'medis\',\'lainnya\'' +
+            ');'
+        )
+      );
   },
 
   down: (queryInterface, Sequelize) => {
