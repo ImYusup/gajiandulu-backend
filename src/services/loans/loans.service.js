@@ -1,6 +1,11 @@
 require('module-alias/register');
 const { response } = require('@helpers');
-const { loans: Loan } = require('@models');
+const {
+  loans: Loan,
+  users: User,
+  digital_assets: DigitalAsset,
+  promos: Promo
+} = require('@models');
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
 
@@ -8,12 +13,12 @@ const loanService = {
   find: async (req, res) => {
     const { id: user_id } = res.local.users;
     try {
-      const loan = await Loan.findAll({where: { user_id: user_id} });
+      const loan = await Loan.findAll({ where: { user_id: user_id } });
       return res
         .status(200)
-        .json(response(true, 'Loan retrieved successfully', loan, null ));
+        .json(response(true, 'Loan retrieved successfully', loan, null));
     } catch (error) {
-      if (error.errors){
+      if (error.errors) {
         return res.status(400).json(response(false, error.errors));
       }
       return res.status(400).json(response(false, error.message));
@@ -25,8 +30,9 @@ const loanService = {
     const { id: user_id } = res.local.users;
 
     try {
-      const loan = await Loan.findOne({ where:
-        [Op.and] [{id: loanId}, {user_id: user_id}] });
+      const loan = await Loan.findOne({
+        where: [Op.and][({ id: loanId }, { user_id: user_id })]
+      });
       if (loan === null) {
         return res
           .status(200)
@@ -34,8 +40,8 @@ const loanService = {
       }
       return res
         .status(200)
-        .json(response(true, 'Loan retrieved successfully',loan, null));
-    } catch(error) {
+        .json(response(true, 'Loan retrieved successfully', loan, null));
+    } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
       }
@@ -44,27 +50,50 @@ const loanService = {
   },
 
   patch: async (req, res) => {
-
-    const { amount, period, service_charge, interest_rate,
-      interest_charge, due_date_charge, purpose, materai_charge,
-      due_date, promo_code, promo_discount, paid, status } = req.body.data;
+    const {
+      amount,
+      period,
+      service_charge,
+      interest_rate,
+      interest_charge,
+      due_date_charge,
+      purpose,
+      materai_charge,
+      due_date,
+      promo_code,
+      promo_discount,
+      paid,
+      status
+    } = req.body.data;
 
     const { id: user_id } = res.local.users;
     const { id: loanId } = req.params;
-    const total =  Number(amount)  +  Number(service_charge);
+    const total = Number(amount) + Number(service_charge);
 
     const payload = Object.assign(
       {},
       {
-        user_id, amount, period, service_charge, interest_rate,
-        interest_charge, due_date_charge, purpose, materai_charge,
-        due_date, promo_code, promo_discount, paid, status, total
+        user_id,
+        amount,
+        period,
+        service_charge,
+        interest_rate,
+        interest_charge,
+        due_date_charge,
+        purpose,
+        materai_charge,
+        due_date,
+        promo_code,
+        promo_discount,
+        paid,
+        status,
+        total
       }
     );
 
     try {
-      let loan = await Loan.findOne({ where: {id: loanId } });
-      if (loan === null ) {
+      let loan = await Loan.findOne({ where: { id: loanId } });
+      if (loan === null) {
         return res
           .status(400)
           .json(response(false, `Loan with id ${loanId} not found`));
@@ -77,7 +106,7 @@ const loanService = {
           .json(response(false, `Updating loan with ${loanId} was failed`));
       }
 
-      loan = await Loan.findOne({ where: {id: loanId} });
+      loan = await Loan.findOne({ where: { id: loanId } });
 
       return res
         .status(200)
@@ -92,19 +121,91 @@ const loanService = {
 
   create: async (req, res) => {
     // const { data } = req.body;
-    const { amount, period, service_charge, interest_rate,
-      interest_charge, due_date_charge, purpose, materai_charge,
-      due_date, promo_code, promo_discount, paid, status } = req.body.data;
+    const {
+      amount,
+      period,
+      service_charge,
+      interest_rate,
+      interest_charge,
+      due_date_charge,
+      purpose,
+      materai_charge,
+      due_date,
+      promo_code,
+      promo_discount,
+      paid,
+      status
+    } = req.body.data;
 
     const { id: user_id } = res.local.users;
-    const total =  Number(amount)  +  Number(service_charge);
+    const user = await User.findOne({ where: { id: user_id } });
+    if (!user.is_confirmed_email) {
+      return res
+        .status(400)
+        .json(
+          response(
+            false,
+            'Kamu tidak dapat mengajukan pinjaman sebelum konfirmasi Email. Periksa inbox / spam Email.'
+          )
+        );
+    }
+    if (!user.identity_card_id) {
+      return res
+        .status(400)
+        .json(
+          response(
+            false,
+            'Mohon konfirmasi informasi kamu dengan menambahkan dokumen KTP / SIM / Passpor'
+          )
+        );
+    }
+    const digitalAsset = await DigitalAsset.findOne({
+      where: { [Op.and]: [{ user_id: user_id }, { type: 'buku_tabungan' }] }
+    });
+    if (!digitalAsset || !digitalAsset.is_verified) {
+      return res
+        .status(400)
+        .json(
+          response(
+            false,
+            'Gajian dulu diperuntukan eksekutif muda yang memiliki gaji bulanan. Upload bukti gaji dahulu / Maaf bukti gaji belum terverifikasi'
+          )
+        );
+    }
+    // @TODO change
+    let total;
+    if (promo_code) {
+      const discount = await Promo.findOne({
+        where: { promo_code: promo_code }
+      });
+      const amount = Number(discount);
+      total =
+        Number(amount) + Number(service_charge) * (amount !== 0 ? amount : 1);
+    }
+
+    if (!promo_code) {
+      total = Number(amount) + Number(service_charge);
+    }
+
     try {
       const payload = Object.assign(
         {},
         {
-          user_id, amount, period, service_charge, interest_rate,
-          interest_charge, due_date_charge, purpose, materai_charge,
-          due_date, promo_code, promo_discount, paid, status, total
+          user_id,
+          amount,
+          period,
+          service_charge,
+          interest_rate,
+          interest_charge,
+          due_date_charge,
+          purpose,
+          materai_charge,
+          due_date,
+          promo_code,
+          promo_discount,
+          paid,
+          status,
+          total
         }
       );
       const loan = await Loan.create(payload);
@@ -122,7 +223,7 @@ const loanService = {
   remove: async (req, res) => {
     const { id: loanId } = req.body;
     try {
-      const loan = await Loan.destroy({ where: {id: loanId } });
+      const loan = await Loan.destroy({ where: { id: loanId } });
       if (loan === 0) {
         return res
           .status(400)
