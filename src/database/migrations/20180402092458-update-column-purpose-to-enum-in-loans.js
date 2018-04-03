@@ -13,7 +13,7 @@ module.exports = {
       .query('ALTER TABLE loans DROP COLUMN purpose')
       .then(() =>
         queryInterface.sequelize.query(
-          'ALTER TABLE loans MODIFY COLUMN purpose ENUM(' +
+          'ALTER TABLE loans ADD COLUMN purpose ENUM(' +
             '\'pendidikan\',\'konsumsi\',\'modal\',\'liburan\',\'menikah\',\'medis\',\'lainnya\'' +
             ');'
         )

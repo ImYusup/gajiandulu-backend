@@ -13,7 +13,7 @@ module.exports = {
       .query('ALTER TABLE occupations DROP COLUMN name')
       .then(() =>
         queryInterface.sequelize.query(
-          'ALTER TABLE occupations MODIFY COLUMN name ENUM(' +
+          'ALTER TABLE occupations ADD COLUMN name ENUM(' +
             '\'pelajar\',\'pegawai\',\'pengusaha\',\'polisi-tni\',\'irt\',\'none\'' +
             ');'
         )

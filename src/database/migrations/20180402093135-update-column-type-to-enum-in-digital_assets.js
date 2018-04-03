@@ -13,7 +13,7 @@ module.exports = {
       .query('ALTER TABLE digital_assets DROP COLUMN type')
       .then(() =>
         queryInterface.sequelize.query(
-          'ALTER TABLE digital_assets MODIFY COLUMN type ENUM(' +
+          'ALTER TABLE digital_assets ADD COLUMN type ENUM(' +
             '\'buku_tabungan\',\'jaminan_emas\',\'profil\',\'gaji\',\'kartu_identitas\',\'signature\',\'selfie\'' +
             ');'
         )
