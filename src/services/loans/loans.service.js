@@ -178,15 +178,23 @@ const loanService = {
     // @TODO change
     let total;
     if (promo_code) {
+
       const discount = await Promo.findOne({
-        where: { promo_code: promo_code }
+        where: { code: promo_code }
       });
+
       if(!discount) {
-        return res.status(400).json(false, 'Promo code not found!');
+
+        return res
+          .status(400).json(response(false, 'Promo code not found!'));
+
+      } else {
+        const debit = Number(discount.discount);
+        total =
+          Number(amount) + Number(service_charge) - debit;
+
       }
-      const amount = Number(discount);
-      total =
-        Number(amount) + Number(service_charge) * (amount !== 0 ? amount : 1);
+
     }
 
     if (!promo_code) {
@@ -214,6 +222,7 @@ const loanService = {
           total
         }
       );
+        console.log(payload, "TESSSSSSS");
       const loan = await Loan.create(payload);
       return res
         .status(201)
