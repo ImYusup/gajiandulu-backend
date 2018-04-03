@@ -7,6 +7,7 @@ const occupation = require('./occupations');
 const me = require('./me');
 const digitalAsset = require('./digital-assets');
 const feedback = require('./feedbacks');
+const promo = require('./promos');
 
 const loan = require('./loans');
 
@@ -23,6 +24,7 @@ module.exports = {
   digitalAsset,
   feedback,
   loan,
-  forgotPassword
+  forgotPassword,
+  promo
 
 };
