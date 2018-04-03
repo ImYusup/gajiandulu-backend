@@ -30,12 +30,16 @@ app.use('/register', routes.register);
 app.use('/login', routes.login);
 app.use('/users', auth, routes.users);
 app.use('/family', auth, routes.family);
-app.use('/identity-cards', auth, routes.identityCard);
+app.use('/identity-cards', auth,  routes.identityCard);
 app.use('/occupations', auth, routes.occupation);
 app.use('/me', auth, routes.me);
 app.use('/digital-assets', auth, routes.digitalAsset);
 app.use('/feedbacks', auth, routes.feedback);
+app.use('/promos', routes.promo);
+
+app.use('/loans', auth, routes.loan);
 app.use('/forgot-password', routes.forgotPassword);
+
 
 app.use(notFound());
 
