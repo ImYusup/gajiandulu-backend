@@ -10,10 +10,10 @@ module.exports = {
       return queryInterface.createTable('users', { id: Sequelize.INTEGER });
     */
     return queryInterface.sequelize
-      .query('ALTER TABLE digital_assets DROP COLUMN type')
+      .query('ALTER TABLE loans DROP COLUMN purpose')
       .then(() =>
         queryInterface.sequelize.query(
-          'ALTER TABLE digital_assets MODIFY COLUMN type ENUM(' +
+          'ALTER TABLE loans MODIFY COLUMN purpose ENUM(' +
             '\'pendidikan\',\'konsumsi\',\'modal\',\'liburan\',\'menikah\',\'medis\',\'lainnya\'' +
             ');'
         )
