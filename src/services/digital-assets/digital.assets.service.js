@@ -1,6 +1,6 @@
 require('module-alias/register');
 const { response } = require('@helpers');
-const { digital_assets: DigitalAsset } = require('@models');
+const { digital_assets: DigitalAsset, users: User } = require('@models');
 const config = require('config');
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
@@ -141,6 +141,13 @@ const digitalAssetService = {
               `Sorry, digital assets type ${req.body.type} not created!`
             )
           );
+      }
+
+      if (req.body.type === 'signature') {
+        await User.update(
+          { registration_complete: true },
+          { where: { id: user_id } }
+        );
       }
 
       return res

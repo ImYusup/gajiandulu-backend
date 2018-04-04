@@ -3,7 +3,8 @@ const { response, jwtHelpers } = require('@helpers');
 const {
   users: User,
   access_tokens: AccessToken,
-  families: Family
+  families: Family,
+  digital_assets: DigitalAsset
 } = require('@models');
 const axios = require('axios');
 const crypt = require('bcrypt');
@@ -66,6 +67,7 @@ const userService = {
         if (!user.registration_complete) {
           await AccessToken.destroy({ where: { user_id: user.id } });
           await Family.destroy({ where: { user_id: user.id } });
+          await DigitalAsset.destroy({ where: { user_id: user.id } });
           await User.destroy({ where: { id: user.id } });
         } else {
           return res
@@ -196,10 +198,6 @@ const userService = {
       const accessToken = await AccessToken.create(payload);
 
       if (accessToken) {
-        await User.update(
-          { registration_complete: true },
-          { where: { id: user.id } }
-        );
         return res
           .status(200)
           .json(
