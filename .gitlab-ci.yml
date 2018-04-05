@@ -8,7 +8,6 @@ build-test:
   - mysql:5.7
   variables:
     MYSQL_DATABASE: "database_test"
-    MYSQL_ROOT_PASSWORD: null 
   tags:
   - web
   image: node:latest
