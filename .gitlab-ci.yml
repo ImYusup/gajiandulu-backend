@@ -1,6 +1,6 @@
 stages:
 - build-test
-- deploy-master
+- deploy-dev
 
 build-test:
   stage: build-test
@@ -16,12 +16,11 @@ build-test:
   - npm install
   - npm run test
   only:
-  - master
   - develop
   - /^(\d+)-.*$/
 
 deploy-master:
-  stage: deploy-master
+  stage: deploy-dev
   image: deployer:latest
   tags:
   - web
@@ -31,5 +30,5 @@ deploy-master:
   script:
   - ssh ubuntu@gajiandulu-admin.projects.refactory.id -o StrictHostKeyChecking=no 'cd /home/ubuntu/apps/gajiandulu && sudo -u www-data bash -s deploy.sh'
   only:
-  - master
+  - develop
 
