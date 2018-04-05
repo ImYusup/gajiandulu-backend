@@ -1,22 +1,35 @@
-image: node:latest
-
 stages:
-  - job1
-  - test
-  - production
+- build-test
+- deploy-master
 
-job1:
-  stage: job1
-  script: "ls -l"
-
-test:
-  stage: test
+build-test:
+  stage: build-test
+  services:
+  - mysql:5.7
+  variables:
+    MYSQL_DATABASE: database_test
+    MYSQL_ROOT_PASSWORD: null 
+  tags:
+  - web
+  image: alpine:latest
   script:
-    - npm install
-    # - npm test
-  artifacts:
-    paths:
-      - dist/
+  - npm install
+  - npm run test
+  only:
+  - master
+  - develop
+  - /^(\d+)-.*$/
 
-before_script:
-  - apt-get update -qq && apt-get install -y -qq nodejs
+deploy-master:
+  stage: deploy-master
+  image: deployer:latest
+  tags:
+  - web
+  before_script:
+  - apk update
+  - apk add openssh
+  script:
+  - ssh ubuntu@gajiandulu-admin.projects.refactory.id -o StrictHostKeyChecking=no 'cd /home/ubuntu/apps/gajiandulu && sudo -u www-data bash -s deploy.sh'
+  only:
+  - master
+
