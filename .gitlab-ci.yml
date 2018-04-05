@@ -8,6 +8,7 @@ build-test:
   - mysql:5.7
   variables:
     MYSQL_DATABASE: "database_test"
+    MYSQL_ALLOW_EMPTY_PASSWORD: "true"
   tags:
   - web
   image: node:latest
