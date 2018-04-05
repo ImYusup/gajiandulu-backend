@@ -11,7 +11,7 @@ build-test:
     MYSQL_ROOT_PASSWORD: null 
   tags:
   - web
-  image: alpine:latest
+  image: node:latest
   script:
   - npm install
   - npm run test
