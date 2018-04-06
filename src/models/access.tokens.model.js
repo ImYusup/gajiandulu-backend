@@ -61,7 +61,8 @@ module.exports = function(sequelize, DataTypes) {
     // Define associations here
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
     AccessToken.belongsTo(models.users, {
-      foreignKey: 'user_id'
+      foreignKey: 'user_id',
+      as: 'user'
     });
   };
 
