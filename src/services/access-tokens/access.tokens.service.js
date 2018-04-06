@@ -82,7 +82,8 @@ const accessTokenService = {
         accessToken = await AccessToken.findOne({
           where: {
             [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
-          }
+          },
+          include: [{ model: User, as: 'user' }]
         });
 
         if (!accessToken) {
