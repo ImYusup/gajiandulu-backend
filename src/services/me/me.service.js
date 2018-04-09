@@ -102,6 +102,8 @@ const meService = {
             delete users.new_password_confirmation
           );
           await User.update(usersWithPassword, { where: { id: userId } });
+        } else {
+          return res.status(400).json(response(false, 'Old password is incorrect'));
         }
       } else {
         await User.update(users, { where: { id: userId } });
