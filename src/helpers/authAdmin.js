@@ -26,7 +26,7 @@ const authAdmin = async (req, res, next) => {
     const admins = await userModel.findOne({where: { id: admin.id }});
     res.local = {};
     
-    if (admins.role_id === 1) {
+    if (admins.role_id.toString() === '1') {
       // Later if you need admin email or id
       // just get res.local.admins
       res.local.admins = {
