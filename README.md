@@ -16,8 +16,24 @@ Getting up and running is as easy as 1, 2, 3.
     ```
     cd path/to/bibitnomic-api; npm install
     ```
+    
+3.  Configure your database connection
+    > config/config.json
+    ```
+    "development": {
+        "username": "your_username",
+        "password": "your_password",
+        "database": "bibitnomic_dev",
+        "host": "127.0.0.1",
+        "dialect": "mysql"
+    },
+    ```
+    > config/default.json
+    ```
+    "mysql": "mysql://your_username:your_password@127.0.0.1:3306/gajian_dulu"
+    ```
 
-3.  Start your app
+4.  Start your app
 
     ```
     npm start

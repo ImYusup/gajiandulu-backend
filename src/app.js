@@ -9,6 +9,8 @@ const morgan = require('morgan');
 const routes = require('./routes');
 const express = require('express');
 const config = require('config');
+const GraphHTTP = require('express-graphql');
+const adminSchema = require('./graphql');
 
 const app = express();
 
@@ -36,10 +38,13 @@ app.use('/me', auth, routes.me);
 app.use('/digital-assets', auth, routes.digitalAsset);
 app.use('/feedbacks', auth, routes.feedback);
 app.use('/promos', routes.promo);
-
 app.use('/loans', auth, routes.loan);
 app.use('/forgot-password', routes.forgotPassword);
-
+app.use('/admins', GraphHTTP((req) => ({
+  schema: adminSchema,
+  pretty: true,
+  graphiql: true
+})));
 
 app.use(notFound());
 
