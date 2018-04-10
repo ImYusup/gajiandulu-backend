@@ -1,5 +1,5 @@
 require('module-alias/register');
-const { auth, notFound } = require('@helpers');
+const { auth, authAdmin, notFound } = require('@helpers');
 // const path = require('path');
 // const favicon = require('serve-favicon');
 const compress = require('compression');
@@ -40,10 +40,11 @@ app.use('/feedbacks', auth, routes.feedback);
 app.use('/promos', routes.promo);
 app.use('/loans', auth, routes.loan);
 app.use('/forgot-password', routes.forgotPassword);
-app.use('/admins', GraphHTTP((req) => ({
+app.use('/admins', authAdmin, GraphHTTP((req, res) => ({
   schema: adminSchema,
-  pretty: true,
-  graphiql: true
+  rootValue: res,
+  pretty: process.env.NODE_ENV !== 'production',
+  graphiql: process.env.NODE_ENV !== 'production'
 })));
 
 app.use(notFound());
