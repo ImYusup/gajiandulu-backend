@@ -16,8 +16,40 @@ Getting up and running is as easy as 1, 2, 3.
     ```
     cd path/to/bibitnomic-api; npm install
     ```
+    
+3.  Configure your database connection
+    > config/config.json
 
-3.  Start your app
+    ```
+    "development": {
+        "username": "your_username",
+        "password": "your_password",
+        "database": "bibitnomic_dev",
+        "host": "127.0.0.1",
+        "dialect": "mysql"
+    },
+    ```
+    > config/default.json
+
+    ```
+    "mysql": "mysql://your_username:your_password@127.0.0.1:3306/gajian_dulu"
+    ```
+
+4.  Migrate database using sequelize
+    Run these commands in order
+    ```
+    node_modules/.bin/sequelize db:create
+    ```
+
+    ```
+    node_modules/.bin/sequelize db:migrate
+    ```
+
+    ```
+    node_modules/.bin/sequelize db:seed
+    ```
+
+5.  Start your app
 
     ```
     npm start
