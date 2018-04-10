@@ -26,7 +26,7 @@ const auth = async (req, res, next) => {
     const users = userModel.findOne({where: { id: user.id }});
     res.local = {};
 
-    if (users.role_id.toString() === '2') {
+    if (users.role_id && users.role_id.toString() === '2') {
       // Later if you need user email or id
       // just get res.local.users
       res.local.users = {
