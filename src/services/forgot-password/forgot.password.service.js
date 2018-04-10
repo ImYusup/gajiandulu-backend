@@ -12,14 +12,15 @@ const forgotPasswordService = {
    *
    */
   create: async (req, res) => {
-    const { email, hash } = req.body.data;
+    const { email, hash } = req.body;
     // Send this password to email later
     const password = Math.random()
       .toString(36)
       .substring(3);
     try {
       const user = await User.findOne({ where: { email: email } });
-      const hashPassword = crypt.hashSync(password, 5);
+      const passgen =  randomstring.generate(8);
+      const hashPassword = crypt.hashSync(passgen, 15);
 
       if (user === null) {
         return res.status(400).json(response(false, 'User email not found!'));
@@ -27,7 +28,6 @@ const forgotPasswordService = {
 
       // crypt.compareSync(hash, user.hash)
       if (hash === user.hash) {
-        var passgen =  randomstring.generate(8);
         var auth = {
           auth: {
             api_key: 'key-4d9b63aeae8c8f075d1ab37c273963d5',
@@ -55,7 +55,7 @@ const forgotPasswordService = {
         });
         await User.update(
           {
-            password: passgen
+            password: hashPassword
           },
           { where: { email: email, hash: hash } }
         );

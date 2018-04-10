@@ -3,15 +3,15 @@ const { response } = require('@helpers');
 const { forgotPasswordService } = require('@services');
 const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require('express-validator/check');
+const { check, body, validationResult } = require('express-validator/check');
 
 router.post(
   '/',
   [
-    check('*.email')
+    check('email')
       .isEmail()
       .withMessage('must be a valid email'),
-    check('*.hash').exists()
+    check('hash').exists()
   ],
   (req, res) => {
     const errors = validationResult(req);
