@@ -19,6 +19,7 @@ Getting up and running is as easy as 1, 2, 3.
     
 3.  Configure your database connection
     > config/config.json
+
     ```
     "development": {
         "username": "your_username",
@@ -29,11 +30,18 @@ Getting up and running is as easy as 1, 2, 3.
     },
     ```
     > config/default.json
+
     ```
     "mysql": "mysql://your_username:your_password@127.0.0.1:3306/gajian_dulu"
     ```
 
-4.  Start your app
+4.  Migrate database using sequelize
+    Run these commands in order
+    `node_modules/.bin/sequelize db:create`
+    `node_modules/.bin/sequelize db:migrate`
+    `node_modules/.bin/sequelize db:seed`
+
+5.  Start your app
 
     ```
     npm start

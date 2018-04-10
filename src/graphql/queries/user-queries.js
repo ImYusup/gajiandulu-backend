@@ -6,6 +6,7 @@ const UserType = require('../types/users');
 
 const user = {
   type: new GraphQLList(UserType),
+  description: 'get users by specific ID',
   args: {
     id: {
       type: GraphQLNonNull(GraphQLInt)
@@ -17,4 +18,13 @@ const user = {
   }
 };
 
-module.exports = { user };
+const users = {
+  type: new GraphQLList(UserType),
+  description: 'get all users',
+  async resolve(root, args) {
+    const results = UserModel.findAll();
+    return results;
+  }
+}
+
+module.exports = { user, users };
