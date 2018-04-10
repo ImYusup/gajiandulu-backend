@@ -37,9 +37,17 @@ Getting up and running is as easy as 1, 2, 3.
 
 4.  Migrate database using sequelize
     Run these commands in order
-    `node_modules/.bin/sequelize db:create`
-    `node_modules/.bin/sequelize db:migrate`
-    `node_modules/.bin/sequelize db:seed`
+    ```
+    node_modules/.bin/sequelize db:create
+    ```
+
+    ```
+    node_modules/.bin/sequelize db:migrate
+    ```
+
+    ```
+    node_modules/.bin/sequelize db:seed
+    ```
 
 5.  Start your app
 
