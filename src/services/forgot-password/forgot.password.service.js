@@ -2,6 +2,9 @@ require('module-alias/register');
 const { response } = require('@helpers');
 const { users: User } = require('@models');
 const crypt = require('bcrypt');
+const nodemailer = require('nodemailer');
+const mg = require('nodemailer-mailgun-transport');
+var randomstring = require("randomstring");
 
 const forgotPasswordService = {
   /**
@@ -24,9 +27,35 @@ const forgotPasswordService = {
 
       // crypt.compareSync(hash, user.hash)
       if (hash === user.hash) {
+        var passgen =  randomstring.generate(8);
+        var auth = {
+          auth: {
+            api_key: 'key-4d9b63aeae8c8f075d1ab37c273963d5',
+            domain: 'sandboxe207aeefc40140019bd222b370bff1ca.mailgun.org'
+          },
+          proxy: 'http://root:@localhost:3000' // optional proxy, default is false
+        }
+        
+        var nodemailerMailgun = nodemailer.createTransport(mg(auth));
+        
+        nodemailerMailgun.sendMail({
+          from: 'hudaparodi@example.com',
+          to: 'hudaparodi@gmail.com', // An array if you have multiple recipients.
+          subject: 'Password Reset - GAJIANDULU',
+          'h:Reply-To': 'reply2this@company.com',
+          //You can use "html:" to send HTML email content. It's magic!
+          html: '<b>Password reset succesfully.</b> Your new password is ' + passgen,
+        }, function (err, info) {
+          if (err) {
+            console.log('Error: ' + err);
+          }
+          else {
+            console.log('Response: ' + info);
+          }
+        });
         await User.update(
           {
-            password: hashPassword
+            password: passgen
           },
           { where: { email: email, hash: hash } }
         );
