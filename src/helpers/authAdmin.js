@@ -3,7 +3,7 @@ const { access_tokens: accessTokenModel, users: userModel } = require('@models')
 const response = require('./response');
 const jwtHelpers = require('./jwt');
 
-const auth = async (req, res, next) => {
+const authAdmin = async (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) {
@@ -22,16 +22,16 @@ const auth = async (req, res, next) => {
         .status(403)
         .json(response(false, 'Please do login to get a valid access_token'));
     }
-    const user = jwtHelpers.verifyJWT(token);
-    const users = userModel.findOne({where: { id: user.id }});
+    const admin = jwtHelpers.verifyJWT(token);
+    const admins = await userModel.findOne({where: { id: admin.id }});
     res.local = {};
-
-    if (users.role_id && users.role_id.toString() === '2') {
-      // Later if you need user email or id
-      // just get res.local.users
-      res.local.users = {
-        email: user.email,
-        id: user.id
+    
+    if (admins.role_id && admins.role_id.toString() === '1') {
+      // Later if you need admin email or id
+      // just get res.local.admins
+      res.local.admins = {
+        email: admin.email,
+        id: admin.id
       };
     } else {
       return res.status(403).json(response(false, 'You are not allowed to access this route'));
@@ -42,4 +42,4 @@ const auth = async (req, res, next) => {
   next();
 };
 
-module.exports = auth;
+module.exports = authAdmin;
