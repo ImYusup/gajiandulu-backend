@@ -18,6 +18,10 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       type: DataTypes.DATE
     }
+  },
+  {
+    timestamps: true,
+    underscored: true
   });
 
   Roles.associate = function(models) {

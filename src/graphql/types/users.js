@@ -2,11 +2,12 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLID,
-  GraphQLInt
-  // GraphQLList
+  GraphQLInt,
+  GraphQLList
 } = require('graphql');
-// // const models = require('../../models/index.js');
-// const { roles: RoleModel } = require('@models');
+
+const RoleType = require('./roles');
+const { roles: RoleModel } = require('@models');
 
 module.exports = new GraphQLObjectType({
   name: 'users',
@@ -50,9 +51,9 @@ module.exports = new GraphQLObjectType({
         }
       },
       role_id: {
-        type: GraphQLInt,
-        resolve(users) {
-          return users.role_id;
+        type: GraphQLList(RoleType),
+        async resolve(users) {
+          return await RoleModel.findAll({where: { id: users.role_id }});
         }
       },
       currency: {
