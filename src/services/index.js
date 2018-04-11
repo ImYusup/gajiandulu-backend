@@ -4,6 +4,7 @@ const familyService = require('./families/families.service.js');
 const identityCardService = require('./identity-cards/identity.cards.service.js');
 const occupationService = require('./occupations/occupations.service.js');
 const meService = require('./me/me.service.js');
+const bankDataService = require('./bank-data/bank.data.js');
 const digitalAssetService = require('./digital-assets/digital.assets.service');
 const feedbackService = require('./feedbacks/feedbacks.service.js');
 const feedbackConversationService = require('./feedback_conversations/feedback.conversation.service');
@@ -23,6 +24,6 @@ module.exports = {
   feedbackConversationService,
   loanService,
   forgotPasswordService,
-  promoService
-
+  promoService,
+  bankDataService
 };
