@@ -8,11 +8,11 @@ const { check, validationResult } = require('express-validator/check');
 router.post(
   '/',
   [
-    check('*.full_name', 'name should only has chars and space')
-      .isLength({ min: 3 })
+    check('*.full_name')
+      .isLength({ min: 3 }).withMessage('name at least 3 letters')
       .matches(
-        /^[A-Za-z]*\s?[A-Za-z0-9-]*\s?[A-Za-z]*\s?[A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]+$/gi
-      ),
+        /^[A-Za-z]*\s?[A-Za-z]*\s?[A-Za-z]*\s?[A-Za-z]*\s?[A-Za-z][A-Za-z]+$/gi
+      ).withMessage('name should only has chars and space'),
     check('*.bank_name', 'bank name should be present').exists(),
     check('*.bank_branch', 'bank branch should be present').exists(),
     check('*.account_number', 'account number must be at least 3 chars long')
