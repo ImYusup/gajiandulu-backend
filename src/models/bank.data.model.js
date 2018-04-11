@@ -24,32 +24,32 @@ module.exports = function(sequelize, DataTypes) {
           min: {
             args: 4,
             msg:
-              'Username must start with a letter, have no spaces, and be at least 3 characters.'
+              'full name must start with a letter, have no spaces, and be at least 3 characters.'
           },
           max: {
             args: 40,
             msg:
-              'Username must start with a letter, have no spaces, and be at less than 40 characters.'
+              'full name must start with a letter, have no spaces, and be at less than 40 characters.'
           },
           is: {
             args: /^[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]*\s?[A-Za-z][A-Za-z0-9-]+$/gi, // must start with letter and only have letters, numbers, dashes
-            msg: 'Username must start with a letter and be 3 - 40 characters.'
+            msg: 'full name must start with a letter and be 3 - 40 characters.'
           },
-          notEmpty: { msg: 'Please input username' }
+          notEmpty: { msg: 'Please input full name' }
         }
       },
       bank_name: {
         allowNull: false,
         type: DataTypes.STRING,
         validate: {
-          notEmpty: { msg: 'Please input relative_type' }
+          notEmpty: { msg: 'Please input bank name' }
         }
       },
       bank_branch: {
         allowNull: false,
         type: DataTypes.STRING,
         validate: {
-          notEmpty: { msg: 'Please input address' }
+          notEmpty: { msg: 'Please input bank branch' }
         }
       },
       account_number: {
