@@ -23,7 +23,7 @@ const auth = async (req, res, next) => {
         .json(response(false, 'Please do login to get a valid access_token'));
     }
     const user = jwtHelpers.verifyJWT(token);
-    const users = userModel.findOne({where: { id: user.id }});
+    const users = await userModel.findOne({where: { id: user.id }});
     res.local = {};
 
     if (users.role_id && users.role_id.toString() === '2') {
