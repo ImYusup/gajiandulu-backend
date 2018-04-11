@@ -7,7 +7,6 @@ const bankDataService = {
     const { data } = req.body;
     // res.local.users from auth middleware
     // check src/helpers/auth.js
-    const { active } = 1;
     const { id: user_id } = res.local.users;
     try {
       const payload = Object.assign({}, data, { user_id }, {active: true} );
