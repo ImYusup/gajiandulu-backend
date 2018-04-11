@@ -28,7 +28,7 @@ deploy-master:
   - apk update
   - apk add openssh
   script:
-  - ssh ubuntu@gajiandulu-admin.projects.refactory.id -o StrictHostKeyChecking=no 'cd /home/ubuntu/apps/gajiandulu && sudo bash -s' < deploy.sh
+  - ssh ubuntu@gajiandulu-admin.projects.refactory.id -o StrictHostKeyChecking=no 'cd /home/ubuntu/apps/gajiandulu && bash -s' < deploy.sh
   only:
   - develop
 
