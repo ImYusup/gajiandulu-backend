@@ -25,6 +25,6 @@ const users = {
     const results = UserModel.findAll();
     return results;
   }
-}
+};
 
 module.exports = { user, users };
