@@ -9,15 +9,13 @@ router.post(
   '/',
   [
     check('*.full_name')
-      .isLength({ min: 3 }).withMessage('name at least 3 letters')
-      .matches(
-        /^[A-Za-z]*\s?[A-Za-z]*\s?[A-Za-z]*\s?[A-Za-z]*\s?[A-Za-z][A-Za-z]+$/gi
-      ).withMessage('name should only has chars and space'),
+      .matches(/^([A-z]|\s)+$/i).withMessage('name should only has chars and space')
+      .isLength({ min: 3 }).withMessage('name at least 3 letters'),
     check('*.bank_name', 'bank name should be present').exists(),
     check('*.bank_branch', 'bank branch should be present').exists(),
-    check('*.account_number', 'account number must be at least 3 chars long')
-      .isLength({ min: 3 })
-      .matches(/\^[+]|\d|\[-]|\s*/gi)
+    check('*.account_number')
+      .matches(/^[^A-z]+([+]|\d|[-]\s)$/i).withMessage('should only account number format and no blank space in the end')
+      .isLength({ min: 3 }).withMessage('account number must be at least 3 chars long')
   ],
   (req, res) => {
     const errors = validationResult(req);
