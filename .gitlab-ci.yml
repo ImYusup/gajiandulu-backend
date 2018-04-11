@@ -1,9 +1,9 @@
 stages:
-- build-test
-- deploy-dev
+- build
+- deploy
 
 build-test:
-  stage: build-test
+  stage: build
   services:
   - mysql:5.7
   variables:
@@ -20,7 +20,7 @@ build-test:
   - /^(\d+)-.*$/
 
 deploy-master:
-  stage: deploy-dev
+  stage: deploy
   image: deployer:latest
   tags:
   - web
@@ -28,7 +28,7 @@ deploy-master:
   - apk update
   - apk add openssh
   script:
-  - ssh ubuntu@gajiandulu-admin.projects.refactory.id -o StrictHostKeyChecking=no 'cd /home/ubuntu/apps/gajiandulu && sudo -u www-data bash -s deploy.sh'
+  - ssh ubuntu@gajiandulu-admin.projects.refactory.id -o StrictHostKeyChecking=no 'cd /home/ubuntu/apps/gajiandulu && sudo bash -s' < deploy.sh
   only:
   - develop
 
