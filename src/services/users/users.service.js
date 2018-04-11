@@ -1,14 +1,14 @@
-require('module-alias/register');
-const { response, jwtHelpers } = require('@helpers');
+require("module-alias/register");
+const { response, jwtHelpers } = require("@helpers");
 const {
   users: User,
   access_tokens: AccessToken,
   families: Family,
   digital_assets: DigitalAsset
-} = require('@models');
-const axios = require('axios');
-const crypt = require('bcrypt');
-const config = require('config');
+} = require("@models");
+const axios = require("axios");
+const crypt = require("bcrypt");
+const config = require("config");
 // const Sequelize = require('sequelize');
 // const { Op } = Sequelize;
 
@@ -18,7 +18,7 @@ const userService = {
       const user = await User.all();
       return res
         .status(200)
-        .json(response(true, 'User retrieved successfully', user, null));
+        .json(response(true, "User retrieved successfully", user, null));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
@@ -38,7 +38,7 @@ const userService = {
       }
       return res
         .status(200)
-        .json(response(true, 'User retrieved successfully', user, null));
+        .json(response(true, "User retrieved successfully", user, null));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
@@ -75,7 +75,7 @@ const userService = {
             .json(
               response(
                 false,
-                'You have completed registration process please do login!'
+                "You have completed registration process please do login!"
               )
             );
         }
@@ -95,7 +95,7 @@ const userService = {
       return res
         .status(201)
         .json(
-          response(true, 'User has been registered successfully', user, null)
+          response(true, "User has been registered successfully", user, null)
         );
     } catch (error) {
       if (error.errors) {
@@ -122,18 +122,18 @@ const userService = {
       }
       // Hash checking
       if (user.hash !== data.hash) {
-        return res.status(422).json(response(false, 'Hash is mismatched'));
+        return res.status(422).json(response(false, "Hash is mismatched"));
       }
       const updatedUser = await User.update(data, { where: { id: userId } });
       if (updatedUser[0] === 0) {
-        return res.status(400).json(response(false, 'User update was failed'));
+        return res.status(400).json(response(false, "User update was failed"));
       }
 
       user = await User.findOne({ where: { id: userId } });
 
       return res
         .status(200)
-        .json(response(true, 'User updated successfully', user, null));
+        .json(response(true, "User updated successfully", user, null));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
@@ -161,7 +161,7 @@ const userService = {
       }
       // Hash checking
       if (user.hash !== data.hash) {
-        return res.status(404).json(response(false, 'Hash is mismatched'));
+        return res.status(404).json(response(false, "Hash is mismatched"));
       }
 
       // Check authorization code to facebook graph server
@@ -192,7 +192,7 @@ const userService = {
       const payload = {
         access_token: token,
         refresh_token: jwtHelpers.refreshToken(),
-        provider: 'account-kit',
+        provider: "account-kit",
         user_id: user.id
       };
       const accessToken = await AccessToken.create(payload);
@@ -201,10 +201,10 @@ const userService = {
         return res
           .status(200)
           .json(
-            response(true, 'Phone number validation success', accessToken, user)
+            response(true, "Phone number validation success", accessToken, user)
           );
       }
-      return res.status(422).json(response(false, 'Unprocessable entity'));
+      return res.status(422).json(response(false, "Unprocessable entity"));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
