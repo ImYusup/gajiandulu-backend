@@ -5,6 +5,8 @@ const {
   GraphQLInt,
   GraphQLList
 } = require('graphql');
+// // const models = require('../../models/index.js');
+// const { roles: RoleModel } = require('@models');
 
 const RoleType = require('./roles');
 const { roles: RoleModel } = require('@models');
