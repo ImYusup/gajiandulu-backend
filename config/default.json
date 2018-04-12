@@ -53,5 +53,5 @@
       "secure": false
     }
   },
-  "mysql": "mysql://root:@127.0.0.1:3306/bibitnomic_dev"
+  "mysql": "mysql://root:secret@127.0.0.1:3306/bibitnomic_dev"
 }
