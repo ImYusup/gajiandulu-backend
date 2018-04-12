@@ -30,18 +30,19 @@ const forgotPasswordService = {
       if (hash === user.hash) {
         if(user.registration_complete == 1){
           var auth = {
+            host: 'smtp.mailtrap.io',
+            port: 2525,
             auth: {
-              api_key: 'key-4d9b63aeae8c8f075d1ab37c273963d5',
-              domain: 'sandboxe207aeefc40140019bd222b370bff1ca.mailgun.org'
-            },
-            proxy: 'http://root:@localhost:3000' // optional proxy, default is false
-          }
+              user: 'fd992b099d817f',
+              pass: '6b564816b97868'
+            }
+          };
           
-          var nodemailerMailgun = nodemailer.createTransport(mg(auth));
+          var nodemailerMail = nodemailer.createTransport(auth);
           
-          nodemailerMailgun.sendMail({
-            from: 'hudaparodi@example.com',
-            to: 'hudaparodi@gmail.com', // An array if you have multiple recipients.
+          nodemailerMail.sendMail({
+            from: 'huda@gajiandulu.com',
+            to: user.email, // An array if you have multiple recipients.
             subject: 'Password Reset - GAJIANDULU',
             'h:Reply-To': 'reply2this@company.com',
             //You can use "html:" to send HTML email content. It's magic!
