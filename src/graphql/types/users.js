@@ -46,6 +46,12 @@ module.exports = new GraphQLObjectType({
           return users.phone;
         }
       },
+      hash: {
+        type: GraphQLString,
+        resolve (users) {
+          return users.hash;
+        }
+      },
       role_id: {
         type: GraphQLInt,
         resolve (users) {
