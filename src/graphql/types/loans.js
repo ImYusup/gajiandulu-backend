@@ -70,7 +70,7 @@ module.exports = new GraphQLObjectType({
         }
       },
       purpose: {
-        type: GraphQLInt,
+        type: GraphQLString,
         resolve(loans) {
           return loans.purpose;
         }
@@ -82,13 +82,13 @@ module.exports = new GraphQLObjectType({
         }
       },
       due_date: {
-        type: GraphQLInt,
+        type: GraphQLString,
         resolve(loans) {
           return loans.due_date;
         }
       },
       promo_code: {
-        type: GraphQLInt,
+        type: GraphQLString,
         resolve(loans) {
           return loans.promo_code;
         }
