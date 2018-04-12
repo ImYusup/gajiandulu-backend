@@ -8,7 +8,7 @@ module.exports = {
         queryInterface.sequelize.query(
           'ALTER TABLE occupations ADD COLUMN name ENUM(' +
             '\'pelajar\',\'pegawai\',\'pengusaha\',\'aparat\',\'irt\',\'none\'' +
-            ');'
+            ') NOT NULL;'
         )
       );
   },
