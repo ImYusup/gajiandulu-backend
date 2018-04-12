@@ -3,7 +3,7 @@ const { response } = require('@helpers');
 const { users: User } = require('@models');
 const crypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-var randomstring = require("randomstring");
+let randomstring = require('randomstring');
 
 const forgotPasswordService = {
   /**
@@ -12,10 +12,6 @@ const forgotPasswordService = {
    */
   create: async (req, res) => {
     const { email, hash } = req.body;
-    // Send this password to email later
-    const password = Math.random()
-      .toString(36)
-      .substring(3);
     try {
       const user = await User.findOne({ where: { email: email } });
       const passgen =  randomstring.generate(8);
@@ -56,29 +52,36 @@ const forgotPasswordService = {
                 html: '<b>Password reset succesfully.</b> Your new password is ' + passgen,
               }, function (err, info) {
                 if (err) {
-                  console.log('Error: ' + err);
+                  return res
+                    .status(400)
+                    .json(
+                      response(
+                        false,
+                        'Failed to send email, please reset password again',
+                        err
+                      )
+                    );
                 }
                 else {
-                  console.log('Response: ' + info);
+                  return res
+                    .status(200)
+                    .json(
+                      response(
+                        true,
+                        'Password successfully reset, please check your email'
+                      )
+                    );
                 }
               });
-              return res
-              .status(200)
-              .json(
-                response(
-                  true,
-                  'Password successfully reset, please check your email'
-                )
-              );
             } else {
               return res
-              .status(400)
-              .json(
-                response(
-                  false,
-                  'Failed to update password'
-                )
-              );
+                .status(400)
+                .json(
+                  response(
+                    false,
+                    'Failed to update password'
+                  )
+                );
             }
           }
         }catch(error){
