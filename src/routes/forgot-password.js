@@ -18,7 +18,6 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(422).json(response(false, errors.array()));
     }
-    // console.log(message : req);
     forgotPasswordService.create(req, res);
   }
 );
