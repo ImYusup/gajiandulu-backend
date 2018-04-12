@@ -3,7 +3,7 @@ const { response } = require('@helpers');
 const { users: User } = require('@models');
 const crypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-let randomstring = require('randomstring');
+const randomstring = require('randomstring');
 
 const forgotPasswordService = {
   /**
