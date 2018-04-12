@@ -63,10 +63,9 @@ const digitalAssetService = {
     // res.local.users from auth middleware
     // check src/helpers/auth.js
     const { id: user_id } = res.local.users;
-    const host =
-      process.env.NODE_ENV || 'development'
-        ? `http://${config.host}:${config.port}/`
-        : config.host;
+    const host = process.env.NODE_ENV !== 'production'
+      ? `http://${config.host}:${config.port}/`
+      : `http://${config.host}/`;
 
     let location;
 
