@@ -1,5 +1,8 @@
-const updateUser = require('./user/update');
-
+const { createAdmin } = require('./admin-management-mutations');
+const { updateAdmin } = require('./admin-management-mutations');
+const { deleteAdmin } = require('./admin-management-mutations');
 module.exports = {
-  updateUser
+  createAdmin,
+  updateAdmin,
+  deleteAdmin
 };

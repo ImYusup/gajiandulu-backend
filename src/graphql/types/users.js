@@ -62,6 +62,12 @@ module.exports = new GraphQLObjectType({
           return users.phone;
         }
       },
+      hash: {
+        type: GraphQLString,
+        resolve(users) {
+          return users.hash;
+        }
+      },
       is_confirmed_email: {
         type: GraphQLInt,
         resolve(users) {
