@@ -10,11 +10,15 @@ const RoleType = require('./roles');
 const OccupationType = require('./occupations');
 const FamilyType = require('./families');
 const IdentityCardType = require('./identity_cards');
+const DigitalAssetType = require('./digital_assets');
+const LoanType = require('./loans');
 const {
   roles: RoleModel,
   occupations: OccupationModel,
   families: FamilyModel,
-  identity_cards: IdentityCardModel
+  identity_cards: IdentityCardModel,
+  digital_assets: DigitalAssetModel,
+  loans: LoanModel
 } = require('@models');
 
 module.exports = new GraphQLObjectType({
@@ -96,6 +100,22 @@ module.exports = new GraphQLObjectType({
         type: GraphQLList(IdentityCardType),
         async resolve(users) {
           return await IdentityCardModel.findAll({
+            where: { user_id: users.id }
+          });
+        }
+      },
+      digital_assets: {
+        type: GraphQLList(DigitalAssetType),
+        async resolve(users) {
+          return await DigitalAssetModel.findAll({
+            where: { user_id: users.id }
+          });
+        }
+      },
+      loans: {
+        type: GraphQLList(LoanType),
+        async resolve(users) {
+          return await LoanModel.findAll({
             where: { user_id: users.id }
           });
         }
