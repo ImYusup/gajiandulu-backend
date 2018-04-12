@@ -3,7 +3,7 @@ const { response } = require('@helpers');
 const { forgotPasswordService } = require('@services');
 const express = require('express');
 const router = express.Router();
-const { check, body, validationResult } = require('express-validator/check');
+const { check, validationResult } = require('express-validator/check');
 
 router.post(
   '/',
