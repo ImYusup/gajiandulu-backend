@@ -6,10 +6,6 @@ const nodemailer = require('nodemailer');
 const randomstring = require('randomstring');
 
 const forgotPasswordService = {
-  /**
-   * Forgot password
-   *
-   */
   create: async (req, res) => {
     const { email, hash } = req.body;
     try {
@@ -17,11 +13,10 @@ const forgotPasswordService = {
       const passgen =  randomstring.generate(8);
       const hashPassword = crypt.hashSync(passgen, 15);
 
-      if (user === null) {
+      if (!user) {
         return res.status(400).json(response(false, 'User email not found!'));
       }
 
-      // crypt.compareSync(hash, user.hash)
       if (hash === user.hash) {
         try{
           if(user.registration_complete == 1){
