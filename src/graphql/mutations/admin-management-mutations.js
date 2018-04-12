@@ -61,7 +61,6 @@ const createAdmin = {
   }
 };
 
-// const updateUdmin
 const updateAdmin = {
   type: UserType,
   description: 'update admin',
@@ -80,23 +79,19 @@ const updateAdmin = {
     },
     date_of_birth: {
       type: GraphQLString
-    },
-    password: {
-      type: GraphQLString
     }
   },
-
   async resolve(root, args) {
-    // YOU SHOULD remember that we only to create admin data, there should be role_id = 1
+    // YOU SHOULD remember that we only to update admin data, there should be role_id = 1
     return await UserModel.findById(args.id).then((result, error) => {
-      if (result) {
+      if (result && result.dataValues.role_id.toString() === '1') {
         const hash = crypt.hashSync(new Date().toString() + args.email || result.dataValues.email, 10);
         const data = Object.assign({}, args, { hash: hash });
         return result.update(data);
       } else {
         return root
           .status(400)
-          .json(response(false, 'admin id not found', error));
+          .json(response(false, 'admin data not found', error));
       }
     });
   }
@@ -112,9 +107,11 @@ const deleteAdmin = {
   },
   async resolve(root, args) {
     // YOU SHOULD remember that we only to create admin data, there should be role_id = 1
-    const destroy = await UserModel.destroy({ where: { id: args.id } });
+    const destroy = await UserModel.destroy({ where: { id: args.id, role_id: 1 } });
     if (destroy) {
       root.status(200).json(response(true, 'admin deleted successfully'));
+    } else {
+      root.status(400).json(response(false, 'admin not found'));
     }
   }
 };
