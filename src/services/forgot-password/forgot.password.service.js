@@ -27,47 +27,65 @@ const forgotPasswordService = {
 
       // crypt.compareSync(hash, user.hash)
       if (hash === user.hash) {
-        if(user.registration_complete == 1){
-          var auth = {
-            host: 'smtp.mailtrap.io',
-            port: 2525,
-            auth: {
-              user: 'fd992b099d817f',
-              pass: '6b564816b97868'
+        try{
+          if(user.registration_complete == 1){
+            const results = await User.update(
+              {
+                password: hashPassword
+              },
+              { where: { email: email, hash: hash } }
+            );
+            if(results){
+              var auth = {
+                host: 'smtp.mailtrap.io',
+                port: 2525,
+                auth: {
+                  user: 'fd992b099d817f',
+                  pass: '6b564816b97868'
+                }
+              };
+              
+              var nodemailerMail = nodemailer.createTransport(auth);
+              
+              nodemailerMail.sendMail({
+                from: 'huda@gajiandulu.com',
+                to: user.email, // An array if you have multiple recipients.
+                subject: 'Password Reset - GAJIANDULU',
+                'h:Reply-To': 'reply2this@company.com',
+                //You can use "html:" to send HTML email content. It's magic!
+                html: '<b>Password reset succesfully.</b> Your new password is ' + passgen,
+              }, function (err, info) {
+                if (err) {
+                  console.log('Error: ' + err);
+                }
+                else {
+                  console.log('Response: ' + info);
+                }
+              });
+              return res
+              .status(200)
+              .json(
+                response(
+                  true,
+                  'Password successfully reset, please check your email'
+                )
+              );
+            } else {
+              return res
+              .status(400)
+              .json(
+                response(
+                  false,
+                  'Failed to update password'
+                )
+              );
             }
-          };
-          
-          var nodemailerMail = nodemailer.createTransport(auth);
-          
-          nodemailerMail.sendMail({
-            from: 'huda@gajiandulu.com',
-            to: user.email, // An array if you have multiple recipients.
-            subject: 'Password Reset - GAJIANDULU',
-            'h:Reply-To': 'reply2this@company.com',
-            //You can use "html:" to send HTML email content. It's magic!
-            html: '<b>Password reset succesfully.</b> Your new password is ' + passgen,
-          }, function (err, info) {
-            if (err) {
-              console.log('Error: ' + err);
-            }
-            else {
-              console.log('Response: ' + info);
-            }
-          });
-          await User.update(
-            {
-              password: hashPassword
-            },
-            { where: { email: email, hash: hash } }
-          );
-          return res
-          .status(200)
-          .json(
-            response(
-              true,
-              'Password successfully reset, please check your email'
-            )
-          );
+          }
+        }catch(error){
+          if (error.errors) {
+            return res.status(400).json(response(false, error.errors));
+          }
+          return res.status(400).json(response(false, error.message));
         }
         return res
           .status(200)
