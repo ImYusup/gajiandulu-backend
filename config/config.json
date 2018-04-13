@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "root",
-    "password": "secret",
-    "database": "bibitnomic_dev",
+    "password": "d4ftstar",
+    "database": "gajiandulu-api",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

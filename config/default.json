@@ -53,5 +53,5 @@
       "secure": false
     }
   },
-  "mysql": "mysql://root:root@127.0.0.1:3306/gajian_dulu"
+  "mysql": "mysql://d4ftstar:root@127.0.0.1:3306/gajiandulu-api"
 }
