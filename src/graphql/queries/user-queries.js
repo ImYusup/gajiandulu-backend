@@ -12,7 +12,7 @@ const user = {
     }
   },
   async resolve(root, args) {
-    const results = UserModel.findAll({ where: { id: args.id } });
+    const results = UserModel.findAll({ where: { id: args.id, role_id: 2 } });
     return results;
   }
 };
@@ -21,7 +21,7 @@ const users = {
   type: new GraphQLList(UserType),
   description: 'get all users',
   async resolve(root, args) {
-    const results = UserModel.findAll();
+    const results = UserModel.findAll({ where: { role_id: 2 } });
     return results;
   }
 };
