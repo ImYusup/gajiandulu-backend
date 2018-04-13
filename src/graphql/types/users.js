@@ -12,13 +12,15 @@ const FamilyType = require('./families');
 const IdentityCardType = require('./identity_cards');
 const DigitalAssetType = require('./digital_assets');
 const LoanType = require('./loans');
+const BankDataType = require('./bank_datas');
 const {
   roles: RoleModel,
   occupations: OccupationModel,
   families: FamilyModel,
   identity_cards: IdentityCardModel,
   digital_assets: DigitalAssetModel,
-  loans: LoanModel
+  loans: LoanModel,
+  bank_data: BankDataModel
 } = require('@models');
 
 module.exports = new GraphQLObjectType({
@@ -90,6 +92,14 @@ module.exports = new GraphQLObjectType({
         type: GraphQLList(OccupationType),
         async resolve(users) {
           return await OccupationModel.findAll({
+            where: { user_id: users.id }
+          });
+        }
+      },
+      bank_accounts: {
+        type: GraphQLList(BankDataType),
+        async resolve(users) {
+          return await BankDataModel.findAll({
             where: { user_id: users.id }
           });
         }
