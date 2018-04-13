@@ -1,11 +1,14 @@
-import { SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG } from 'constants';
-
+require('module-alias/register');
 const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLID,
-  GraphQLInt
+  GraphQLInt,
+  GraphQLList
 } = require('graphql');
+
+const UserType = require('../types/users');
+const { users: UserModel } = require('@models');
 
 module.exports = new GraphQLObjectType({
   name: 'loans',
@@ -16,6 +19,12 @@ module.exports = new GraphQLObjectType({
         type: GraphQLID,
         resolve(loans) {
           return loans.id;
+        }
+      },
+      user_id: {
+        type: GraphQLList(UserType),
+        async resolve(loans) {
+          return await UserModel.findAll({ where: {} });
         }
       },
       amount: {
@@ -40,6 +49,12 @@ module.exports = new GraphQLObjectType({
         type: GraphQLInt,
         resolve(loans) {
           return loans.interest_rate;
+        }
+      },
+      interest_charge: {
+        type: GraphQLInt,
+        resolve(loans) {
+          return loans.interest_charge;
         }
       },
       due_date_charge: {
@@ -94,12 +109,6 @@ module.exports = new GraphQLObjectType({
         type: GraphQLString,
         resolve(loans) {
           return loans.status;
-        }
-      },
-      user_id: {
-        type: GraphQLInt,
-        resolve(loans) {
-          return loans.user_id;
         }
       }
     };
