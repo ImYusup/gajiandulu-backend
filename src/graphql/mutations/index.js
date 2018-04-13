@@ -1,6 +1,6 @@
 const { createAdmin, updateAdmin, deleteAdmin } = require('./admin-management-mutations');
 const { updateLoan, deleteLoan } = require('./loans-mutations');
-const updateUser = require('./user/update');
+const { updateUser, deleteUser } = require('./user-mutations');
 
 module.exports = {
   createAdmin,
@@ -8,5 +8,6 @@ module.exports = {
   deleteAdmin,
   updateLoan,
   deleteLoan,
-  updateUser
+  updateUser,
+  deleteUser
 };

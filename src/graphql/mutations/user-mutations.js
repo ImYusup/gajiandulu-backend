@@ -1,24 +1,62 @@
 require('module-alias/register');
-const { GraphQLNonNull, GraphQLString } = require('graphql');
-const { users: UserModel } = require('@models');
-const updateUser = require('../../types/users');
+const { GraphQLNonNull, GraphQLString, GraphQLID } = require('graphql');
 
-const user = {
-  type: updateUser,
+const { response } = require('@helpers');
+const { users: UserModel } = require('@models');
+const UserType = require('../types/users');
+
+const updateUser = {
+  type: UserType,
+  description: 'update admin',
   args: {
+    id: {
+      type: GraphQLNonNull(GraphQLID)
+    },
     full_name: {
-      type: new GraphQLNonNull(GraphQLString)
+      type: GraphQLString
     },
     email: {
-      type: new GraphQLNonNull(GraphQLString)
-    },
-    date_of_birth: {
-      type: new GraphQLNonNull(GraphQLString)
+      type: GraphQLString
     },
     phone: {
-      type: new GraphQLNonNull(GraphQLString)
+      type: GraphQLString
+    },
+    date_of_birth: {
+      type: GraphQLString
+    }
+  },
+  async resolve(root, args) {
+    return await UserModel.findById(args.id).then((result, error) => {
+      if (result && result.dataValues.role_id.toString() === '2') {
+        const data = Object.assign({}, args);
+        return result.update(data);
+      } else {
+        return root
+          .status(400)
+          .json(response(false, 'user data not found', error));
+      }
+    });
+  }
+};
+
+const deleteUser = {
+  type: UserType,
+  description: 'Delete User',
+  args: {
+    id: {
+      type: GraphQLNonNull(GraphQLID)
+    }
+  },
+  async resolve(root, args) {
+    const destroy = await UserModel.destroy({
+      where: { id: args.id, role_id: 2 }
+    });
+    if (destroy) {
+      root.status(200).json(response(true, 'User deleted succesfully'));
+    } else {
+      root.status(400).json(response(false, 'User not found'));
     }
   }
 };
 
-module.exports = user;
+module.exports = { updateUser, deleteUser };
