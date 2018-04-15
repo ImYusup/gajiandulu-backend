@@ -21,10 +21,10 @@ module.exports = new GraphQLObjectType({
           return loans.id;
         }
       },
-      user_id: {
+      user: {
         type: GraphQLList(UserType),
         async resolve(loans) {
-          return await UserModel.findAll({ where: {} });
+          return await UserModel.findAll({ where: {id: loans.user_id} });
         }
       },
       amount: {
@@ -109,6 +109,18 @@ module.exports = new GraphQLObjectType({
         type: GraphQLString,
         resolve(loans) {
           return loans.status;
+        }
+      },
+      created_at: {
+        type: GraphQLString,
+        resolve(loans) {
+          return loans.created_at;
+        }
+      },
+      updated_at: {
+        type: GraphQLString,
+        resolve(loans) {
+          return loans.updated_at;
         }
       }
     };

@@ -4,7 +4,7 @@ const { GraphQLList, GraphQLNonNull, GraphQLInt } = require('graphql');
 const { loans: LoanModel } = require('@models');
 const LoanType = require('../types/loans');
 
-const loans_id = {
+const loan = {
   type: new GraphQLList(LoanType),
   description: 'get loan by specific ID',
   args: {
@@ -18,7 +18,7 @@ const loans_id = {
   }
 };
 
-const loans_all = {
+const loans = {
   type: new GraphQLList(LoanType),
   description: 'get all loans',
   async resolve(root, args) {
@@ -27,4 +27,4 @@ const loans_all = {
   }
 };
 
-module.exports = { loans_id, loans_all };
+module.exports = { loan, loans };
