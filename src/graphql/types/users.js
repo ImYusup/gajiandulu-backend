@@ -23,9 +23,6 @@ const {
   bank_data: BankDataModel
 } = require('@models');
 
-const RoleType = require('./roles');
-const { roles: RoleModel } = require('@models');
-
 module.exports = new GraphQLObjectType({
   name: 'users',
   description: 'users data',
@@ -79,7 +76,7 @@ module.exports = new GraphQLObjectType({
           return users.is_confirmed_email;
         }
       },
-      role_id: {
+      role: {
         type: GraphQLList(RoleType),
         async resolve(users) {
           return await RoleModel.findAll({ where: { id: users.role_id } });
