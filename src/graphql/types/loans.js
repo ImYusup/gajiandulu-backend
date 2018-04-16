@@ -70,7 +70,7 @@ module.exports = new GraphQLObjectType({
         }
       },
       purpose: {
-        type: GraphQLInt,
+        type: GraphQLString,
         resolve(loans) {
           return loans.purpose;
         }
