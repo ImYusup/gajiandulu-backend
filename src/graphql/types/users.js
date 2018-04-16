@@ -76,7 +76,7 @@ module.exports = new GraphQLObjectType({
           return users.is_confirmed_email;
         }
       },
-      role_id: {
+      role: {
         type: GraphQLList(RoleType),
         async resolve(users) {
           return await RoleModel.findAll({ where: { id: users.role_id } });

@@ -1,13 +1,18 @@
+require('module-alias/register');
 const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLID,
+  GraphQLList,
   GraphQLInt
 } = require('graphql');
 
+const UserLoanType = require('./user_loans');
+const { users: UserModel } = require('@models');
+
 module.exports = new GraphQLObjectType({
   name: 'loans',
-  description: 'Loans data',
+  description: 'loans data',
   fields() {
     return {
       id: {
@@ -58,8 +63,14 @@ module.exports = new GraphQLObjectType({
           return loans.total;
         }
       },
-      materai_charge: {
+      purpose: {
         type: GraphQLString,
+        resolve(loans) {
+          return loans.purpose;
+        }
+      },
+      materai_charge: {
+        type: GraphQLInt,
         resolve(loans) {
           return loans.materai_charge;
         }
@@ -83,21 +94,35 @@ module.exports = new GraphQLObjectType({
         }
       },
       paid: {
-        type: GraphQLInt,
+        type: GraphQLString,
         resolve(loans) {
           return loans.paid;
         }
       },
       status: {
-        type: GraphQLInt,
+        type: GraphQLString,
         resolve(loans) {
           return loans.status;
         }
       },
-      purpose: {
+      created_at: {
         type: GraphQLString,
         resolve(loans) {
-          return loans.purpose;
+          return loans.created_at;
+        }
+      },
+      updated_at: {
+        type: GraphQLString,
+        resolve(loans) {
+          return loans.updated_at;
+        }
+      },
+      user: {
+        type: GraphQLList(UserLoanType),
+        async resolve(loans) {
+          return await UserModel.findAll({
+            where: { id: loans.user_id }
+          });
         }
       }
     };
