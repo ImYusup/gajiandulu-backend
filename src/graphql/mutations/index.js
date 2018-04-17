@@ -9,7 +9,10 @@ const { updateBankAccount } = require('./bank-account-mutations');
 const { updateOccupation } = require('./occupation-mutations');
 const { updateFamily } = require('./family-mutations');
 const { updateIdentityCard } = require('./identity-card-mutations');
-const { createDigitalAsset } = require('./digital-asset-mutations');
+const {
+  createDigitalAssets,
+  deleteAssets
+} = require('./digital-assets-mutations');
 
 module.exports = {
   createAdmin,
@@ -23,5 +26,6 @@ module.exports = {
   updateOccupation,
   updateFamily,
   updateIdentityCard,
-  createDigitalAsset
+  createDigitalAssets,
+  deleteAssets
 };
