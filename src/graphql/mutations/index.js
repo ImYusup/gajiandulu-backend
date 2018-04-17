@@ -7,6 +7,9 @@ const { updateLoan, deleteLoan } = require('./loans-mutations');
 const { updateUser, deleteUser } = require('./user-mutations');
 const { updateBankAccount } = require('./bank-account-mutations');
 const { updateOccupation } = require('./occupation-mutations');
+const { updateFamily } = require('./family-mutations');
+const { updateIdentityCard } = require('./identity-card-mutations');
+const { createDigitalAsset } = require('./digital-asset-mutations');
 
 module.exports = {
   createAdmin,
@@ -17,5 +20,8 @@ module.exports = {
   updateUser,
   deleteUser,
   updateBankAccount,
-  updateOccupation
+  updateOccupation,
+  updateFamily,
+  updateIdentityCard,
+  createDigitalAsset
 };
