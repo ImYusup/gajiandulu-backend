@@ -21,9 +21,7 @@ const updateBankAccount = {
     return await BankAccountModel.findById(args.id).then((result, error) => {
       if (result) {
         const data = Object.assign({}, args);
-        return root
-          .status(200)
-          .json(response(true, 'Bank account update successfully', data));
+        return result.update(data);
       } else {
         return root.status(400).json(response(false, 'Bank not found', error));
       }
