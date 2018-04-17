@@ -6,8 +6,8 @@ const {
   GraphQLList
 } = require('graphql');
 
-const assets = require('./digital-assets');
-const loans = require('./loans');
+const AssetsType = require('./digital-assets');
+const LoansType = require('./loans');
 const { digital_assets: AssetsModel, loans: LoansModel } = require('@models');
 
 module.exports = new GraphQLObjectType({
@@ -70,15 +70,15 @@ module.exports = new GraphQLObjectType({
         }
       },
       digital_assets: {
-        type: new GraphQLList(assets),
+        type: GraphQLList(AssetsType),
         resolve(users) {
-            return AssetsModel.findAll({ where: { user_id: users.id } });
+          return AssetsModel.findAll({ where: { user_id: users.id } });
         }
       },
       loans: {
-        type: new GraphQLList(loans),
+        type: GraphQLList(LoansType),
         resolve(users) {
-            return LoansModel.findAll({ where: { user_id: users.id } });
+          return LoansModel.findAll({ where: { user_id: users.id } });
         }
       }
     };

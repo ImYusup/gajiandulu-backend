@@ -22,7 +22,7 @@ module.exports = new GraphQLObjectType({
         }
       },
       user: {
-        type: GraphQLList(UserType),
+        type: UserType,
         async resolve(loans) {
           return await UserModel.findAll({ where: {id: loans.user_id} });
         }
