@@ -30,7 +30,7 @@ const createAdmin = {
       type: GraphQLNonNull(GraphQLString)
     }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     const { full_name, email, phone, date_of_birth, password } = args;
 
     const hashPassword = crypt.hashSync(password, 15);
@@ -54,7 +54,7 @@ const createAdmin = {
     if (results) {
       return results;
     } else {
-      return root
+      return res
         .status(400)
         .json(response(false, 'failed to insert to database'));
     }
@@ -81,7 +81,7 @@ const updateAdmin = {
       type: GraphQLString
     }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     // YOU SHOULD remember that we only to update admin data, there should be role_id = 1
     return await UserModel.findById(args.id).then((result, error) => {
       if (result && result.dataValues.role_id.toString() === '1') {
@@ -89,7 +89,7 @@ const updateAdmin = {
         const data = Object.assign({}, args, { hash: hash });
         return result.update(data);
       } else {
-        return root
+        return res
           .status(400)
           .json(response(false, 'admin data not found', error));
       }
@@ -105,13 +105,13 @@ const deleteAdmin = {
       type: GraphQLNonNull(GraphQLID)
     }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     // YOU SHOULD remember that we only to create admin data, there should be role_id = 1
     const destroy = await UserModel.destroy({ where: { id: args.id, role_id: 1 } });
     if (destroy) {
-      root.status(200).json(response(true, 'admin deleted successfully'));
+      res.status(200).json(response(true, 'admin deleted successfully'));
     } else {
-      root.status(400).json(response(false, 'admin not found'));
+      res.status(400).json(response(false, 'admin not found'));
     }
   }
 };

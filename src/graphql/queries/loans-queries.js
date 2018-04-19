@@ -12,7 +12,7 @@ const loan = {
       type: GraphQLNonNull(GraphQLInt)
     }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     const results = LoanModel.findAll({ where: { id: args.id } });
     return results;
   }
@@ -21,7 +21,7 @@ const loan = {
 const loans = {
   type: new GraphQLList(LoanType),
   description: 'get all loans',
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     const results = LoanModel.findAll();
     return results;
   }

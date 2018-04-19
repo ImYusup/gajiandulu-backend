@@ -11,13 +11,27 @@ This project uses [Node](https://nodejs.org/). An open source web framework for 
 Getting up and running is as easy as 1, 2, 3.
 
 1.  Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
+    Required version:
+    ```
+    "node": "^9.0.0",
+    "yarn": ">= 0.18.0"
+    ```
 2.  Install your dependencies
 
     ```
-    cd path/to/bibitnomic-api; npm install
+    cd path/to/gajiandulu-api; npm install
     ```
-    
+
+    or
+
+    ```
+    cd path/to/gajiandulu-api; yarn
+    ```
+
 3.  Configure your database connection
+
+    ### Never Commit/Push your changes in these config file! Keep it only in your local!
+
     > config/config.json
 
     ```
@@ -29,6 +43,7 @@ Getting up and running is as easy as 1, 2, 3.
         "dialect": "mysql"
     },
     ```
+
     > config/default.json
 
     ```
@@ -37,6 +52,7 @@ Getting up and running is as easy as 1, 2, 3.
 
 4.  Migrate database using sequelize
     Run these commands in order
+
     ```
     node_modules/.bin/sequelize db:create
     ```

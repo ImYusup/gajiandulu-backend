@@ -32,12 +32,12 @@ const updateLoan = {
     paid: { type: GraphQLInt},
     status: { type: GraphQLInt}
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     return await LoanModel.findByID(args.id).then((result, error) => {
       if (result) {
         return result.update(args);
       } else {
-        return root
+        return res
           .status(400)
           .json(response(false, 'loan data is not found', error));
       }
@@ -53,12 +53,12 @@ const deleteLoan = {
       type: GraphQLNonNull(GraphQLID)
     }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     const destroy = await LoanModel.destroy({ where: { id: args.id } });
     if (destroy) {
-      root.status(200).json(response(true, 'A loan has been successfully deleted'));
+      res.status(200).json(response(true, 'A loan has been successfully deleted'));
     } else {
-      root.status(400).json(response(false, 'loan not found'));
+      res.status(400).json(response(false, 'loan not found'));
     }
   }
 };

@@ -3,10 +3,11 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLID,
+  GraphQLList,
   GraphQLInt
 } = require('graphql');
 
-const UserType = require('../types/users');
+const UserLoanType = require('./user_loans');
 const { users: UserModel } = require('@models');
 
 module.exports = new GraphQLObjectType({
@@ -18,12 +19,6 @@ module.exports = new GraphQLObjectType({
         type: GraphQLID,
         resolve(loans) {
           return loans.id;
-        }
-      },
-      user: {
-        type: UserType,
-        async resolve(loans) {
-          return await UserModel.findAll({ where: {id: loans.user_id} });
         }
       },
       amount: {
@@ -120,6 +115,14 @@ module.exports = new GraphQLObjectType({
         type: GraphQLString,
         resolve(loans) {
           return loans.updated_at;
+        }
+      },
+      user: {
+        type: GraphQLList(UserLoanType),
+        async resolve(loans) {
+          return await UserModel.findAll({
+            where: { id: loans.user_id }
+          });
         }
       }
     };

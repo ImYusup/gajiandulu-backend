@@ -6,9 +6,22 @@ const {
   GraphQLList
 } = require('graphql');
 
-const AssetsType = require('./digital-assets');
-const LoansType = require('./loans');
-const { digital_assets: AssetsModel, loans: LoansModel } = require('@models');
+const RoleType = require('./roles');
+const OccupationType = require('./occupations');
+const FamilyType = require('./families');
+const IdentityCardType = require('./identity_cards');
+const DigitalAssetType = require('./digital-assets');
+const LoanType = require('./loans');
+const BankDataType = require('./bank_datas');
+const {
+  roles: RoleModel,
+  occupations: OccupationModel,
+  families: FamilyModel,
+  identity_cards: IdentityCardModel,
+  digital_assets: DigitalAssetModel,
+  loans: LoanModel,
+  bank_data: BankDataModel
+} = require('@models');
 
 module.exports = new GraphQLObjectType({
   name: 'users',
@@ -17,68 +30,110 @@ module.exports = new GraphQLObjectType({
     return {
       id: {
         type: GraphQLID,
-        resolve (users) {
+        resolve(users) {
           return users.id;
         }
       },
       full_name: {
         type: GraphQLString,
-        resolve (users) {
+        resolve(users) {
           return users.full_name;
         }
       },
       email: {
         type: GraphQLString,
-        resolve (users) {
+        resolve(users) {
           return users.email;
         }
       },
       pin: {
         type: GraphQLString,
-        resolve (users) {
+        resolve(users) {
           return users.pin;
         }
       },
       date_of_birth: {
         type: GraphQLString,
-        resolve (users) {
+        resolve(users) {
           return users.date_of_birth;
         }
       },
       phone: {
         type: GraphQLString,
-        resolve (users) {
+        resolve(users) {
           return users.phone;
         }
       },
       hash: {
         type: GraphQLString,
-        resolve (users) {
+        resolve(users) {
           return users.hash;
         }
       },
-      role_id: {
+      is_confirmed_email: {
         type: GraphQLInt,
-        resolve (users) {
-          return users.role_id;
+        resolve(users) {
+          return users.is_confirmed_email;
+        }
+      },
+      role: {
+        type: GraphQLList(RoleType),
+        async resolve(users) {
+          return await RoleModel.findAll({ where: { id: users.role_id } });
         }
       },
       currency: {
         type: GraphQLString,
-        resolve (users) {
+        resolve(users) {
           return users.currency;
         }
       },
+      occupations: {
+        type: GraphQLList(OccupationType),
+        async resolve(users) {
+          return await OccupationModel.findAll({
+            where: { user_id: users.id }
+          });
+        }
+      },
+      bank_accounts: {
+        type: GraphQLList(BankDataType),
+        async resolve(users) {
+          return await BankDataModel.findAll({
+            where: { user_id: users.id }
+          });
+        }
+      },
+      families: {
+        type: GraphQLList(FamilyType),
+        async resolve(users) {
+          return await FamilyModel.findAll({
+            where: { user_id: users.id }
+          });
+        }
+      },
+      identity_cards: {
+        type: GraphQLList(IdentityCardType),
+        async resolve(users) {
+          return await IdentityCardModel.findAll({
+            where: { user_id: users.id }
+          });
+        }
+      },
       digital_assets: {
-        type: GraphQLList(AssetsType),
-        resolve(users) {
-          return AssetsModel.findAll({ where: { user_id: users.id } });
+        type: GraphQLList(DigitalAssetType),
+        async resolve(users) {
+          return await DigitalAssetModel.findAll({
+            where: { user_id: users.id }
+          });
         }
       },
       loans: {
-        type: GraphQLList(LoansType),
-        resolve(users) {
-          return LoansModel.findAll({ where: { user_id: users.id } });
+        type: GraphQLList(LoanType),
+        async resolve(users) {
+          return await LoanModel.findAll({
+            where: { user_id: users.id }
+          });
         }
       }
     };
