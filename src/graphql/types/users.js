@@ -10,7 +10,7 @@ const RoleType = require('./roles');
 const OccupationType = require('./occupations');
 const FamilyType = require('./families');
 const IdentityCardType = require('./identity_cards');
-const DigitalAssetType = require('./digital_assets');
+const DigitalAssetType = require('./digital-assets');
 const LoanType = require('./loans');
 const BankDataType = require('./bank_datas');
 const {

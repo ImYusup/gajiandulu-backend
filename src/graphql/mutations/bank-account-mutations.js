@@ -17,13 +17,13 @@ const updateBankAccount = {
     bank_branch: { type: GraphQLString },
     account_number: { type: GraphQLString }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     return await BankAccountModel.findById(args.id).then((result, error) => {
       if (result) {
         const data = Object.assign({}, args);
         return result.update(data);
       } else {
-        return root.status(400).json(response(false, 'Bank not found', error));
+        return res.status(400).json(response(false, 'Bank not found', error));
       }
     });
   }

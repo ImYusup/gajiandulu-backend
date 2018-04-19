@@ -43,7 +43,7 @@ app.use('/loans', auth, routes.loan);
 app.use('/forgot-password', routes.forgotPassword);
 app.use('/admins', authAdmin, GraphHTTP((req, res) => ({
   schema: adminSchema,
-  rootValue: res,
+  rootValue: {req, res},
   pretty: process.env.NODE_ENV !== 'production',
   graphiql: process.env.NODE_ENV !== 'production'
 })));

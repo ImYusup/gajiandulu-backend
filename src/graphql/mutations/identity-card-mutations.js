@@ -16,13 +16,13 @@ const updateIdentityCard = {
     address: { type: GraphQLString },
     city: { type: GraphQLString }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     return await IdentityCardModel.findById(args.id).then((result, error) => {
       if (result) {
         const data = Object.assign({}, args);
         return result.update(data);
       } else {
-        return root
+        return res
           .status(400)
           .json(response(false, 'Identity card no found', error));
       }

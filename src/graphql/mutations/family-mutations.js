@@ -17,13 +17,13 @@ const updateFamily = {
     address: { type: GraphQLString },
     phone: { type: GraphQLString }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     return await FamilyModel.findById(args.id).then((result, error) => {
       if (result) {
         const data = Object.assign({}, args);
         return result.update(data);
       } else {
-        return root
+        return res
           .status(400)
           .json(response(false, 'Family not found', error));
       }

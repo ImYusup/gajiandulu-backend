@@ -25,13 +25,13 @@ const updateUser = {
       type: GraphQLString
     }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     return await UserModel.findById(args.id).then((result, error) => {
       if (result && result.dataValues.role_id.toString() === '2') {
         const data = Object.assign({}, args);
         return result.update(data);
       } else {
-        return root
+        return res
           .status(400)
           .json(response(false, 'user data not found', error));
       }
@@ -47,14 +47,14 @@ const deleteUser = {
       type: GraphQLNonNull(GraphQLID)
     }
   },
-  async resolve(root, args) {
+  async resolve({req, res}, args) {
     const destroy = await UserModel.destroy({
       where: { id: args.id, role_id: 2 }
     });
     if (destroy) {
-      root.status(200).json(response(true, 'User deleted succesfully'));
+      res.status(200).json(response(true, 'User deleted succesfully'));
     } else {
-      root.status(400).json(response(false, 'User not found'));
+      res.status(400).json(response(false, 'User not found'));
     }
   }
 };
