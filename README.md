@@ -30,6 +30,8 @@ Getting up and running is as easy as 1, 2, 3.
 
 3.  Configure your database connection
 
+    ### Never Commit/Push your changes in these config file! Keep it only in your local!
+
     > config/config.json
 
     ```
@@ -47,8 +49,6 @@ Getting up and running is as easy as 1, 2, 3.
     ```
     "mysql": "mysql://your_username:your_password@127.0.0.1:3306/gajian_dulu"
     ```
-
-    ### Never Commit/Push your changes in this file!
 
 4.  Migrate database using sequelize
     Run these commands in order
