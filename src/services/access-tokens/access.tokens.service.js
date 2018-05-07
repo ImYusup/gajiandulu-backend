@@ -40,6 +40,22 @@ const accessTokenService = {
           .json(response(false, 'Please complete your registration first!'));
       }
 
+      if (data.provider === 'admin') {
+        if (user.role_id.toString() !== '1') {
+          return res
+            .status(400)
+            .json(response(false, 'You have no permission to login as admin'));
+        }
+      } else {
+        if (user.role_id.toString() === '1') {
+          return res
+            .status(400)
+            .json(
+              response(false, 'You have no permission to login to mobile apps')
+            );
+        }
+      }
+
       // @TODO Uncomment this when email service activated
       // if (!user.is_confirmed_email) {
       //   return res
