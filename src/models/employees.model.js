@@ -45,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE
     }
   }, {
+    timestamps: true,
     underscored: true,
   });
   Employee.associate = function(models) {
