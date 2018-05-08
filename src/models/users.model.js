@@ -116,6 +116,5 @@ module.exports = function(sequelize, DataTypes) {
     return values;
   };
 
-  
   return User;
 };
