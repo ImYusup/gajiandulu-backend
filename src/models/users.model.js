@@ -45,7 +45,7 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: false,
         type: DataTypes.STRING
       },
-      date_of_birth: {
+      birthday: {
         allowNull: false,
         type: DataTypes.DATEONLY,
         validate: {
@@ -56,30 +56,25 @@ module.exports = function(sequelize, DataTypes) {
         allowNull: true,
         type: DataTypes.STRING
       },
-      is_confirmed_email: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
-      },
-      role_id: {
-        allowNull: true,
-        type: DataTypes.INTEGER
-      },
       hash: {
         allowNull: false,
         type: DataTypes.STRING
       },
-      registration_complete: {
-        allowNull: false,
-        type: DataTypes.STRING,
+      is_active_notif: {
+        type: DataTypes.TINYINT,
         defaultValue: false
       },
-      identity_card_id: {
-        allowNull: true,
-        type: DataTypes.INTEGER
+      is_confirmed_email: {
+        type: DataTypes.TINYINT,
+        defaultValue: false
       },
-      occupation_id: {
-        allowNull: true,
-        type: DataTypes.INTEGER
+      currency: {
+        allowNull: false,
+        type: DataTypes.STRING
+      },
+      registration_complete: {
+        type: DataTypes.TINYINT,
+        defaultValue: false
       },
       created_at: {
         allowNull: false,
@@ -99,32 +94,16 @@ module.exports = function(sequelize, DataTypes) {
   // eslint-disable-next-line no-unused-vars
   User.associate = function(models) {
     // Define associations here
-    // See http://docs.sequelizejs.com/en/latest/docs/associations/
-    User.hasMany(models.feedbacks, {
-      foreignKey: 'user_id',
-      onDelete: 'CASCADE'
-    });
-    User.hasMany(models.employees, {
-      foreignKey: 'user_id',
-      onDelete: 'CASCADE'
-    });
-    User.belongsTo(models.roles, {
-      foreignKey: 'role_id',
-      onDelete: 'CASCADE'
-    });
+    // See http://docs.sequelizejs.com/en/latest/docs/associations
     User.hasOne(models.access_tokens, {
       foreignKey: 'user_id',
       onDelete: 'CASCADE'
     });
-    User.hasOne(models.occupations, {
+    User.hasMany(models.bank_data, {
       foreignKey: 'user_id',
       onDelete: 'CASCADE'
     });
-    User.hasOne(models.families, {
-      foreignKey: 'user_id',
-      onDelete: 'CASCADE'
-    });
-    User.hasOne(models.digital_assets, {
+    User.hasMany(models.employees, {
       foreignKey: 'user_id',
       onDelete: 'CASCADE'
     });
@@ -137,5 +116,6 @@ module.exports = function(sequelize, DataTypes) {
     return values;
   };
 
+  
   return User;
 };
