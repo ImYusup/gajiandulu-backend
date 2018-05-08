@@ -61,11 +61,11 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING
       },
       is_active_notif: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.TINYINT,
         defaultValue: false
       },
       is_confirmed_email: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.TINYINT,
         defaultValue: false
       },
       currency: {
@@ -73,7 +73,7 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING
       },
       registration_complete: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.TINYINT,
         defaultValue: false
       },
       created_at: {
@@ -99,11 +99,11 @@ module.exports = function(sequelize, DataTypes) {
       foreignKey: 'user_id',
       onDelete: 'CASCADE'
     });
-    User.hasOne(models.bank_data, {
+    User.hasMany(models.bank_data, {
       foreignKey: 'user_id',
       onDelete: 'CASCADE'
     });
-    User.hasOne(models.employees, {
+    User.hasMany(models.employees, {
       foreignKey: 'user_id',
       onDelete: 'CASCADE'
     });
@@ -116,5 +116,6 @@ module.exports = function(sequelize, DataTypes) {
     return values;
   };
 
+  
   return User;
 };
