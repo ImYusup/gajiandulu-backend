@@ -79,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
   Presences.associate = function(models) {
     // Define associations here
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
-    Presences.hasOne(models.emloyees, {
+    Presences.hasOne(models.employees, {
       foreignKey: 'employee_id'
     });
   };
