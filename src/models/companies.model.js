@@ -27,8 +27,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       timezone: {
         allowNull: false,
+        defaultValue: 'Asia/Jakarta',
         type: DataTypes.STRING
-      }, created_at: {
+      },
+      created_at: {
         allowNull: false,
         type: DataTypes.DATE
       },
