@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "*",
+    "password": "secret",
     "database": "bibitnomic_dev",
     "host": "127.0.0.1",
     "dialect": "mysql"
