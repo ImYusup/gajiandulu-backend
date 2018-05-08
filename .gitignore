@@ -111,3 +111,5 @@ $RECYCLE.BIN/
 # Others
 lib/
 data/
+config/config.js
+config/default.json
