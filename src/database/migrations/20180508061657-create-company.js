@@ -25,7 +25,7 @@ module.exports = {
         type: Sequelize.STRING(45)
       },
       timezone: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.STRING(45)
       },
       created_at: {
