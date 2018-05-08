@@ -8,19 +8,6 @@ module.exports = function(sequelize, DataTypes) {
         primaryKey: true,
         autoIncrement: true
       },
-      user_id: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-        foreignKey: true,
-        references: {
-          model: 'users',
-          key: 'id'
-        }
-      },
-      type: {
-        allowNull: false,
-        type: DataTypes.STRING
-      },
       path: {
         allowNull: false,
         type: DataTypes.STRING
@@ -30,17 +17,28 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING
       },
       url: {
-        allowNull: true,
-        type: DataTypes.STRING,
-        defaultValue: null
+        allowNull: false,
+        type: DataTypes.STRING
       },
       mime_type: {
-        allowNull: true,
+        allowNUll: false,
         type: DataTypes.STRING
       },
       is_verified: {
         allowNull: true,
-        type: DataTypes.BOOLEAN
+        type: DataTypes.TINYINT
+      },
+      type: {
+        allowNull: false,
+        type: DataTypes.STRING
+      },
+      uploadable_type: {
+        allowNull: false,
+        type: DataTypes.STRING
+      },
+      uploadable_id: {
+        allowNUll: false,
+        type: DataTypes.INTEGER
       },
       created_at: {
         allowNull: false,
