@@ -10,14 +10,14 @@ module.exports = {
       },
       company_id: {
         allowNull: false,
-        primaryKey: true,
+        foreignKey: true,
         type: Sequelize.INTEGER,
         references: {
           model: 'companies',
           key: 'id'}
       },
       user_id: {
-        allowNull: true,
+        allowNull: false,
         foreignKey: true,
         type: Sequelize.INTEGER,
         references: {

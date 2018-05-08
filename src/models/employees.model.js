@@ -1,59 +1,56 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var Employees = sequelize.define('emplooyees', {
+  var Employee = sequelize.define('employees', {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      type: Sequelize.INTEGER
+      type: DataTypes.INTEGER
     },
     company_id: {
       allowNull: false,
-      primaryKey: true,
-      type: Sequelize.INTEGER,
+      foreignKey: true,
+      type: DataTypes.INTEGER,
       references: {
         model: 'companies',
         key: 'id'}
     },
     user_id: {
-      allowNull: true,
+      allowNull: false,
+      type: DataTypes.INTEGER,
       foreignKey: true,
-      type: Sequelize.INTEGER,
       references: {
         model: 'users',
-        key: 'id'}
+        key: 'id'
+      }
     },
     role: {
       allowNull: false,
-      type: Sequelize.INTEGER(11)
+      type: DataTypes.INTEGER(11)
     },
     salary: {
       allowNull: false,
-      type: Sequelize.INTEGER
+      type: DataTypes.INTEGER
     },
     flag: {
       allowNull: false,
-      type: Sequelize.INTEGER(11)
+      type: DataTypes.INTEGER(11)
     },
     created_at: {
       allowNull: false,
-      type: Sequelize.DATE
+      type: DataTypes.DATE
     },
     updated_at: {
       allowNull: false,
-      type: Sequelize.DATE
+      type: DataTypes.DATE
     }
   }, {
     underscored: true,
   });
-  Employees.associate = function(models) {
+  Employee.associate = function(models) {
     // associations can be defined here
-  Employees.belongsTo(models.users,{
-    foreignKey: 'user_id'
-  });
-  Employees.belongsTo(models.companies,{
-    foreignKey: 'company_id'
-  });
+  Employee.belongsTo(models.users, { foreignKey: 'user_id' });
+  Employee.belongsTo(models.companies,{ foreignKey: 'company_id'});
   };
-  return Employees;
+  return Employee;
 };

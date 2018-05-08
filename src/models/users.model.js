@@ -104,6 +104,10 @@ module.exports = function(sequelize, DataTypes) {
       foreignKey: 'user_id',
       onDelete: 'CASCADE'
     });
+    User.hasMany(models.employees, {
+      foreignKey: 'user_id',
+      onDelete: 'CASCADE'
+    });
     User.belongsTo(models.roles, {
       foreignKey: 'role_id',
       onDelete: 'CASCADE'
