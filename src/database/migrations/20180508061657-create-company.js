@@ -10,7 +10,7 @@ module.exports = {
       },
       codename: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(45),
       },
       name: {
         allowNull: false,
@@ -22,11 +22,11 @@ module.exports = {
       },
       phone: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(45)
       },
       timezone: {
         allowNull: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING(45)
       },
       created_at: {
         allowNull: false,
