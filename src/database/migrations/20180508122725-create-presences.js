@@ -16,7 +16,6 @@ module.exports = {
           model: 'employees',
           key: 'id'
         },
-        defaultValue: 2
       },
       presence_date: {
         allowNull: false,
@@ -36,14 +35,14 @@ module.exports = {
       },
       rest_end: {
         allowNull: false,
-        type:Sequelize.DATE
+        type: Sequelize.DATE
       },
       is_absence: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.TINYINT,
         defaultValue: false
       },
       is_leave: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.TINYINT,
         defaultValue: false
       },
       overwork: {
