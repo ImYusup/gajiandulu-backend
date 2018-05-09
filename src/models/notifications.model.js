@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
   });
   notifications.associate = function(models) {
     // associations can be defined here
+    notifications.belongsTo(models.employee, { 
+      foreignKey: 'employee_id',
+      onDelete: 'CASCADE' 
+    });
   };
   return notifications;
 };

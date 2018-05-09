@@ -51,10 +51,16 @@ module.exports = (sequelize, DataTypes) => {
   Employee.associate = function(models) {
     // associations can be defined here
     Employee.belongsTo(models.users, { 
-      foreignKey: 'user_id' 
+      foreignKey: 'user_id',
+      onDelete: 'CASCADE' 
     });
     Employee.belongsTo(models.companies,{ 
-      foreignKey: 'company_id'
+      foreignKey: 'company_id',
+      onDelete: 'CASCADE'
+    });
+    Employee.hasMany(models.notifications,{
+      foreignKey: 'employee_id',
+      onDelete: 'CASCADE'
     });
     Employee.hasMany(models.presences,{ 
       foreignKey: 'presences_id',
