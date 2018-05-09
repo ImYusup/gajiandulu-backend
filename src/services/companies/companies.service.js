@@ -7,8 +7,32 @@ const companyService = {
     const { data } = req.body;
     // res.local.users from auth middleware
     // check src/helpers/auth.js
+    // let noSpaces = req.body.name.replace(/\s/g, '');
+    // let theCode = noSpaces.replace(/[aeiou]/ig,'').toUpperCase();
+    let theCode = 'PTBB';
+    let lastNum = '001';
+    // let finalCode = (theCode+lastNum);
+    const companyExist = await Company.findOne({
+      where: ['codename like ?', `${theCode}%` + '%']
+    });
+    /* eslint-disable*/
+    console.log('datanya', companyExist);
+
+    if (companyExist) {
+      let lastNums = companyExist.substr(-3);
+      lastNums = parseInt(lastNums);
+      lastNums++;
+      lastNums = ('0000'+lastNums).substr(-3);
+      let finalCode = (theCode+lastNums);
+    } else {
+      lastNum = parseInt(lastNum);
+      // lastNum++;
+      lastNum = ('0000'+lastNum).substr(-3);
+      let finalCode = (theCode+lastNum);
+    }
+
     try {
-      const payload = Object.assign({}, data, {active: true} );
+      const payload = Object.assign({}, data, {codename: finalCode, active: true} );
       let company = await Company.create(payload);
       if (company) {
         return res

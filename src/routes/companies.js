@@ -8,7 +8,6 @@ const { check, validationResult } = require('express-validator/check');
 router.post(
   '/',
   [
-    check('*.codename', 'codename should be present').exists(),
     check('*.name', 'name should only has chars and space').isLength({
       min: 3
     }),
