@@ -15,6 +15,16 @@ module.exports = {
         queryInterface.sequelize.query(
           'ALTER TABLE digital_assets ADD COLUMN uploadable_id INTEGER NOT NULL AFTER uploadable_type;'
         )
+      )
+      .then(() =>
+        queryInterface.sequelize.query(
+          'ALTER TABLE digital_assets MODIFY COLUMN created_at DATETIME AFTER uploadable_id;'
+        )
+      )
+      .then(() =>
+        queryInterface.sequelize.query(
+          'ALTER TABLE digital_assets MODIFY COLUMN updated_at DATETIME AFTER created_at;'
+        )
       );
   },
 
