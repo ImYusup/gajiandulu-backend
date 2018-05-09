@@ -56,6 +56,10 @@ module.exports = (sequelize, DataTypes) => {
     Employee.belongsTo(models.companies,{ 
       foreignKey: 'company_id'
     });
+    Employee.hasMany(models.presences,{ 
+      foreignKey: 'presences_id',
+      onDelete : 'CASCADE'
+    });
   };
   return Employee;
 };
