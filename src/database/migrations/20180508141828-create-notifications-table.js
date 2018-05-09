@@ -9,7 +9,13 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       employee_id: {
-        type: Sequelize.INTEGER
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        foreignKey: true,
+        references: {
+          model: 'employees',
+          key: 'id'
+        }
       },
       body: {
         allowNull: false,

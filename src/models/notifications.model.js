@@ -8,7 +8,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     employee_id: {
-      type: DataTypes.INTEGER
+      allowNull: false,
+      type: DataTypes.INTEGER,
+      foreignKey: true,
+      references: {
+        model: 'employees',
+        key: 'id'
+      }
     },
     body: {
       allowNull: false,
