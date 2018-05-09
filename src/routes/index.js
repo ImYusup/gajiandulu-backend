@@ -8,11 +8,10 @@ const me = require('./me');
 const digitalAsset = require('./digital-assets');
 const feedback = require('./feedbacks');
 const promo = require('./promos');
-
 const loan = require('./loans');
-
 const forgotPassword = require('./forgot-password');
 const bankData = require('./bank-data');
+const companies = require('./companies');
 
 module.exports = {
   register,
@@ -27,5 +26,6 @@ module.exports = {
   loan,
   forgotPassword,
   promo,
-  bankData
+  bankData,
+  companies
 };

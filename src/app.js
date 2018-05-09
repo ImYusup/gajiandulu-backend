@@ -47,6 +47,7 @@ app.use('/admins', authAdmin, GraphHTTP((req, res) => ({
   pretty: process.env.NODE_ENV !== 'production',
   graphiql: process.env.NODE_ENV !== 'production'
 })));
+app.use('/companies', routes.companies);
 
 app.use(notFound());
 
