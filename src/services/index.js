@@ -11,6 +11,7 @@ const feedbackConversationService = require('./feedback_conversations/feedback.c
 const loanService = require('./loans/loans.service.js');
 const forgotPasswordService = require('./forgot-password/forgot.password.service');
 const promoService = require('./promos/promos.service');
+const companyService = require('./companies/companies.service');
 // eslint-disable-next-line no-unused-vars
 module.exports = {
   userService,
@@ -25,5 +26,6 @@ module.exports = {
   loanService,
   forgotPasswordService,
   promoService,
-  bankDataService
+  bankDataService,
+  companyService
 };
