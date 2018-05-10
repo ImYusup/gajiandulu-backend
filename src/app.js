@@ -28,11 +28,21 @@ app.use('/uploads', express.static(config.uploads));
 
 // Route for API
 // auth is middleware for authentication
+app.use(
+  '/admins',
+  authAdmin,
+  GraphHTTP((req, res) => ({
+    schema: adminSchema,
+    rootValue: { req, res },
+    pretty: process.env.NODE_ENV !== 'production',
+    graphiql: process.env.NODE_ENV !== 'production'
+  }))
+);
 app.use('/register', routes.register);
 app.use('/login', routes.login);
 app.use('/users', auth, routes.users);
 app.use('/family', auth, routes.family);
-app.use('/identity-cards', auth,  routes.identityCard);
+app.use('/identity-cards', auth, routes.identityCard);
 app.use('/occupations', auth, routes.occupation);
 app.use('/me', auth, routes.me);
 app.use('/me/banks', auth, routes.bankData);
@@ -41,13 +51,7 @@ app.use('/feedbacks', auth, routes.feedback);
 app.use('/promos', routes.promo);
 app.use('/loans', auth, routes.loan);
 app.use('/forgot-password', routes.forgotPassword);
-app.use('/admins', authAdmin, GraphHTTP((req, res) => ({
-  schema: adminSchema,
-  rootValue: {req, res},
-  pretty: process.env.NODE_ENV !== 'production',
-  graphiql: process.env.NODE_ENV !== 'production'
-})));
-app.use('/companies', routes.companies);
+app.use('/companies', auth, routes.companies);
 
 app.use(notFound());
 

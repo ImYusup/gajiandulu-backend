@@ -12,6 +12,7 @@ const loanService = require('./loans/loans.service.js');
 const forgotPasswordService = require('./forgot-password/forgot.password.service');
 const promoService = require('./promos/promos.service');
 const companyService = require('./companies/companies.service');
+const companySettingService = require('./company-settings/company-settings.service');
 // eslint-disable-next-line no-unused-vars
 module.exports = {
   userService,
@@ -27,5 +28,6 @@ module.exports = {
   forgotPasswordService,
   promoService,
   bankDataService,
-  companyService
+  companyService,
+  companySettingService
 };
