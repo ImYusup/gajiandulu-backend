@@ -33,7 +33,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.BOOLEAN
       },
-      res_limit: {
+      rest_limit: {
         allowNull: false,
         type: Sequelize.INTEGER
       },

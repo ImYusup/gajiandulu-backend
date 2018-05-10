@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.BOOLEAN
       },
-      res_limit: {
+      rest_limit: {
         allowNull: false,
         type: DataTypes.INTEGER
       },
