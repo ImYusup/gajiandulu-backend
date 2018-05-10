@@ -13,7 +13,8 @@ const companyService = {
 
     try {
       let finalCode;
-      let theCode = noSpaces.replace(/[aeiou]/ig,'').toUpperCase();
+      let removePunctuations = noSpaces.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,'');
+      let theCode = removePunctuations.replace(/[aeiou]/ig,'').toUpperCase();
       const companyExist = await Company.findOne({order: [['created_at', 'DESC'],], where: {codename: {[Op.like]: `${theCode}%`}}
       });
 
