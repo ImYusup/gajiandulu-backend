@@ -7,7 +7,7 @@ const { Op } = Sequelize;
 const companyService = {
   create: async (req, res) => {
     const { data } = req.body;
-    let noSpaces = req.body.name.replace(/\s/g, '');
+    let noSpaces = req.body.data.name.replace(/\s/g, '');
     // res.local.users from auth middleware
     // check src/helpers/auth.js
 
