@@ -7,33 +7,27 @@ const { Op } = Sequelize;
 const companyService = {
   create: async (req, res) => {
     const { data } = req.body;
+    let noSpaces = req.body.name.replace(/\s/g, '');
     // res.local.users from auth middleware
     // check src/helpers/auth.js
-    // let noSpaces = req.body.name.replace(/\s/g, '');
-    // let theCode = noSpaces.replace(/[aeiou]/ig,'').toUpperCase();
-    let theCode = 'PTBB';
-    // let lastNum = '001';
-    // let finalCode = (theCode+lastNum);
-    const companyExist = await Company.findOne({
-      where: { codename: { [Op.like]: `${theCode}%` } }
-    });
-    /* eslint-disable no-console*/
-    console.log('datanya', parseInt(companyExist.codename.substr(-3)) + 1);
-
-    // if (companyExist) {
-    //   let lastNums = companyExist.substr(-3);
-    //   lastNums = parseInt(lastNums);
-    //   lastNums++;
-    //   lastNums = ('0000' + lastNums).substr(-3);
-    //   let finalCode = theCode + lastNums;
-    // } else {
-    //   lastNum = parseInt(lastNum);
-    //   // lastNum++;
-    //   lastNum = ('0000' + lastNum).substr(-3);
-    //   let finalCode = theCode + lastNum;
-    // }
 
     try {
+      let finalCode;
+      let theCode = noSpaces.replace(/[aeiou]/ig,'').toUpperCase();
+      const companyExist = await Company.findOne({order: [['created_at', 'DESC'],], where: {codename: {[Op.like]: `${theCode}%`}}
+      });
+
+      if (companyExist) {
+        let lastNums = companyExist.codename.substr(-3);
+        lastNums = parseInt(lastNums);
+        lastNums++;
+        lastNums = ('0000'+lastNums).substr(-3);
+        finalCode = (theCode+lastNums);
+      } else {
+        const lastNum = '001';
+        finalCode = (theCode+lastNum);
+      }
+
       const payload = Object.assign({}, data, {
         codename: finalCode,
         active: true
