@@ -1,30 +1,42 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('feedbacks', {
+    return queryInterface.createTable('employees', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      employee_id: {
+      company_id: {
         allowNull: false,
         foreignKey: true,
         type: Sequelize.INTEGER,
         references: {
-          model: 'employees',
+          model: 'companies',
           key: 'id'
         }
       },
-      summary: {
+      user_id: {
         allowNull: false,
-        type: Sequelize.STRING
+        foreignKey: true,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id'
+        }
       },
-      status: {
+      role: {
         allowNull: false,
-        type: Sequelize.ENUM('pending', 'onprocess', 'resolved'),
-        defaultValue: 'pending'
+        type: Sequelize.INTEGER(11)
+      },
+      salary: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      flag: {
+        allowNull: false,
+        type: Sequelize.INTEGER(11)
       },
       created_at: {
         allowNull: false,
@@ -37,6 +49,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('feedbacks');
+    return queryInterface.dropTable('employees');
   }
 };

@@ -8,12 +8,12 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true
       },
-      user_id: {
+      employee_id: {
         allowNull: false,
         type: DataTypes.INTEGER,
         foreignKey: true,
         references: {
-          model: 'users',
+          model: 'employees',
           key: 'id'
         }
       },
@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
   );
   Feedback.associate = function(models) {
     // associations can be defined here
-    Feedback.belongsTo(models.users, { foreignKey: 'user_id' });
+    Feedback.belongsTo(models.employees, { foreignKey: 'employee_id' });
     Feedback.hasMany(models.feedback_conversations, {
       foreignKey: 'feedback_id',
       as: 'conversations'

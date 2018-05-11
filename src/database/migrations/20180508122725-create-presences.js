@@ -15,7 +15,7 @@ module.exports = {
         references: {
           model: 'employees',
           key: 'id'
-        },
+        }
       },
       presence_date: {
         allowNull: false,

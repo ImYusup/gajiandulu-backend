@@ -62,19 +62,20 @@ module.exports = function(sequelize, DataTypes) {
       },
       is_active_notif: {
         type: DataTypes.TINYINT,
-        defaultValue: false
+        defaultValue: 0
       },
       is_confirmed_email: {
         type: DataTypes.TINYINT,
-        defaultValue: false
+        defaultValue: 0
       },
       currency: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        defaultValue: 'IDR'
       },
       registration_complete: {
         type: DataTypes.TINYINT,
-        defaultValue: false
+        defaultValue: 0
       },
       created_at: {
         allowNull: false,
@@ -116,6 +117,5 @@ module.exports = function(sequelize, DataTypes) {
     return values;
   };
 
-  
   return User;
 };
