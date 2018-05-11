@@ -19,14 +19,13 @@ module.exports = {
       },
       code: {
         allowNull: false,
-        type:Sequelize.STRING
+        type: Sequelize.STRING
       },
       discount: {
         allowNull: false,
-        type:Sequelize.STRING
+        type: Sequelize.STRING
       },
-
-      expired_date:{
+      expired_date: {
         allowNull: false,
         type: Sequelize.DATEONLY
       },
@@ -42,7 +41,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-
     return queryInterface.dropTable('promos');
     /*
       Add reverting commands here.

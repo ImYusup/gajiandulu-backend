@@ -20,7 +20,12 @@ module.exports = {
         updated_at: date
       },
       {
-        role: 'user',
+        role: 'manajer',
+        created_at: date,
+        updated_at: date
+      },
+      {
+        role: 'karyawan',
         created_at: date,
         updated_at: date
       }

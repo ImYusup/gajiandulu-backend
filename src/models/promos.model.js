@@ -1,6 +1,6 @@
-
 module.exports = (sequelize, DataTypes) => {
-  const Promo = sequelize.define('promos',
+  const Promo = sequelize.define(
+    'promos',
     {
       id: {
         allowNull: false,
@@ -12,23 +12,22 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
         validate: {
-          notEmpty: {msg: 'Please input code'},
+          notEmpty: { msg: 'Please input code' }
         }
       },
       discount: {
         allowNull: false,
         type: DataTypes.INTEGER,
         validate: {
-          notEmpty: {msg: 'Please input discount'},
-          isNumeric: {msg: 'Please input only format number'}
+          notEmpty: { msg: 'Please input discount' },
+          isNumeric: { msg: 'Please input only format number' }
         }
       },
       expired_date: {
         allowNull: false,
         type: DataTypes.DATEONLY,
         validate: {
-          notEmpty: {msg: 'Please input expired date'}
-          
+          notEmpty: { msg: 'Please input expired date' }
         }
       },
       created_at: {
@@ -46,7 +45,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Promo.associate = function(models) {
-
     // associations can be defined here
   };
   return Promo;

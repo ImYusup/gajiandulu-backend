@@ -23,10 +23,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       password: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.STRING
       },
-      date_of_birth: {
+      birthday: {
         allowNull: false,
         type: Sequelize.DATEONLY
       },
@@ -36,23 +36,29 @@ module.exports = {
         unique: true
       },
       hash: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.STRING,
         unique: true
       },
-      is_confirmed_email: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false
-      },
-      role_id: {
+      is_active_notif: {
         allowNull: true,
-        foreignKey: true,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'roles',
-          key: 'id'
-        },
-        defaultValue: 2
+        type: Sequelize.TINYINT,
+        defaultValue: 0
+      },
+      is_confirmed_email: {
+        allowNull: true,
+        type: Sequelize.TINYINT,
+        defaultValue: 0
+      },
+      currency: {
+        allowNull: true,
+        type: Sequelize.STRING(45),
+        defaultValue: 'IDR'
+      },
+      registration_complete: {
+        allowNull: true,
+        type: Sequelize.TINYINT,
+        defaultValue: 0
       },
       created_at: {
         allowNull: false,

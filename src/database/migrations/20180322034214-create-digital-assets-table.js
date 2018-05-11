@@ -9,19 +9,6 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true
       },
-      user_id: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        foreignKey: true,
-        references: {
-          model: 'users',
-          key: 'id'
-        }
-      },
-      type: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
       path: {
         allowNull: false,
         type: Sequelize.STRING
@@ -39,8 +26,21 @@ module.exports = {
         type: Sequelize.STRING
       },
       is_verified: {
-        allowNull: true,
-        type: Sequelize.BOOLEAN
+        allowNull: false,
+        type: Sequelize.TINYINT,
+        defaultValue: 0
+      },
+      type: {
+        allowNull: false,
+        type: Sequelize.STRING(45)
+      },
+      uploadable_type: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      uploadable_id: {
+        allowNull: false,
+        type: Sequelize.INTEGER
       },
       created_at: {
         allowNull: false,

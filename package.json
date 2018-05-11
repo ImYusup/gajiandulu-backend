@@ -2,14 +2,13 @@
   "name": "bibitnomic-api",
   "description": "feathers API",
   "version": "0.1.0",
-  "homepage": "bibitnomic.id",
+  "homepage": "https://bibitnomic.id",
   "main": "src",
   "keywords": [
     "bibitnomic"
   ],
   "author": {
-    "name": "Krisrp",
-    "email": "kristoforusrp@gmail.com"
+    "name": "Refactory"
   },
   "contributors": [
     "Refactory.id"

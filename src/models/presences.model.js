@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         references: {
           model: 'employees',
           key: 'id'
-        },
+        }
       },
       presence_date: {
         allowNull: false,
@@ -40,11 +40,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       is_absence: {
         allowNull: false,
-        type: DataTypes.TINYINT,
+        type: DataTypes.TINYINT
       },
       is_leave: {
         allowNull: false,
-        type: DataTypes.TINYINT,
+        type: DataTypes.TINYINT
       },
       overwork: {
         allowNull: false,
@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
       updated_at: {
         allowNull: false,
         type: DataTypes.DATE
-      },
+      }
     },
     {
       timestamps: true,
@@ -78,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   // eslint-disable-next-line no-unused-vars
-  Presences.associate = function (models) {
+  Presences.associate = function(models) {
     // Define associations here
     // See http://docs.sequelizejs.com/en/latest/docs/associations/
     Presences.belongsTo(models.employees, {

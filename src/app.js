@@ -1,5 +1,5 @@
 require('module-alias/register');
-const { auth, authAdmin, notFound } = require('@helpers');
+const { authAdmin, notFound } = require('@helpers');
 // const path = require('path');
 // const favicon = require('serve-favicon');
 const compress = require('compression');
@@ -38,20 +38,9 @@ app.use(
     graphiql: process.env.NODE_ENV !== 'production'
   }))
 );
-app.use('/register', routes.register);
-app.use('/login', routes.login);
-app.use('/users', auth, routes.users);
-app.use('/family', auth, routes.family);
-app.use('/identity-cards', auth, routes.identityCard);
-app.use('/occupations', auth, routes.occupation);
-app.use('/me', auth, routes.me);
-app.use('/me/banks', auth, routes.bankData);
-app.use('/digital-assets', auth, routes.digitalAsset);
-app.use('/feedbacks', auth, routes.feedback);
-app.use('/promos', routes.promo);
-app.use('/loans', auth, routes.loan);
-app.use('/forgot-password', routes.forgotPassword);
-app.use('/companies', auth, routes.companies);
+
+// API Version
+app.use('/api/v1', routes.v1);
 
 app.use(notFound());
 
