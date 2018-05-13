@@ -1,6 +1,6 @@
 require('module-alias/register');
 const { response } = require('@helpers');
-const { companyService, companySettingService } = require('@services/v1');
+const { companyService, companySettingService, dashboardService } = require('@services');
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator/check');
@@ -57,5 +57,13 @@ router.post(
     companySettingService.create(req, res);
   }
 );
+
+router.get('/:id/depositsummary?month=:month&year=:year', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  dashboardService.get(req, res);
+});
 
 module.exports = router;
