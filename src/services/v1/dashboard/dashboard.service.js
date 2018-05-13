@@ -32,7 +32,7 @@ const dashboardService = {
         }
 
         const depositSummary = results.map(data => {
-          
+
           return Object.assign(
             {},
             {
@@ -50,8 +50,7 @@ const dashboardService = {
                 true,
                 'Deposit summary has been successfully retrieved',
                 depositSummary
-            );
-          );
+            ));
         });
       });
 

@@ -1,6 +1,6 @@
 require('module-alias/register');
 const { response } = require('@helpers');
-const { companyService, companySettingService, dashboardService } = require('@services');
+const { companyService, companySettingService, dashboardService } = require('@services/v1');
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator/check');
