@@ -1,6 +1,6 @@
-# bibitnomic-api
+# gajiandulu-api
 
->
+---
 
 ## About
 
@@ -30,24 +30,16 @@ Getting up and running is as easy as 1, 2, 3.
 
 3.  Configure your database connection
 
-    ### Never Commit/Push your changes in these config file! Keep it only in your local!
+    ### Create .env file in root directory of the project
 
-    > config/config.json
+    Write this in `.env` file
 
-    ```
-    "development": {
-        "username": "your_username",
-        "password": "your_password",
-        "database": "bibitnomic_dev",
-        "host": "127.0.0.1",
-        "dialect": "mysql"
-    },
-    ```
-
-    > config/default.json
+    > .env
 
     ```
-    "mysql": "mysql://your_username:your_password@127.0.0.1:3306/gajian_dulu"
+    DEV_USER=your_mysql_username
+    DEV_PASS=your_mysql_password
+    DEV_DATABASE=bibitnomic_dev
     ```
 
 4.  Migrate database using sequelize
@@ -61,10 +53,6 @@ Getting up and running is as easy as 1, 2, 3.
     node_modules/.bin/sequelize db:migrate
     ```
 
-    ```
-    node_modules/.bin/sequelize db:seed
-    ```
-
 5.  Start your app
 
     ```
@@ -73,12 +61,13 @@ Getting up and running is as easy as 1, 2, 3.
 
 ## Specification
 
-* [User register](https://gitlab.com/refactory-bibitnomic/gajian-dulu/wikis/Registration-Specification)
-* [User setting](https://gitlab.com/refactory-bibitnomic/gajian-dulu/wikis/Setting-Spesification)
+Read specification in this link
+
+* [GajianDulu Specifications](https://gitlab.com/refactory-bibitnomic/gajian-dulu/wikis/)
 
 ## Testing
 
-Simply run `npm test` and all your tests in the `test/` directory will be run.
+Simply run `npm run test` and all your tests in the `test/` directory will be run.
 
 ## Changelog
 

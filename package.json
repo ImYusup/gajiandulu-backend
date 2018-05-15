@@ -32,9 +32,10 @@
   },
   "scripts": {
     "test": "yarn run eslint && yarn run mocha",
-    "eslint": "eslint src/. test/. --config .eslintrc.json",
+    "eslint": "node_modules/.bin/eslint src/. test/. --config .eslintrc.json",
     "start": "nodemon --exec node src/",
-    "mocha": "mocha test/ --recursive --exit"
+    "mocha": "mocha test/ --recursive --exit",
+    "precommit": "lint-staged"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -42,9 +43,10 @@
     "compression": "^1.7.2",
     "config": "^1.30.0",
     "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
     "express": "^4.16.3",
-    "express-validator": "^5.1.2",
     "express-graphql": "^0.6.12",
+    "express-validator": "^5.1.2",
     "fb": "^2.0.0",
     "graphql": "^0.13.2",
     "helmet": "^3.12.0",
@@ -76,5 +78,12 @@
     "request": "^2.85.0",
     "request-promise": "^4.2.2",
     "sequelize-cli": "^4.0.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --config --write",
+      "npm run eslint",
+      "git add"
+    ]
   }
 }
