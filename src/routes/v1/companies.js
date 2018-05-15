@@ -1,20 +1,29 @@
 require('module-alias/register');
-const { response } = require('@helpers');
-const { companyService, companySettingService } = require('@services/v1');
+const {
+  response
+} = require('@helpers');
+const {
+  companyService,
+  companySettingService,
+  dashboardService
+} = require('@services/v1');
 const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require('express-validator/check');
+const {
+  check,
+  query,
+  validationResult
+} = require('express-validator/check');
 
 router.post(
-  '/',
-  [
+  '/', [
     check('*.name', 'name should only has chars and space').isLength({
       min: 3
     }),
     check('*.address', 'address should be present').exists(),
-    check('*.phone', 'must be phone number')
-      .optional({ nullable: true })
-      .isMobilePhone('id-ID'),
+    check('*.phone', 'must be phone number').optional({
+      nullable: true
+    }).isMobilePhone('id-ID'),
     check('*.timezone', 'timezone should be present').exists()
   ],
   (req, res) => {
@@ -27,8 +36,7 @@ router.post(
 );
 
 router.post(
-  '/:id/settings',
-  [
+  '/:id/settings', [
     check(
       '*.notif_presence_overdue',
       'notif presence overdue should not be empty'
@@ -57,5 +65,17 @@ router.post(
     companySettingService.create(req, res);
   }
 );
+
+router.get('/:id/deposit-summary', [
+  query('month', 'failed need query month and year').exists(),
+  query('year', 'failed need query month and year').exists()
+],
+(req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  dashboardService.get(req, res);
+});
 
 module.exports = router;
