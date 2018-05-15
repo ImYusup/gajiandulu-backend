@@ -5,6 +5,10 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator/check');
 
+router.get(
+  '/:company_id/presences/:presence_id',(req,res)=>{companyService.get(req,res)}
+)
+
 router.post(
   '/',
   [
