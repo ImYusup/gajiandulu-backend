@@ -3,56 +3,47 @@ const { response } = require('@helpers');
 const {
   journals: Journals,
   employees: Employee,
-  companies: Company
 } = require('@models');
 const Sequelize = require('sequelize');
 
 const dashboardService = {
   get: async (req, res) => {
-    const { data } = req.body;
-    const { month: month } = req.params;
-    const { year: year } = req.params;
+    const { month: month } = req.query;
+    const { year: year } = req.query;
     const { id: companyId } = req.params;
 
     try {
-      let company = await Company.findAll({
-        attributes: ['Company.*', 'Employee.*', 'Journals.*' [Sequelize.fn('COUNT', Sequelize.col('Employee.salary')), 'total_salary']],
-        include: [{
-          model: Employee,
-          include: [{
-            model: Journals,
-            where: { month: month, year: year, id: companyId  },
-          }],
-          }],
-      }).then(results => {
-        if (!results) {
-          return res
-            .status(400)
-            .json(response(false, `Company with id ${companyId} is not found`));
-        }
-
-        const depositSummary = results.map(data => {
-
-          return Object.assign(
-            {},
-            {
-              id: companyId,
-              year: year,
-              month: month,
-              total_salary: data.total_salary ,
-              deposit: data.debit - data.kredit,
-            },
-          );
-          res
-          .status(200)
-          .json(
-            response(
-                true,
-                'Deposit summary has been successfully retrieved',
-                depositSummary
-            ));
-        });
+      const total_salary = await Employee.findAll({
+        where: { company_id: companyId },
+        attributes: [[Sequelize.fn('SUM', Sequelize.col('salary')), 'total_salaries']],
       });
+      const deposits = await Employee.findAll({
+        attributes: ['company_id'],
+        where: { company_id: companyId },
+        raw: true,
+        include: [{
+          model: Journals,
+          attributes: [[Sequelize.fn('SUM', (Sequelize.col('debet'), Sequelize.literal('-'), Sequelize.col('kredit'))), 'deposit']],
+          raw: true
+        }],
+      });
+
+      const payload = Object.assign({}, {
+        id: companyId,
+        month: month,
+        year: year,
+        total_salary: total_salary[0].dataValues.total_salaries,
+        deposit: deposits[0]['journals.deposit'],
+      });
+      return res
+        .status(200)
+        .json(
+          response(
+            true,
+            'Deposit summary has been successfully retrieved',
+            payload,
+          )
+        );
 
     } catch (error) {
       if (error.errors) {
