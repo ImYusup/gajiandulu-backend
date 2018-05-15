@@ -112,3 +112,4 @@ $RECYCLE.BIN/
 lib/
 data/
 public/uploads
+.env
