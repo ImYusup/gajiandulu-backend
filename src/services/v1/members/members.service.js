@@ -10,8 +10,6 @@ const Sequelize = require('sequelize');
 
 const memberService = {
   get: async (req, res) => {
-    const { month: month } = req.query;
-    const { year: year } = req.query;
     const { id: userId } = req.params;
 
 
@@ -21,6 +19,17 @@ const memberService = {
         attributes: [[Sequelize.fn('SUM', Sequelize.col('fine')), 'fines']],
 
       });
+
+      const month = await Presence.findAll({
+        where: { employee_id:userId},
+        attributes :[[Sequelize.fn('month', Sequelize.col('presence_date')),'month']],
+      });
+
+      const year = await Presence.findAll({
+        where: { employee_id:userId},
+        attributes :[[Sequelize.fn('year', Sequelize.col('presence_date')),'year']],
+      });
+
       const workhour = await Presence.findAll({
         where: { employee_id: userId },
         attributes: [[Sequelize.fn('SUM', Sequelize.col('work_hours')), 'workhour']],
@@ -56,8 +65,8 @@ const memberService = {
         flag: employeeData[0]['flag'],
 
         salary_summary: {
-          month: month,
-          year: year,
+          month: month[0].dataValues.month,
+          year: year[0].dataValues.year,
           total_salary: salary[0].dataValues.salaries,
           fine: fines[0].dataValues.fines,
           workhour: workhour[0].dataValues.workhour,
@@ -83,7 +92,32 @@ const memberService = {
       }
       return res.status(400).json(response(false, error.message));
     }
-  }
+  },
+
+  patch: async (req, res) => {
+    const userId = req.params.id;
+    const { data } = req.body;
+    try {
+      let employee = await Employee.findOne({ where: { id: userId } });
+
+      Employee.update(data, { where: { id: userId } });      
+      if(employee.flag == '3'){
+        return res
+          .status(200)
+          .json(response(true, 'Member status has been successfully updated'));
+      }
+      return res
+        .status(400)
+        .json(response(false));
+
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
+  },
+
 };
 
 module.exports = memberService;
