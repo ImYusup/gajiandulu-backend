@@ -9,11 +9,11 @@ const bankDataService = {
     // check src/helpers/auth.js
     const { id: user_id } = res.local.users;
     try {
-      const payload = Object.assign({}, data, { user_id }, {active: true} );
-      let bank = await BankData.create(payload);
+      const payload = Object.assign({}, data, { user_id }, { active: true });
+      const bank = await BankData.create(payload);
       if (bank) {
         return res
-          .status(200)
+          .status(201)
           .json(response(true, 'Bank data created successfully', bank, null));
       }
     } catch (error) {

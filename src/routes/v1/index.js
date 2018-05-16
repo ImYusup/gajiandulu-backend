@@ -19,7 +19,7 @@ v1.use('/register', register);
 v1.use('/login', login);
 v1.use('/users', auth, users);
 v1.use('/me', auth, me);
-v1.use('/me/banks', auth, bankData);
+v1.use('/banks', auth, bankData);
 v1.use('/digital-assets', auth, digitalAsset);
 v1.use('/feedbacks', auth, feedback);
 v1.use('/promos', promo);

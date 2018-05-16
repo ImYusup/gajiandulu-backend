@@ -20,8 +20,8 @@ router.post(
       .withMessage(
         'should only account number format and no blank space in the end'
       )
-      .isLength({ min: 3 })
-      .withMessage('account number must be at least 3 chars long')
+      .isLength({ min: 5 })
+      .withMessage('account number must be at least 5 chars long')
   ],
   (req, res) => {
     const errors = validationResult(req);
