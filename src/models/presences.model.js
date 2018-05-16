@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.DATE
       },
+      presence_overdue: {
+        allowNull: false,
+        type: DataTypes.INTEGER
+      },
       is_absence: {
         allowNull: false,
         type: DataTypes.TINYINT
@@ -54,9 +58,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER
       },
-      salary: {
+      checkin_location: {
         allowNull: false,
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
+      },
+      chekout_location: {
+        allowNull: false,
+        type: DataTypes.STRING
       },
       fine: {
         allowNull: false,

@@ -37,6 +37,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
+      presence_overdue: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
       is_absence: {
         type: Sequelize.TINYINT,
         defaultValue: false
@@ -53,9 +57,13 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      salary: {
+      checkin_location: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
+      },
+      chekout_location: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       fine: {
         allowNull: false,
