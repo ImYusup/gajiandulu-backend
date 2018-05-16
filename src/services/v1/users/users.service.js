@@ -55,24 +55,6 @@ const userService = {
       // Additional requirement:
       // if user is not completed their registration step delete the all user related record
       // and created new user
-      let user = await User.findOne({ where: { email: email } });
-      if (user) {
-        // Delete the user if `is_confirmed_email` false
-        // this should do cascade delete on associate models
-        if (!user.registration_complete) {
-          await AccessToken.destroy({ where: { user_id: user.id } });
-          await User.destroy({ where: { id: user.id } });
-        } else {
-          return res
-            .status(422)
-            .json(
-              response(
-                false,
-                'You have completed registration process please do login!'
-              )
-            );
-        }
-      }
       const payload = Object.assign(
         {},
         {
@@ -83,13 +65,32 @@ const userService = {
           hash
         }
       );
-
-      user = await User.create(payload);
-      return res
-        .status(201)
-        .json(
-          response(true, 'User has been registered successfully', user, null)
-        );
+      let user = await User.findOne({ where: { email: email } });
+      if (user) {
+        // this should do cascade delete on associate models
+        if (!user.registration_complete) {
+          await User.update(payload, { where: { email: email } });
+          return res
+            .status(200)
+            .json(
+              response(true, 'User has been registered successfully', user)
+            );
+        } else {
+          return res
+            .status(422)
+            .json(
+              response(
+                false,
+                'You have completed registration process please do login!'
+              )
+            );
+        }
+      } else {
+        user = await User.create(payload);
+        return res
+          .status(201)
+          .json(response(true, 'User has been registered successfully', user));
+      }
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
