@@ -24,6 +24,6 @@ v1.use('/digital-assets', auth, digitalAsset);
 v1.use('/feedbacks', auth, feedback);
 v1.use('/promos', promo);
 v1.use('/forgot-password', forgotPassword);
-v1.use('/companies', auth, companies);
+v1.use('/companies', companies);
 
 module.exports = v1;
