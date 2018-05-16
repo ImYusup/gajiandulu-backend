@@ -18,38 +18,43 @@ const companyService = {
           }]
         }]
       });
-      const assets = await DigitalAsset.findOne({ where: { uploadable_id: presences.employee.id } })
+      const assets = await DigitalAsset.findOne({
+        where: {
+          uploadable_id: presences.employee.id,
+          uploadable_type: 'employees'
+        }
+      });
       let result = Object.assign(
         {
-          "id": presences.id,
-          "presence_date": presences.presence_date,
-          "presence_start": presences.presence_id,
-          "presence_end": presences.presence_end,
-          "rest_start": presences.rest_start,
-          "rest_end": presences.rest_end,
-          "presence_overdue": presences.presence_overdue,
-          "is_absence": presences.is_absence,
-          "is_leave": presences.is_leave,
-          "overwork": presences.overwork,
-          "work_hours": presences.work_hours,
-          "salary": presences.salary,
-          "fine": presences.fine,
-          "employee": {
-            "id": presences.employee.id,
-            "role": presences.employee.role,
-            "full_name": presences.employee.user.full_name,
-            "email": presences.employee.user.email,
-            "phone": presences.employee.user.phone,
-            "assets": [
+          'id': presences.id,
+          'presence_date': presences.presence_date,
+          'presence_start': presences.presence_id,
+          'presence_end': presences.presence_end,
+          'rest_start': presences.rest_start,
+          'rest_end': presences.rest_end,
+          'presence_overdue': presences.presence_overdue,
+          'is_absence': presences.is_absence,
+          'is_leave': presences.is_leave,
+          'overwork': presences.overwork,
+          'work_hours': presences.work_hours,
+          'salary': presences.salary,
+          'fine': presences.fine,
+          'employee': {
+            'id': presences.employee.id,
+            'role': presences.employee.role,
+            'full_name': presences.employee.user.full_name,
+            'email': presences.employee.user.email,
+            'phone': presences.employee.user.phone,
+            'assets': [
               {
-                "type": assets.type,
-                "path": assets.path
+                'type': assets.type,
+                'path': assets.path
               }
             ]
           }
         }
-      )
-      if (presences === null) {
+      );
+      if (!presences) {
         return res
           .status(400)
           .json(response(false, `Presences with id ${presence_id} not found`));
