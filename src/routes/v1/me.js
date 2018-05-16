@@ -120,6 +120,7 @@ router.post('/checklog', (req, res) => {
             false,
             'Please specify the type first, type can be checkin or checkout'
           )
+          
         );
     }
 
