@@ -15,6 +15,10 @@ const {
   validationResult
 } = require('express-validator/check');
 
+router.get(
+  '/:company_id/presences/:presence_id',(req,res)=>{companyService.get(req,res);}
+);
+
 router.post(
   '/', [
     check('*.name', 'name should only has chars and space').isLength({
