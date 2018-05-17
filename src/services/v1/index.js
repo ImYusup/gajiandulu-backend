@@ -11,6 +11,7 @@ const companyService = require('./companies/companies.service');
 const companySettingService = require('./company-settings/company-settings.service');
 const dashboardService = require('./dashboard/dashboard.service');
 const memberService = require('./members/members.service');
+
 // eslint-disable-next-line no-unused-vars
 module.exports = {
   userService,
@@ -25,5 +26,5 @@ module.exports = {
   companyService,
   companySettingService,
   dashboardService,
-  memberService,
+  memberService
 };

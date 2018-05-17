@@ -149,7 +149,7 @@ module.exports = function(sequelize, DataTypes) {
   );
 
   Occupation.associate = function(models) {
-    Occupation.hasOne(models.users, { foreignKey: 'occupation_id' });
+    // Occupation.hasOne(models.users, { foreignKey: 'occupation_id' });
   };
 
   return Occupation;

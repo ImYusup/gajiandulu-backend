@@ -3,7 +3,8 @@ const { response } = require('@helpers');
 const {
   companyService,
   companySettingService,
-  dashboardService
+  dashboardService,
+  memberService
 } = require('@services/v1');
 const express = require('express');
 const router = express.Router();
@@ -132,6 +133,25 @@ router.get(
       return res.status(422).json(response(false, errors.array()));
     }
     dashboardService.get(req, res);
+  }
+);
+
+router.post(
+  '/:company_id/members',
+  [
+    check('*.name', 'name should not be empty').exists(),
+    check('*.email', 'email should not be empty').exists(),
+    check('*.phone', 'phone should not be empty').exists(),
+    check('*.salary', 'salary should not be empty').exists(),
+    check('*.role', 'role should not be empty').exists(),
+    check('*.flag', 'flag limit should not be empty').exists()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    memberService.create(req, res);
   }
 );
 

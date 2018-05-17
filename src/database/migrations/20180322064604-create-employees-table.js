@@ -31,12 +31,16 @@ module.exports = {
         type: Sequelize.INTEGER(11)
       },
       salary: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.INTEGER
       },
       flag: {
         allowNull: false,
         type: Sequelize.INTEGER(11)
+      },
+      active: {
+        allowNull: false,
+        type: Sequelize.TINYINT
       },
       created_at: {
         allowNull: false,

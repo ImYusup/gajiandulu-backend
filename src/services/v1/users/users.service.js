@@ -73,7 +73,11 @@ const userService = {
           return res
             .status(200)
             .json(
-              response(true, 'User has been registered successfully', user)
+              response(
+                true,
+                'Invited user has been registered successfully',
+                user
+              )
             );
         } else {
           return res
