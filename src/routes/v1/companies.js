@@ -24,7 +24,20 @@ router.get('/:company_id/presences/:presence_id', (req, res) => {
   }
   companyService.get(req, res);
 });
+router.get('/:company_id/presences', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  companyService.find(req, res);
+});
 
+router.get('/', (req, res) => {
+  companyService.find(req, res);
+});
+router.get('/:company_id/presences', (req, res) => {
+  companyService.get(req, res);
+});
 router.post(
   '/',
   [
