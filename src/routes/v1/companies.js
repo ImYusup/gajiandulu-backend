@@ -168,4 +168,8 @@ router.post(
   }
 );
 
+router.get('/:id/members', (req, res) => {
+  companyMemberService.get(req, res);
+});
+
 module.exports = router;
