@@ -3,8 +3,11 @@ const { response } = require('@helpers');
 const {
   employees: Employee,
   users: User,
-  presences: Presence
+  presences: Presence,
+  companies: Company
 } = require('@models');
+const crypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 const Sequelize = require('sequelize');
 
 const memberService = {
@@ -131,8 +134,25 @@ const memberService = {
     //console.log(data);
     // res.local.users from auth middleware
     // check src/helpers/auth.js
+    const auth = {
+      host: 'smtp.mailtrap.io',
+      port: 2525,
+      auth: {
+        user: 'fd992b099d817f',
+        pass: '6b564816b97868'
+      }
+    };
+    const nodemailerMail = nodemailer.createTransport(auth);
 
     try {
+      const companyData = await Company.findOne({ where: { id: company_id } });
+      if (!companyData) {
+        return res
+          .status(400)
+          .json(
+            response(false, `Company with parameter id ${company_id} not found`)
+          );
+      }
       const emailExist = await User.findOne({
         where: { email: data.email }
       });
@@ -146,32 +166,113 @@ const memberService = {
           { user_id: emailExist.id, company_id, active: true }
         );
         const employee = await Employee.create(payload);
-        return res
-          .status(201)
-          .json(
-            response(
-              true,
-              'Employee has been added successfully',
-              employee,
-              null
-            )
-          );
+        const results = Object.assign({}, { id: employee.id }, data);
+
+        nodemailerMail.sendMail(
+          {
+            from: 'no-reply@gajiandulu.com',
+            to: data.email, // An array if you have multiple recipients.
+            subject: `Member Invitation GajianDulu - ${companyData.name}`,
+            //You can use "html:" to send HTML email content. It's magic!
+            html: `
+              <h1>${companyData.name} Member Invitation</h1>
+              <p>You have invitation from ${companyData.name}</p>
+              <p>The company manager has invited you with these information</p><br>
+              <p>Full Name: ${data.name}</p>
+              <p>Email: ${data.email}</p>
+              <p>Phone: ${data.phone}</p><br>
+              <p>Please do register again in GajianDulu Mobile Apps with those information.</p>
+              <p>Then you must insert this company codename after you done registration</p>
+              <p>--------------------------------------------------------------------------</p>
+              <h1>${companyData.codename}</h1>
+              <p>--------------------------------------------------------------------------</p>
+              `
+          },
+          function(err, info) {
+            if (err) {
+              return res
+                .status(400)
+                .json(
+                  response(
+                    false,
+                    'Failed to send email, please invite member again',
+                    err
+                  )
+                );
+            } else {
+              return res
+                .status(201)
+                .json(
+                  response(true, 'Employee has invited successfully', results)
+                );
+            }
+          }
+        );
       } else {
-        const payload = Object.assign({}, data, { active: true });
+        const hash = crypt.hashSync(new Date().toString() + data.email, 10);
+        const payloadUser = Object.assign(
+          {},
+          { full_name: data.name, email: data.email, phone: data.phone, hash }
+        );
+        const userCreated = await User.create(payloadUser);
 
-        const user = await User.create(payload);
-        //const employee = await Employee.create(payload1);
+        const payloadEmployee = Object.assign(
+          {},
+          {
+            company_id,
+            user_id: userCreated.id,
+            role: data.role,
+            salary: data.salary,
+            flag: data.flag
+          }
+        );
+        const employee = await Employee.create(payloadEmployee);
+        const results = Object.assign({}, { id: employee.id }, data);
 
-        return res
-          .status(201)
-          .json(
-            response(
-              true,
-              'User & Employee has been added successfully',
-              user,
-              null
-            )
-          );
+        nodemailerMail.sendMail(
+          {
+            from: 'no-reply@gajiandulu.com',
+            to: data.email, // An array if you have multiple recipients.
+            subject: `Member Invitation GajianDulu - ${companyData.name}`,
+            //You can use "html:" to send HTML email content. It's magic!
+            html: `
+              <h1>${companyData.name} Member Invitation</h1>
+              <p>You have invitation from ${companyData.name}</p>
+              <p>The company manager has invited you with these information</p><br>
+              <p>Full Name: ${data.name}</p>
+              <p>Email: ${data.email}</p>
+              <p>Phone: ${data.phone}</p><br>
+              <p>Please do register again in GajianDulu Mobile Apps with those information.</p>
+              <p>Then you must insert this company codename after you done registration</p>
+              <p>--------------------------------------------------------------------------</p>
+              <h1>${companyData.codename}</h1>
+              <p>--------------------------------------------------------------------------</p>
+              `
+          },
+          function(err, info) {
+            if (err) {
+              return res
+                .status(400)
+                .json(
+                  response(
+                    false,
+                    'Failed to send email, please invite member again',
+                    err
+                  )
+                );
+            } else {
+              return res
+                .status(201)
+                .json(
+                  response(
+                    true,
+                    'User & Employee has been added successfully',
+                    results
+                  )
+                );
+            }
+          }
+        );
       }
     } catch (error) {
       if (error.errors) {

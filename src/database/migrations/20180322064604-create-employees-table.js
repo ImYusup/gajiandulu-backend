@@ -31,7 +31,7 @@ module.exports = {
         type: Sequelize.INTEGER(11)
       },
       salary: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.INTEGER
       },
       flag: {

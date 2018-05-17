@@ -178,7 +178,7 @@ const companyService = {
         salary: 0,
         user_id,
         role: 1,
-        flag: 2
+        flag: 3
       });
       await User.update(
         { registration_complete: 1 },

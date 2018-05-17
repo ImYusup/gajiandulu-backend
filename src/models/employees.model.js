@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER(11)
       },
       salary: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.INTEGER
       },
       flag: {
@@ -41,7 +41,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       active: {
         allowNull: false,
-        type: DataTypes.TINYINT
+        type: DataTypes.TINYINT,
+        defaultValue: 1
       },
       created_at: {
         allowNull: false,
