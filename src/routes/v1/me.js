@@ -70,6 +70,22 @@ router.post(
 router.patch(
   '/',
   [
+    check('*.email')
+      .optional({ nullable: true })
+      .isEmail()
+      .withMessage('must be a valid email'),
+
+    check('*.adress', 'adress should be present').exists(),
+
+    check('phone', 'phone number should pe present')
+      .exists()
+      .matches(/^[\d]+$/i)
+      .withMessage('Only number that allowed'),
+
+    check('*.timezone', 'timezone should be present').exists(),
+
+    check('*.birthday').isISO8601(),
+
     check(
       '*.old_password',
       'old password required to change new password'
@@ -87,6 +103,61 @@ router.patch(
         return true;
       }
     )
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    meService.patch(req, res);
+  }
+);
+router.patch(
+  '/',
+  [
+    check('*.full_name', ' name should only has chars and space').isLength({
+      min: 3
+    }),
+    check('*.email')
+      .optional({ nullable: true })
+      .isEmail()
+      .withMessage('must be a valid email'),
+
+    check('*.adress', 'adress should be present').exists(),
+
+    check('*.phone', 'must be phone number')
+      .optional({
+        nullable: true
+      })
+
+      .isMobilePhone('id-ID'),
+    check('*.timezone', 'timezone should be present').exists(),
+
+    check('*.birthday').isISO8601(),
+
+    check(
+      '*.old_password',
+      'old password required to change new password'
+    ).custom((value, { req }) => {
+      if (req.body.data.new_password) {
+        return value ? true : false;
+      }
+      return true;
+    }),
+
+    check('*.new_password', 'new password required').custom(
+      (value, { req }) => {
+        if (req.body.data.old_password) {
+          return value ? true : false;
+        }
+        return true;
+      }
+    ),
+
+    check(
+      '*.new_password_confirmation',
+      'new password confirmation must be the same as new password'
+    ).custom((value, { req }) => value === req.body.data.new_password)
   ],
   (req, res) => {
     const errors = validationResult(req);
