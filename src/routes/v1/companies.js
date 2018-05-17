@@ -24,6 +24,7 @@ router.get('/:company_id/presences/:presence_id', (req, res) => {
   }
   companyService.get(req, res);
 });
+
 router.get('/:company_id/presences', (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -35,9 +36,11 @@ router.get('/:company_id/presences', (req, res) => {
 router.get('/', (req, res) => {
   companyService.find(req, res);
 });
+
 router.get('/:company_id/presences', (req, res) => {
   companyService.get(req, res);
 });
+
 router.post(
   '/',
   [
@@ -60,6 +63,22 @@ router.post(
     companyService.create(req, res);
   }
 );
+
+router.patch('/:company_id', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  companyService.patch(req, res);
+});
+
+router.get('/:company_id/settings', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  companySettingService.get(req, res);
+});
 
 router.post(
   '/:id/settings',
@@ -93,6 +112,14 @@ router.post(
   }
 );
 
+router.patch('/:id/settings', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  companySettingService.patch(req, res);
+});
+
 router.get(
   '/:id/deposit-summary',
   [
@@ -107,13 +134,5 @@ router.get(
     dashboardService.get(req, res);
   }
 );
-
-router.patch('/:id/settings', (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json(response(false, errors.array()));
-  }
-  companySettingService.patch(req, res);
-});
 
 module.exports = router;
