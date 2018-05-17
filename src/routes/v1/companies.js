@@ -168,7 +168,7 @@ router.post(
   }
 );
 
-router.get('/:id/members', (req, res) => {
+router.get('/:company_id/members', (req, res) => {
   companyMemberService.get(req, res);
 });
 

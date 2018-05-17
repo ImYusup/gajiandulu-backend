@@ -43,27 +43,27 @@ function totalWorkhour(presenceDatas) {
 
 const companyMemberService = {
   get: async (req, res) => {
-    const { id: userId } = req.params;
+    const { company_id: companyId } = req.params;
 
     try {
       const journalData = await Journal.findAll({
-        where: { employee_id: userId }
+        where: { employee_id: companyId }
       });
       const presenceData = await Presence.findAll({
-        where: { employee_id: userId }
+        where: { employee_id: companyId }
       });
       const employeeData = await Employee.findAll({
-        where: { user_id: userId }
+        where: { company_id: companyId }
       });
       const userData = await User.findAll({
-        where: { id: userId }
+        where: { id: companyId }
       });
 
       let presences = totalWorkhour(presenceData);
       const payload = Object.assign(
         {},
         {
-          id: userId,
+          id: companyId,
           full_name: userData[0].dataValues.full_name,
           email: userData[0].dataValues.email,
           phone: userData[0].dataValues.phone,
