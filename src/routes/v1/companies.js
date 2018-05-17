@@ -95,4 +95,12 @@ router.get(
   }
 );
 
+router.patch('/:id/settings', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  companySettingService.patch(req, res);
+});
+
 module.exports = router;
