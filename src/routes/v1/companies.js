@@ -5,7 +5,8 @@ const {
   companySettingService,
   dashboardService,
   memberService,
-  presenceService
+  presenceService,
+  companyMemberService
 } = require('@services/v1');
 const express = require('express');
 const router = express.Router();
@@ -112,6 +113,25 @@ router.patch('/:id/settings', (req, res) => {
     return res.status(422).json(response(false, errors.array()));
   }
   companySettingService.patch(req, res);
+});
+
+router.get(
+  '/:id/deposit-summary',
+  [
+    query('month', 'failed need query month and year').exists(),
+    query('year', 'failed need query month and year').exists()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    dashboardService.get(req, res);
+  }
+);
+
+router.get('/:id/members', (req, res) => {
+  companyMemberService.get(req, res);
 });
 
 router.get(
