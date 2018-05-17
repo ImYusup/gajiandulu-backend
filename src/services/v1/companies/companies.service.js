@@ -3,22 +3,22 @@ const { response } = require('@helpers');
 const {
   companies: Company,
   employees: Employee,
-  users: User,
-  digital_assets: DigitalAsset,
-  presences: Presence
+  users: User
 } = require('@models');
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
 
 const companyService = {
   get: async (req, res) => {
-    const { company_id, presence_id } = req.params;
     const { id: user_id } = res.local.users;
 
     try {
       if (req.query.codename) {
         const { codename } = req.query;
-        const isCompany = await Company.findOne({ where: { codename } });
+        const isCompany = await Company.findOne({
+          where: { codename },
+          attributes: { exclude: ['created_at', 'updated_at'] }
+        });
         if (!isCompany) {
           return res
             .status(400)
@@ -36,63 +36,11 @@ const companyService = {
           { registration_complete: 1 },
           { where: { id: user_id } }
         );
+
         return res
           .status(200)
           .json(
             response(true, 'Company has been successfully retrieved', isCompany)
-          );
-      } else {
-        const presences = await Presence.findOne({
-          where: { id: presence_id },
-          include: [
-            {
-              model: Employee,
-              where: { company_id },
-              include: [
-                {
-                  model: User
-                }
-              ]
-            }
-          ]
-        });
-        const assets = await DigitalAsset.findOne({
-          where: {
-            uploadable_id: presences.employee.id,
-            uploadable_type: 'employees'
-          }
-        });
-        let result = Object.assign(
-          {},
-          presences,
-          {
-            employee: {
-              full_name: presences.employee.user.full_name,
-              email: presences.employee.user.email,
-              phone: presences.employee.user.phone,
-              assets: [
-                {
-                  type: assets.type,
-                  path: assets.path
-                }
-              ]
-            }
-          },
-          delete presences.employee.user.full_name,
-          delete presences.employee.user.email,
-          delete presences.employee.user.phone
-        );
-        if (!presences) {
-          return res
-            .status(400)
-            .json(
-              response(false, `Presences with id ${presence_id} not found`)
-            );
-        }
-        return res
-          .status(200)
-          .json(
-            response(true, 'Schedule detail retrieved successfully', result)
           );
       }
     } catch (error) {
