@@ -39,6 +39,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER(11)
       },
+      active: {
+        allowNull: false,
+        type: DataTypes.TINYINT
+      },
       created_at: {
         allowNull: false,
         type: DataTypes.DATE

@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.INTEGER
       },
       full_name: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING,
         validate: {
           min: {
@@ -42,11 +42,11 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING
       },
       password: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING
       },
       birthday: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.DATEONLY,
         validate: {
           isDate: true
@@ -57,7 +57,7 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.STRING
       },
       hash: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING
       },
       is_active_notif: {

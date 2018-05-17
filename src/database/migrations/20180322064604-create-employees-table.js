@@ -38,6 +38,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER(11)
       },
+      active: {
+        allowNull: false,
+        type: Sequelize.TINYINT
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE
