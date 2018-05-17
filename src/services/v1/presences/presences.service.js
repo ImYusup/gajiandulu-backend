@@ -1,7 +1,6 @@
 require('module-alias/register');
 const { response } = require('@helpers');
 const {
-  companies: Company,
   digital_assets: DigitalAsset,
   employees: Employee,
   users: User,
@@ -11,97 +10,65 @@ const {
 const presenceService = {
   get: async (req, res) => {
     const { company_id, presence_id } = req.params;
-    const { id: user_id } = res.local.users;
 
     try {
-      if (req.query.codename) {
-        const { codename } = req.query;
-        const isCompany = await Company.findOne({ where: { codename } });
-        if (!isCompany) {
-          return res
-            .status(400)
-            .json(response(false, 'Company code not found'));
-        }
-        const isInvited = await Employee.findOne({
-          where: { user_id, company_id: isCompany.id, flag: 1 }
-        });
-        if (!isInvited) {
-          return res
-            .status(400)
-            .json(response(false, 'You are not invited yet'));
-        }
-        await User.update(
-          { registration_complete: 1 },
-          { where: { id: user_id } }
-        );
-        return res
-          .status(200)
-          .json(
-            response(true, 'Company has been successfully retrieved', isCompany)
-          );
-      } else {
-        const presences = await Presence.findOne({
-          where: { id: presence_id },
-          include: [
-            {
-              model: Employee,
-              where: { company_id: company_id },
-              include: [
-                {
-                  model: User
-                }
-              ]
-            }
-          ]
-        });
-
-        const assets = await DigitalAsset.findOne({
-          where: {
-            uploadable_id: presences.employee.id,
-            uploadable_type: 'employees'
-          }
-        });
-        let result = Object.assign({
-          id: presences.id,
-          presence_date: presences.presence_date,
-          presence_start: presences.presence_start,
-          presence_end: presences.presence_end,
-          rest_start: presences.rest_start,
-          rest_end: presences.rest_end,
-          presence_overdue: presences.presence_overdue,
-          is_absence: presences.is_absence,
-          is_leave: presences.is_leave,
-          overwork: presences.overwork,
-          work_hours: presences.work_hours,
-          salary: presences.salary,
-          fine: presences.fine,
-          employee: {
-            id: presences.employee.id,
-            role: presences.employee.role,
-            full_name: presences.employee.user.full_name,
-            email: presences.employee.user.email,
-            phone: presences.employee.user.phone,
-            assets: [
+      const presences = await Presence.findOne({
+        where: { id: presence_id },
+        include: [
+          {
+            model: Employee,
+            where: { company_id: company_id },
+            include: [
               {
-                type: assets.type,
-                path: assets.path
+                model: User
               }
             ]
           }
-        });
-        if (!presences) {
-          return res
-            .status(400)
-            .json(
-              response(false, `Presences with id ${presence_id} not found`)
-            );
+        ]
+      });
+
+      const assets = await DigitalAsset.findOne({
+        where: {
+          uploadable_id: presences.employee.id,
+          uploadable_type: 'employees'
         }
+      });
+      let result = Object.assign({
+        id: presences.id,
+        presence_date: presences.presence_date,
+        presence_start: presences.presence_start,
+        presence_end: presences.presence_end,
+        rest_start: presences.rest_start,
+        rest_end: presences.rest_end,
+        presence_overdue: presences.presence_overdue,
+        is_absence: presences.is_absence,
+        is_leave: presences.is_leave,
+        overwork: presences.overwork,
+        work_hours: presences.work_hours,
+        salary: presences.salary,
+        fine: presences.fine,
+        employee: {
+          id: presences.employee.id,
+          role: presences.employee.role,
+          full_name: presences.employee.user.full_name,
+          email: presences.employee.user.email,
+          phone: presences.employee.user.phone,
+          assets: [
+            {
+              type: assets.type,
+              path: assets.path
+            }
+          ]
+        }
+      });
+      if (!presences) {
         return res
-          .status(200)
-          .json(
-            response(true, 'Presence detail retrieved successfully', result)
-          );
+          .status(400)
+          .json(response(false, `Presences with id ${presence_id} not found`));
       }
+      return res
+        .status(200)
+        .json(response(true, 'Presence detail retrieved successfully', result));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
