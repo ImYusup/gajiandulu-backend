@@ -17,7 +17,7 @@ build-test:
   - npm run test
   only:
   - develop
-  - /^(\d+)-.*$/
+  - /^([#|\d]+)-.*$/
 
 deploy-master:
   stage: deploy
