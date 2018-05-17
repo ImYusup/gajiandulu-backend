@@ -26,8 +26,7 @@ module.exports = {
       },
       bank_branch: {
         allowNull: false,
-        type: Sequelize.STRING,
-        unique: true
+        type: Sequelize.STRING
       },
       account_number: {
         allowNull: false,

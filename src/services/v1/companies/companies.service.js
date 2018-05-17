@@ -103,6 +103,43 @@ const companyService = {
     }
   },
 
+  patch: async (req, res) => {
+    const { data } = req.body;
+    const { company_id } = req.params;
+
+    try {
+      let updateCompany = await Company.findOne({ where: { id: company_id } });
+      if (!updateCompany) {
+        return res
+          .status(400)
+          .json(response(false, `Company with id ${company_id} is not found`));
+      }
+
+      updateCompany = await Company.update(data, {
+        where: { id: company_id }
+      });
+      if (!updateCompany) {
+        return res
+          .status(400)
+          .json(
+            response(false, `Nothing changed in Company with id ${company_id}`)
+          );
+      }
+
+      updateCompany = await Company.findOne({ where: { id: company_id } });
+      return res
+        .status(200)
+        .json(
+          response(true, 'Company has been successfully updated', updateCompany)
+        );
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
+  },
+
   create: async (req, res) => {
     const { data } = req.body;
     // res.local.users from auth middleware

@@ -40,7 +40,7 @@ const meService = {
     }
   },
 
-  put: async (req, res) => {
+  patch: async (req, res) => {
     const { id: userId } = res.local.users;
     const { data } = req.body;
     try {
@@ -51,45 +51,8 @@ const meService = {
           .json(response(false, `User data with id ${userId} is not found`));
       }
 
-      if (data.family) {
-        const familyData = await UserFamily.findOne({
-          where: { user_id: userId }
-        });
-        if (!familyData) {
-          return res
-            .status(400)
-            .json(
-              response(false, `Family data with id ${userId} is not found`)
-            );
-        }
-        // Update Family Data
-        await UserFamily.update(data.family, { where: { user_id: userId } });
-      }
-
-      if (data.occupation) {
-        const occupationData = await Occupation.findOne({
-          where: { user_id: userId }
-        });
-        if (!occupationData) {
-          return res
-            .status(400)
-            .json(
-              response(false, `Occupation data with id ${userId} is not found`)
-            );
-        }
-        // Update Occupation Data
-        await Occupation.update(data.occupation, {
-          where: { user_id: userId }
-        });
-      }
-
       // Update User Data
-      const users = Object.assign(
-        {},
-        data,
-        delete data.family,
-        delete data.occupation
-      );
+      const users = Object.assign({}, data);
       if (users.old_password) {
         if (crypt.compareSync(users.old_password, userData.password)) {
           const encryptPassword = crypt.hashSync(users.new_password, 15);
@@ -98,12 +61,13 @@ const meService = {
             users,
             { password: encryptPassword },
             delete users.old_password,
-            delete users.new_password,
-            delete users.new_password_confirmation
+            delete users.new_password
           );
           await User.update(usersWithPassword, { where: { id: userId } });
         } else {
-          return res.status(400).json(response(false, 'Old password is incorrect'));
+          return res
+            .status(400)
+            .json(response(false, 'Old password is incorrect'));
         }
       } else {
         await User.update(users, { where: { id: userId } });
