@@ -13,17 +13,18 @@ var d = new Date();
 var Month = d.getMonth() + 1;
 var Year = d.getFullYear();
 
-// function totalData(presenceDatas) {
-//   let salaryTot = 0;
-//   let date = [];
-//   for (let i = 0; i < presenceDatas.length; i++) {
-//     date.push(presenceDatas[i].dataValues.presence_date.split('-'));
-//     salaryTot = salaryTot + presenceDatas[i].dataValues.salary;
-//   }
-//   return date;
-// }
-
-function totalWorkhour(presenceDatas) {
+function companyMembersData(
+  journalData,
+  presenceData,
+  employeeData,
+  userData,
+  Year,
+  Month,
+  Employee,
+  Journal
+) {
+  let members = [];
+  let membersobj = {};
   let i = 0;
   let dateNow = new Date();
   let wHours = 0;
@@ -31,53 +32,93 @@ function totalWorkhour(presenceDatas) {
   let a2;
   let b = dateNow.getMonth() + 1;
   let b2 = dateNow.getFullYear();
-  for (i = 0; i < presenceDatas.length; i++) {
-    a = presenceDatas[i].dataValues.presence_start.getMonth() + 1;
-    a2 = presenceDatas[i].dataValues.presence_start.getFullYear();
+  for (i = 0; i < employeeData.length; i++) {
+    var x = employeeData[i].dataValues.user_id;
+    var y = employeeData[i].dataValues.id;
+    var full_name = userData[x - 1].dataValues.full_name;
+    var email = userData[x - 1].dataValues.email;
+    var phone = userData[x - 1].dataValues.phone;
+    var flag = employeeData[i].dataValues.flag;
+    var role = employeeData[i].dataValues.role;
+    var kredit = journalData[y - 1].dataValues.kredit;
+    var debet = journalData[y - 1].dataValues.debet;
+    a = presenceData[x - 1].dataValues.presence_start.getMonth() + 1;
+    a2 = presenceData[x - 1].dataValues.presence_start.getFullYear();
     if (b === a && b2 === a2) {
-      wHours = wHours + presenceDatas[i].dataValues.work_hours;
+      wHours = wHours + presenceData[x - 1].dataValues.work_hours;
     }
-  }
-  return wHours;
-}
 
+    members.push({
+      id: employeeData[i].dataValues.company_id,
+      full_name: full_name,
+      email: email,
+      phone: phone,
+      flag: flag,
+      role: role,
+      salary_summary: {
+        month: Month,
+        year: Year,
+        salary: kredit,
+        fine: debet,
+        workhour: x,
+        wHours
+      }
+    });
+  }
+  return members;
+}
+//var lo = employeeData[0].dataValues.id;
 const companyMemberService = {
   get: async (req, res) => {
     const { company_id: companyId } = req.params;
 
     try {
       const journalData = await Journal.findAll({
-        where: { employee_id: companyId }
+        where: { employee_id: 1 }
       });
-      const presenceData = await Presence.findAll({
-        where: { employee_id: companyId }
-      });
+      const presenceData = await Presence.findAll({});
       const employeeData = await Employee.findAll({
         where: { company_id: companyId }
       });
-      const userData = await User.findAll({
-        where: { id: companyId }
-      });
+      const userData = await User.findAll({});
 
-      let presences = totalWorkhour(presenceData);
-      const payload = Object.assign(
-        {},
-        {
-          id: companyId,
-          full_name: userData[0].dataValues.full_name,
-          email: userData[0].dataValues.email,
-          phone: userData[0].dataValues.phone,
-          flag: employeeData[0].dataValues.flag,
-          role: employeeData[0].dataValues.role,
-          salary_summary: {
-            month: Month,
-            year: Year,
-            salary: journalData[0].dataValues.kredit,
-            fine: journalData[0].dataValues.debet,
-            workhour: presences
-          }
-        }
+      //       HASIL TAUFAN :
+
+      //     "success": "true",
+      //     "message": "Member list been successfully retrieved",
+      //     "data": [
+      //         {
+      //             "id": "12",
+      //             "full_name": "Tony Stark",
+      //             "email": "tony@stark.com",
+      //             "phone": "0856748394",
+      //             "flag": "3",
+      //             "role": "2",
+      //             "salary_summary": {
+      //                 "month": "2",
+      //                 "year": "2018",
+      //                 "salary": "5000000",
+      //                 "fine": "10000",
+      //                 "workhour": "60"
+      //             }
+      //         }
+      //     ]
+      // }
+
+      let dataMem = companyMembersData(
+        journalData,
+        presenceData,
+        employeeData,
+        userData,
+        Year,
+        Month
       );
+      console.log(
+        'aaaaaaaa ' +
+          companyMembersData(journalData, presenceData, employeeData, userData)
+      );
+
+      const payload = dataMem;
 
       return res
         .status(200)
