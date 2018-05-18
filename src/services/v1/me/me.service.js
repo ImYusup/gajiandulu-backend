@@ -1,45 +1,50 @@
 require('module-alias/register');
-const { response } = require('@helpers');
+const { response, compareCoordinates } = require('@helpers');
 const {
   users: User,
-  occupations: Occupation,
-  families: UserFamily,
-  notifications: Notification
+  notifications: Notification,
+  employees: Employee,
+  companies: Company,
+  digital_assets: DigitalAsset,
+  presences: Presence
 } = require('@models');
 const crypt = require('bcrypt');
+const path = require('path');
+const config = require('config');
+const fs = require('fs');
 
 const meService = {
-  find: async (req, res) => {
-    const { id: userId } = res.local.users;
-    try {
-      const userData = await User.findOne({ where: { id: userId } });
-      const familyData = await UserFamily.findOne({
-        where: { user_id: userId }
-      });
-      const occupationData = await Occupation.findOne({
-        where: { user_id: userId }
-      });
-      if (!userData || !occupationData || !familyData) {
-        return res
-          .status(400)
-          .json(response(false, `Me data with id ${userId} is not found`));
-      }
-      const meData = {
-        userData,
-        family: familyData,
-        occupation: occupationData
-      };
+  // find: async (req, res) => {
+  //   const { id: userId } = res.local.users;
+  //   try {
+  //     const userData = await User.findOne({ where: { id: userId } });
+  //     const familyData = await UserFamily.findOne({
+  //       where: { user_id: userId }
+  //     });
+  //     const occupationData = await Occupation.findOne({
+  //       where: { user_id: userId }
+  //     });
+  //     if (!userData || !occupationData || !familyData) {
+  //       return res
+  //         .status(400)
+  //         .json(response(false, `Me data with id ${userId} is not found`));
+  //     }
+  //     const meData = {
+  //       userData,
+  //       family: familyData,
+  //       occupation: occupationData
+  //     };
 
-      return res
-        .status(200)
-        .json(response(true, 'Me data retrieved successfully', meData, null));
-    } catch (error) {
-      if (error.errors) {
-        return res.status(400).json(response(false, error.errors));
-      }
-      return res.status(400).json(response(false, error.message));
-    }
-  },
+  //     return res
+  //       .status(200)
+  //       .json(response(true, 'Me data retrieved successfully', meData, null));
+  //   } catch (error) {
+  //     if (error.errors) {
+  //       return res.status(400).json(response(false, error.errors));
+  //     }
+  //     return res.status(400).json(response(false, error.message));
+  //   }
+  // },
 
   patch: async (req, res) => {
     const { id: userId } = res.local.users;
@@ -104,6 +109,153 @@ const meService = {
             notifications
           )
         );
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
+  },
+
+  checklog: async (req, res) => {
+    const { id: user_id } = res.local.users;
+    const presencesLocation = req.body.location.replace(/\s/g, '').split(',');
+    const host =
+      process.env.NODE_ENV !== 'production'
+        ? `http://${config.host}:${config.port}/`
+        : `http://${config.host}/`;
+
+    let filepath;
+    let presenceProcess;
+    let payload = {
+      type: req.body.type,
+      uploadable_type: 'employees'
+    };
+
+    try {
+      const employeeData = await Employee.findOne({
+        where: { user_id },
+        include: [{ model: Company }]
+      });
+      const companyLocation = employeeData.company.location
+        .replace(/\s/g, '')
+        .split(',');
+      const radius = compareCoordinates(
+        presencesLocation[0],
+        presencesLocation[1],
+        companyLocation[0],
+        companyLocation[1]
+      );
+
+      if (parseFloat(radius) >= 201) {
+        return res
+          .status(400)
+          .json(
+            response(
+              false,
+              'Your checklog not in the right place as company place'
+            )
+          );
+      }
+
+      // This will handle file as encoded base64 from client
+      if (!req.file) {
+        const base64Data = req.body.file.replace(
+          /^data:image\/png;base64,/,
+          ''
+        );
+        const filename = Date.now() + '.png';
+
+        filepath = path.join(
+          __dirname + '/../../../public/uploads/' + filename
+        );
+
+        fs.writeFile(filepath, base64Data, 'base64', error => {
+          if (error) {
+            return new Error(
+              'Something went wrong when save your image! Please try again.'
+            );
+          }
+        });
+        payload['filename'] = filename;
+        payload['mime_type'] = 'image/png';
+        payload['path'] = 'public/uploads/' + filename;
+        payload['url'] = host + 'uploads/' + filename;
+      }
+
+      // This will handle file as blob from client
+      if (req.file) {
+        filepath = req.file.path.split('/')[1];
+
+        payload['path'] = req.file.path;
+        payload['filename'] = req.file.filename;
+        payload['mime_type'] = req.file.mimetype;
+        payload['url'] = `${host}${filepath}/${req.file.filename}`;
+      }
+
+      payload['uploadable_id'] = employeeData.id;
+      const digitalAsset = await DigitalAsset.create(payload);
+      if (!digitalAsset) {
+        return res
+          .status(400)
+          .json(
+            response(
+              false,
+              'Sorry, photo image uploaded but not saved in the database'
+            )
+          );
+      }
+      const thisDate = new Date();
+      if (req.body.type.toString() === 'checkin') {
+        presenceProcess = await Presence.findOne({
+          where: {
+            employee_id: employeeData.id,
+            presence_date: `${thisDate.getFullYear()}-${thisDate.getMonth() +
+              1}-${thisDate.getDate()}`
+          }
+        });
+        if (presenceProcess) {
+          return res
+            .status(400)
+            .json(response(false, 'You have already checkin today'));
+        }
+        presenceProcess = await Presence.create({
+          employee_id: employeeData.id,
+          presence_date: `${thisDate.getFullYear()}-${thisDate.getMonth() +
+            1}-${thisDate.getDate()}`,
+          presence_start: thisDate,
+          checkin_location: req.body.location
+        });
+      } else if (req.body.type.toString() === 'checkout') {
+        presenceProcess = await Presence.findOne({
+          where: {
+            employee_id: employeeData.id,
+            presence_date: `${thisDate.getFullYear()}-${thisDate.getMonth() +
+              1}-${thisDate.getDate()}`
+          }
+        });
+        if (!presenceProcess) {
+          return res
+            .status(400)
+            .json(response(false, 'Please do checkin first'));
+        }
+        const checkining = new Date(presenceProcess.presence_start);
+        const work_hours = Math.floor(Math.abs(checkining - thisDate) / 36e5);
+        presenceProcess = await Presence.update(
+          {
+            presence_end: thisDate,
+            checkout_location: req.body.location,
+            work_hours
+          },
+          {
+            where: {
+              employee_id: employeeData.id,
+              presence_date: `${thisDate.getFullYear()}-${thisDate.getMonth() +
+                1}-${thisDate.getDate()}`
+            }
+          }
+        );
+      }
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
