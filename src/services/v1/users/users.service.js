@@ -70,6 +70,7 @@ const userService = {
         // this should do cascade delete on associate models
         if (!user.registration_complete) {
           await User.update(payload, { where: { email: email } });
+          user = await User.findOne({ where: { email: email } });
           return res
             .status(200)
             .json(
