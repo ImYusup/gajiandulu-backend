@@ -1,6 +1,10 @@
 require('module-alias/register');
 const { jwtHelpers, response } = require('@helpers');
-const { users: User, access_tokens: AccessToken } = require('@models');
+const {
+  users: User,
+  access_tokens: AccessToken,
+  employees: Employee
+} = require('@models');
 const crypt = require('bcrypt');
 const config = require('config');
 const Sequelize = require('sequelize');
@@ -39,22 +43,6 @@ const accessTokenService = {
           .status(400)
           .json(response(false, 'Please complete your registration first!'));
       }
-
-      // if (data.provider === 'admin') {
-      //   if (user.role_id.toString() !== '1') {
-      //     return res
-      //       .status(403)
-      //       .json(response(false, 'You have no permission to login as admin'));
-      //   }
-      // } else {
-      //   if (user.role_id.toString() === '1') {
-      //     return res
-      //       .status(403)
-      //       .json(
-      //         response(false, 'You have no permission to login to mobile apps')
-      //       );
-      //   }
-      // }
 
       // @TODO Uncomment this when email service activated
       // if (!user.is_confirmed_email) {
@@ -100,6 +88,12 @@ const accessTokenService = {
             [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
           },
           include: [{ model: User, as: 'user' }]
+        });
+        const employeesData = await Employee.findOne({ where: user.id });
+
+        accessToken = Object.assign({}, accessToken.dataValues, {
+          flag: employeesData.flag,
+          role: employeesData.role
         });
 
         if (!accessToken) {
