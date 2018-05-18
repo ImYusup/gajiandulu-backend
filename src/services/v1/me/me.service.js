@@ -3,7 +3,8 @@ const { response } = require('@helpers');
 const {
   users: User,
   occupations: Occupation,
-  families: UserFamily
+  families: UserFamily,
+  notifications: Notification
 } = require('@models');
 const crypt = require('bcrypt');
 
@@ -76,6 +77,35 @@ const meService = {
       return res
         .status(200)
         .json(response(true, 'Profile has been successfully updated'));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
+  },
+
+  get: async (req, res) => {
+    try {
+      const notifications = await Notification.findAll({
+        order: [['created_at', 'DESC']],
+        attributes: { exclude: ['id', 'employee_id', 'updated_at'] }
+      });
+      if (!notifications) {
+        return res
+          .status(400)
+          .json(response(false, 'Notifications code not found'));
+      }
+
+      return res
+        .status(200)
+        .json(
+          response(
+            true,
+            'Notifications has been successfully retrieved',
+            notifications
+          )
+        );
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
