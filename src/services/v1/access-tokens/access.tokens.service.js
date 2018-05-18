@@ -58,7 +58,7 @@ const accessTokenService = {
       if (crypt.compareSync(data.password, user.password)) {
         const token = jwtHelpers.createJWT(
           Object.assign({
-            email: user.email,
+            email_phone: user.email_phone,
             id: user.id,
             full_name: user.full_name
           }),
