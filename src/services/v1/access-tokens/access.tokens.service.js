@@ -32,10 +32,14 @@ const accessTokenService = {
     const { data } = req.body;
 
     try {
-      const user = await User.findOne({ where: { email: data.email } });
+      const user = await User.findOne({
+        where: {
+          [Op.or]: [{ email: data.email_phone }, { phone: data.email_phone }]
+        }
+      });
 
       if (user === null) {
-        return res.status(400).json(response(false, 'User email not found!'));
+        return res.status(400).json(response(false, 'User not found!'));
       }
 
       if (!user.registration_complete) {
