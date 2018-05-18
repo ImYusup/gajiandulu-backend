@@ -1,6 +1,10 @@
 require('module-alias/register');
 const { jwtHelpers, response } = require('@helpers');
-const { users: User, access_tokens: AccessToken } = require('@models');
+const {
+  users: User,
+  access_tokens: AccessToken,
+  employees: Employee
+} = require('@models');
 const crypt = require('bcrypt');
 const config = require('config');
 const Sequelize = require('sequelize');
@@ -28,10 +32,14 @@ const accessTokenService = {
     const { data } = req.body;
 
     try {
-      const user = await User.findOne({ where: { email: data.email } });
+      const user = await User.findOne({
+        where: {
+          [Op.or]: [{ email: data.email_phone }, { phone: data.email_phone }]
+        }
+      });
 
       if (user === null) {
-        return res.status(400).json(response(false, 'User email not found!'));
+        return res.status(400).json(response(false, 'User not found!'));
       }
 
       if (!user.registration_complete) {
@@ -39,22 +47,6 @@ const accessTokenService = {
           .status(400)
           .json(response(false, 'Please complete your registration first!'));
       }
-
-      // if (data.provider === 'admin') {
-      //   if (user.role_id.toString() !== '1') {
-      //     return res
-      //       .status(403)
-      //       .json(response(false, 'You have no permission to login as admin'));
-      //   }
-      // } else {
-      //   if (user.role_id.toString() === '1') {
-      //     return res
-      //       .status(403)
-      //       .json(
-      //         response(false, 'You have no permission to login to mobile apps')
-      //       );
-      //   }
-      // }
 
       // @TODO Uncomment this when email service activated
       // if (!user.is_confirmed_email) {
@@ -100,6 +92,12 @@ const accessTokenService = {
             [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
           },
           include: [{ model: User, as: 'user' }]
+        });
+        const employeesData = await Employee.findOne({ where: user.id });
+
+        accessToken = Object.assign({}, accessToken.dataValues, {
+          flag: employeesData.flag,
+          role: employeesData.role
         });
 
         if (!accessToken) {

@@ -3,16 +3,25 @@ const { response } = require('@helpers');
 const { accessTokenService } = require('@services/v1');
 const express = require('express');
 const router = express.Router();
-const { check, validationResult } = require('express-validator/check');
+const { check, oneOf, validationResult } = require('express-validator/check');
 
 router.post(
   '/',
   [
-    check('*.email')
-      .isEmail()
-      .withMessage('must be a valid email'),
-    check('*.password', 'passwords must be at least 5 chars long')
-      .isLength({ min: 5 })
+    check('*.email_phone')
+      .exists()
+      .withMessage('Email or Phone cannot be empty'),
+    oneOf([
+      check('*.email_phone')
+        .isMobilePhone('id-ID')
+        .withMessage('Must be phone number format'),
+      check('*.email_phone')
+        .isEmail()
+        .withMessage('Must be valid email')
+    ]),
+    check('*.password', 'passwords must be at least 5 chars long').isLength({
+      min: 5
+    })
   ],
   (req, res) => {
     const errors = validationResult(req);
