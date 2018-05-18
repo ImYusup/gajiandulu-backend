@@ -125,12 +125,11 @@ router.patch(
 
     check('*.adress', 'adress should be present').exists(),
 
-    check('*.phone', 'must be phone number')
-      .optional({
-        nullable: true
-      })
+    check('phone', 'phone number should pe present')
+      .exists()
+      .matches(/^[\d]+$/i)
+      .withMessage('Only number that allowed'),
 
-      .isMobilePhone('id-ID'),
     check('*.timezone', 'timezone should be present').exists(),
 
     check('*.birthday').isISO8601(),

@@ -234,4 +234,59 @@ router.post(
 );
 
 
+<<<<<<< HEAD
+=======
+router.patch(
+  '/:id',
+  [
+    check('*.adress', 'adress should be present').exists(),
+
+    check('phone', 'phone number should pe present')
+      .exists()
+      .matches(/^[\d]+$/i)
+      .withMessage('Only number that allowed'),
+
+    check('*.timezone', 'timezone should be present').exists()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    companyService.patch(req, res);
+  }
+);
+router.patch(
+  '/:id/settings',
+  [
+    check(
+      '*.notif_presence_overdue',
+      'notif presence overdue should not be empty'
+    ).exists(),
+    check(
+      '*.presence_overdue_limit',
+      'presence overdue limit should not be empty'
+    ).exists(),
+    check('*.overwork_limit', 'overwork limit should not be empty').exists(),
+    check('*.notif_overwork', 'notif overwork should not be empty').exists(),
+    check('*.rest_limit', 'rest limit should not be empty').exists(),
+    check(
+      '*.notif_work_schedule',
+      'notif work schedule should not be empty'
+    ).exists(),
+    check(
+      '*.automated_payroll',
+      'automated payroll should not be empty'
+    ).exists()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    companySettingService.patch(req, res);
+  }
+);
+
+>>>>>>> hot fix
 module.exports = router;
