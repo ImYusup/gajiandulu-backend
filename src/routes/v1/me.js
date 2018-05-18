@@ -67,7 +67,7 @@ router.post(
   }
 );
 
-router.patch(
+router.put(
   '/',
   [
     check('*.email')
@@ -86,6 +86,9 @@ router.patch(
 
     check('*.birthday').isISO8601(),
 
+    check('*.phone', 'must be phone number')
+      .optional({ nullable: true })
+      .isMobilePhone('id-ID'),
     check(
       '*.old_password',
       'old password required to change new password'
@@ -102,14 +105,134 @@ router.patch(
         }
         return true;
       }
+    ),
+    check(
+      '*.new_password_confirmation',
+      'new password confirmation must be the same as new password'
+    ).custom((value, { req }) => value === req.body.data.new_password),
+    check('*.family.name', 'family name required')
+      .optional({ nullable: true })
+      .custom((value, { req }) => {
+        if (
+          req.body.data.family.relative_type &&
+          req.body.data.family.address &&
+          req.body.data.family.phone
+        ) {
+          return value ? true : false;
+        }
+        return true;
+      })
+      .custom(value => {
+        if (value) {
+          return value.match(/^([A-z]|\s)+$/gi) ? true : false;
+        }
+        return true;
+      })
+      .withMessage('family name must be alphabethical'),
+    check('*.family.relative_type', 'family relative type required')
+      .optional({ nullable: true })
+      .custom((value, { req }) => {
+        if (req.body.data.family.name) {
+          return value ? true : false;
+        }
+        return true;
+      })
+      .custom(value => {
+        if (value) {
+          return value.match(/^([A-z]|\s)+$/gi) ? true : false;
+        }
+        return true;
+      })
+      .withMessage('family relative type must be alphabethical'),
+    check('*.family.address', 'family address required')
+      .optional({ nullable: true })
+      .custom((value, { req }) => {
+        if (req.body.data.family.name) {
+          return value ? true : false;
+        }
+        return true;
+      }),
+    check('*.family.phone', 'family phone required')
+      .optional({ nullable: true })
+      .custom((value, { req }) => {
+        if (req.body.data.family.name) {
+          return value ? true : false;
+        }
+        return true;
+      })
+      .isMobilePhone('id-ID')
+      .withMessage('family phone must be phone number format'),
+    check('*.occupation.name', 'occupation name must be alphabethical').custom(
+      value => {
+        if (value) {
+          return value.match(/^([A-z]|\s)+$/gi) ? true : false;
+        }
+        return true;
+      }
+    ),
+    check(
+      '*.occupation.annual_salary_range_min',
+      'minimum annual salary range must be numeric'
     )
+      .optional({ nullable: true })
+      .isInt()
+      .isNumeric(),
+    check(
+      '*.occupation.annual_salary_range_max',
+      'maximum annual salary range must be numeric'
+    )
+      .optional({ nullable: true })
+      .isInt()
+      .isNumeric(),
+    check(
+      '*.occupation.current_asset_range_min',
+      'minimum current asset range must be numeric'
+    )
+      .optional({ nullable: true })
+      .isInt()
+      .isNumeric(),
+    check(
+      '*.occupation.current_asset_range_max',
+      'maximum current asset range must be numeric'
+    )
+      .optional({ nullable: true })
+      .isInt()
+      .isNumeric(),
+    check('*.occupation.monthly_salary', 'monthly salary must be numeric')
+      .optional({ nullable: true })
+      .isInt()
+      .isNumeric(),
+    check(
+      '*.occupation.company_name',
+      'occupation company name must be alphabethical'
+    ).custom(value => {
+      if (value) {
+        return value.match(/^([A-z]|\s)+$/gi) ? true : false;
+      }
+      return true;
+    }),
+    check(
+      '*.occupation.position',
+      'company position must be alphabethical'
+    ).custom(value => {
+      if (value) {
+        return value.match(/^([A-z]|\s)+$/gi) ? true : false;
+      }
+      return true;
+    }),
+    check(
+      '*.occupation.company_phone',
+      'company phone must be phone number format'
+    )
+      .optional({ nullable: true })
+      .isMobilePhone('id-ID')
   ],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).json(response(false, errors.array()));
     }
-    meService.patch(req, res);
+    meService.put(req, res);
   }
 );
 router.patch(

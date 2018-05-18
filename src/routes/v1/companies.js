@@ -3,10 +3,14 @@ const { response } = require('@helpers');
 const {
   companyService,
   companySettingService,
+<<<<<<< HEAD
   dashboardService,
   memberService,
   presenceService,
   companyMemberService
+=======
+  dashboardService
+>>>>>>> hot fix
 } = require('@services/v1');
 const express = require('express');
 const router = express.Router();
@@ -25,15 +29,7 @@ router.get('/:company_id/presences/:presence_id', (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).json(response(false, errors.array()));
   }
-  presenceService.get(req, res);
-});
-
-router.get('/:company_id/presences', (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json(response(false, errors.array()));
-  }
-  presenceService.find(req, res);
+  companyService.get(req, res);
 });
 
 router.post(
@@ -66,6 +62,7 @@ router.post(
   }
 );
 
+<<<<<<< HEAD
 router.patch('/:company_id',
   [
 
@@ -147,6 +144,8 @@ router.patch(
   }
 );
 
+=======
+>>>>>>> hot fix
 router.post(
   '/:id/settings',
   [
@@ -206,6 +205,7 @@ router.get(
   }
 );
 
+<<<<<<< HEAD
 router.get('/:company_id/members', (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -236,6 +236,8 @@ router.post(
 
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> hot fix
 router.patch(
   '/:id',
   [
