@@ -24,7 +24,6 @@ function companyMembersData(
   Journal
 ) {
   let members = [];
-  let membersobj = {};
   let i = 0;
   let dateNow = new Date();
   let wHours = 0;
@@ -67,15 +66,12 @@ function companyMembersData(
   }
   return members;
 }
-//var lo = employeeData[0].dataValues.id;
 const companyMemberService = {
   get: async (req, res) => {
     const { company_id: companyId } = req.params;
 
     try {
-      const journalData = await Journal.findAll({
-        where: { employee_id: 1 }
-      });
+      const journalData = await Journal.findAll({});
       const presenceData = await Presence.findAll({});
       const employeeData = await Employee.findAll({
         where: { company_id: companyId }
@@ -100,7 +96,7 @@ const companyMemberService = {
       //                 "salary": "5000000",
       //                 "fine": "10000",
       //                 "workhour": "60"
-      //             }
+      //             }//
       //         }
       //     ]
       // }
@@ -112,10 +108,6 @@ const companyMemberService = {
         userData,
         Year,
         Month
-      );
-      console.log(
-        'aaaaaaaa ' +
-          companyMembersData(journalData, presenceData, employeeData, userData)
       );
 
       const payload = dataMem;
