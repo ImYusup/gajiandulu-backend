@@ -92,9 +92,7 @@ const meService = {
         attributes: { exclude: ['id', 'employee_id', 'updated_at'] }
       });
       if (!notifications) {
-        return res
-          .status(400)
-          .json(response(false, 'Notifications code not found'));
+        return res.status(400).json(response(false, 'Notifications not found'));
       }
 
       return res
