@@ -131,6 +131,10 @@ router.get(
 );
 
 router.get('/:id/members', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
   companyMemberService.get(req, res);
 });
 
