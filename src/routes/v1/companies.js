@@ -130,7 +130,7 @@ router.get(
   }
 );
 
-router.get('/:id/members', (req, res) => {
+router.get('/:company_id/members', (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json(response(false, errors.array()));
@@ -171,9 +171,5 @@ router.post(
     memberService.create(req, res);
   }
 );
-
-router.get('/:company_id/members', (req, res) => {
-  companyMemberService.get(req, res);
-});
 
 module.exports = router;
