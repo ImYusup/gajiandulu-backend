@@ -5,7 +5,8 @@ const {
   companySettingService,
   dashboardService,
   memberService,
-  presenceService
+  presenceService,
+  companyMemberService
 } = require('@services/v1');
 const express = require('express');
 const router = express.Router();
@@ -128,6 +129,14 @@ router.get(
     dashboardService.get(req, res);
   }
 );
+
+router.get('/:company_id/members', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  companyMemberService.get(req, res);
+});
 
 router.post(
   '/:company_id/members',
