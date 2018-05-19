@@ -138,21 +138,6 @@ router.get('/:company_id/members', (req, res) => {
   companyMemberService.get(req, res);
 });
 
-router.get(
-  '/:id/deposit-summary',
-  [
-    query('month', 'failed need query month and year').exists(),
-    query('year', 'failed need query month and year').exists()
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json(response(false, errors.array()));
-    }
-    dashboardService.get(req, res);
-  }
-);
-
 router.post(
   '/:company_id/members',
   [
