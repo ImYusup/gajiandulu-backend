@@ -84,4 +84,12 @@ router.patch(
   }
 );
 
+router.get('/notifications', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  meService.get(req, res);
+});
+
 module.exports = router;
