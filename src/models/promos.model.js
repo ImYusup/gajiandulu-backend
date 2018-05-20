@@ -30,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: { msg: 'Please input expired date' }
         }
       },
+      total: {
+        allowNull: true,
+        type: DataTypes.INTEGER
+      },
+      usage: {
+        allowNull: true,
+        type: DataTypes.INTEGER
+      },
       created_at: {
         allowNull: false,
         type: DataTypes.DATE

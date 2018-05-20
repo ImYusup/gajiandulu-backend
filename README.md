@@ -1,5 +1,7 @@
 # gajiandulu-api
 
+### PLEASE COMPLETELY READ THESE INFORMATION
+
 ---
 
 ## About
@@ -13,7 +15,7 @@ Getting up and running is as easy as 1, 2, 3.
 1.  Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
     Required version:
     ```
-    "node": "^9.0.0",
+    "node": ">= 9.0.0",
     "yarn": ">= 0.18.0"
     ```
 2.  Install your dependencies
@@ -22,7 +24,7 @@ Getting up and running is as easy as 1, 2, 3.
     cd path/to/gajiandulu-api; npm install
     ```
 
-    or
+    OR
 
     ```
     cd path/to/gajiandulu-api; yarn
@@ -45,6 +47,18 @@ Getting up and running is as easy as 1, 2, 3.
 4.  Migrate database using sequelize
     Run these commands in order
 
+    ### If you have sequelize installed global
+
+    ```
+    sequelize db:create
+    ```
+
+    ```
+    sequelize db:migrate
+    ```
+
+    ### If you have been not installing sequelize global
+
     ```
     node_modules/.bin/sequelize db:create
     ```
@@ -53,7 +67,21 @@ Getting up and running is as easy as 1, 2, 3.
     node_modules/.bin/sequelize db:migrate
     ```
 
-5.  Start your app
+5.  OPTIONAL: You can run seeder to have dummy data in the table needed, for detailed information about the data like user password, etc. Look at src/database/seeders in the name dummy-data.js file. Just then run the command.
+
+    ### If you have sequelize installed global
+
+    ```
+    sequelize db:seed:all
+    ```
+
+    ### If you have been not installing sequelize global
+
+    ```
+    node_modules/.bin/sequelize db:seed:all
+    ```
+
+6.  Start your app
 
     ```
     npm start

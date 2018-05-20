@@ -1,7 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  var Journals = sequelize.define(
-    'journals',
+  var JournalDetail = sequelize.define(
+    'journal_details',
     {
       id: {
         allowNull: false,
@@ -9,26 +9,35 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      employee_id: {
+      journal_id: {
         allowNull: false,
         type: DataTypes.INTEGER,
         foreignKey: true,
         references: {
-          model: 'employees',
+          model: 'journals',
           key: 'id'
         }
       },
-      type: {
-        allowNull: false,
-        type: DataTypes.STRING(45)
-      },
-      debet: {
-        allowNull: true,
+      tax: {
         type: DataTypes.INTEGER
       },
-      kredit: {
-        allowNull: true,
+      fee: {
         type: DataTypes.INTEGER
+      },
+      promo_id: {
+        type: DataTypes.INTEGER
+      },
+      promo_applied: {
+        type: DataTypes.INTEGER
+      },
+      total: {
+        type: DataTypes.INTEGER
+      },
+      total_nett: {
+        type: DataTypes.INTEGER
+      },
+      status: {
+        type: DataTypes.TINYINT(2)
       },
       created_at: {
         allowNull: false,
@@ -44,16 +53,12 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true
     }
   );
-  Journals.associate = function(models) {
+  JournalDetail.associate = function(models) {
     // associations can be defined here
-    Journals.belongsTo(models.employees, {
-      foreignKey: 'employee_id',
-      onDelete: 'CASCADE'
-    });
-    Journals.hasOne(models.journal_details, {
+    JournalDetail.belongsTo(models.journals, {
       foreignKey: 'journal_id',
       onDelete: 'CASCADE'
     });
   };
-  return Journals;
+  return JournalDetail;
 };

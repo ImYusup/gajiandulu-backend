@@ -23,51 +23,53 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATEONLY
       },
       presence_start: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.DATE
       },
       presence_end: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.DATE
       },
       rest_start: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.DATE
       },
       rest_end: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.DATE
       },
       presence_overdue: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.INTEGER
       },
       is_absence: {
         allowNull: false,
-        type: DataTypes.TINYINT
+        type: DataTypes.TINYINT,
+        defaultValue: 0
       },
       is_leave: {
         allowNull: false,
-        type: DataTypes.TINYINT
+        type: DataTypes.TINYINT,
+        defaultValue: 0
       },
       overwork: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.INTEGER
       },
       work_hours: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.INTEGER
       },
       checkin_location: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING
       },
-      chekout_location: {
-        allowNull: false,
+      checkout_location: {
+        allowNull: true,
         type: DataTypes.STRING
       },
       fine: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.INTEGER
       },
       created_at: {

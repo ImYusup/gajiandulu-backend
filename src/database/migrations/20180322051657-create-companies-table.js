@@ -10,15 +10,15 @@ module.exports = {
       },
       codename: {
         allowNull: false,
-        type: Sequelize.STRING(45),
+        type: Sequelize.STRING(45)
       },
       name: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.STRING
       },
       address: {
         allowNull: false,
-        type: Sequelize.TEXT,
+        type: Sequelize.TEXT
       },
       phone: {
         allowNull: false,
@@ -27,6 +27,10 @@ module.exports = {
       timezone: {
         allowNull: false,
         type: Sequelize.STRING(45)
+      },
+      location: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       created_at: {
         allowNull: false,

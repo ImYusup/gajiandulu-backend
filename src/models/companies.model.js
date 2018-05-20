@@ -11,15 +11,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       codename: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
       },
       name: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
       },
       address: {
         allowNull: false,
-        type: DataTypes.TEXT,
+        type: DataTypes.TEXT
       },
       phone: {
         allowNull: false,
@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       timezone: {
         allowNull: false,
         defaultValue: 'Asia/Jakarta',
+        type: DataTypes.STRING
+      },
+      location: {
+        allowNull: false,
         type: DataTypes.STRING
       },
       created_at: {
@@ -53,7 +57,8 @@ module.exports = (sequelize, DataTypes) => {
     });
     Company.hasOne(models.company_settings, {
       foreignKey: 'company_id',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
+      as: 'setting'
     });
   };
   return Company;
