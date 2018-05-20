@@ -22,11 +22,11 @@ module.exports = {
         type: Sequelize.STRING(45)
       },
       debet: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.INTEGER
       },
       kredit: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.INTEGER
       },
       created_at: {

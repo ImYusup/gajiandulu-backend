@@ -1,47 +1,42 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('employees', {
+    return queryInterface.createTable('journal_details', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      company_id: {
+      journal_id: {
         allowNull: false,
-        foreignKey: true,
         type: Sequelize.INTEGER,
+        foreignKey: true,
         references: {
-          model: 'companies',
+          model: 'journals',
           key: 'id'
         }
       },
-      user_id: {
-        allowNull: false,
-        foreignKey: true,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'users',
-          key: 'id'
-        }
-      },
-      role: {
-        allowNull: false,
-        type: Sequelize.INTEGER(11)
-      },
-      salary: {
-        allowNull: true,
+      tax: {
         type: Sequelize.INTEGER
       },
-      flag: {
-        allowNull: false,
-        type: Sequelize.INTEGER(11)
+      fee: {
+        type: Sequelize.INTEGER
       },
-      active: {
-        allowNull: false,
-        type: Sequelize.TINYINT,
-        defaultValue: 1
+      promo_id: {
+        type: Sequelize.INTEGER
+      },
+      promo_applied: {
+        type: Sequelize.INTEGER
+      },
+      total: {
+        type: Sequelize.INTEGER
+      },
+      total_nett: {
+        type: Sequelize.INTEGER
+      },
+      status: {
+        type: Sequelize.TINYINT(2)
       },
       created_at: {
         allowNull: false,
@@ -54,6 +49,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('employees');
+    return queryInterface.dropTable('journal-details');
   }
 };

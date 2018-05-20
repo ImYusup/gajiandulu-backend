@@ -57,7 +57,8 @@ module.exports = (sequelize, DataTypes) => {
     });
     Company.hasOne(models.company_settings, {
       foreignKey: 'company_id',
-      onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
+      as: 'setting'
     });
   };
   return Company;
