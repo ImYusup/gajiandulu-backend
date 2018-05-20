@@ -5,6 +5,7 @@ const {
   notifications: Notification,
   employees: Employee,
   companies: Company,
+  company_settings: CompanySetting,
   digital_assets: DigitalAsset,
   presences: Presence
 } = require('@models');
@@ -135,7 +136,12 @@ const meService = {
     try {
       const employeeData = await Employee.findOne({
         where: { user_id },
-        include: [{ model: Company }]
+        include: [
+          {
+            model: Company,
+            include: [{ model: CompanySetting, as: 'setting' }]
+          }
+        ]
       });
       const companyLocation = employeeData.company.location
         .replace(/\s/g, '')
@@ -205,6 +211,7 @@ const meService = {
             )
           );
       }
+
       const thisDate = new Date();
       if (req.body.type.toString() === 'checkin') {
         presenceProcess = await Presence.findOne({
@@ -239,12 +246,21 @@ const meService = {
             .status(400)
             .json(response(false, 'Please do checkin first'));
         }
+        // For testing checkout time purpose, uncomment below
+        // Date.prototype.addHours = function(h) {
+        //   this.setHours(this.getHours() + h);
+        //   return this;
+        // };
         const checkining = new Date(presenceProcess.presence_start);
         const work_hours = Math.floor(Math.abs(checkining - thisDate) / 36e5);
+        const overwork = Math.floor(
+          work_hours - employeeData.company.setting.overwork_limit
+        );
         presenceProcess = await Presence.update(
           {
             presence_end: thisDate,
             checkout_location: req.body.location,
+            overwork,
             work_hours
           },
           {
@@ -256,6 +272,9 @@ const meService = {
           }
         );
       }
+      return res
+        .status(201)
+        .json(response(true, 'You have been successfully checking'));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
