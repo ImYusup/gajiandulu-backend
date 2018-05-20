@@ -55,7 +55,7 @@ router.post(
     check('*.timezone', 'timezone should be present')
       .exists()
       .matches(/^(\w+[/]\w+)+$/)
-      .withMessage('timezone format must be "asia/jakarta"')
+      .withMessage('timezone format must be "continent/city"')
   ],
   (req, res) => {
     const errors = validationResult(req);
