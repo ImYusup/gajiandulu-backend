@@ -82,81 +82,6 @@ router.get('/:company_id/settings', (req, res) => {
   companySettingService.get(req, res);
 });
 
-router.post(
-  '/:id/settings',
-  [
-    check(
-      '*.notif_presence_overdue',
-      'notif presence overdue should not be empty'
-    )
-      .exists()
-      .matches(/^[\d]+$/i)
-      .withMessage('Only number that allowed'),
-    check(
-      '*.presence_overdue_limit',
-      'presence overdue limit should not be empty'
-    )
-      .exists()
-      .matches(/^[\d]+$/i)
-      .withMessage('Only number that allowed'),
-    check('*.overwork_limit', 'overwork limit should not be empty')
-      .exists()
-      .matches(/^[\d]+$/i)
-      .withMessage('Only number that allowed'),
-    check('*.notif_overwork', 'notif overwork should not be empty').exists(),
-    check('*.rest_limit', 'rest limit should not be empty')
-      .exists()
-      .matches(/^[\d]+$/i)
-      .withMessage('Only number that allowed'),
-    check('*.notif_work_schedule', 'notif work schedule should not be empty')
-      .exists()
-      .matches(/^[\d]+$/i)
-      .withMessage('Only number that allowed'),
-    check(
-      '*.automated_payroll',
-      'automated payroll should not be empty'
-    ).exists()
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json(response(false, errors.array()));
-    }
-    companySettingService.create(req, res);
-  }
-);
-
-router.patch('/:id/settings', (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json(response(false, errors.array()));
-  }
-  companySettingService.patch(req, res);
-});
-
-router.get(
-  '/:id/deposit-summary',
-  [
-    query('month', 'failed need query month and year').exists(),
-    query('year', 'failed need query month and year').exists()
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json(response(false, errors.array()));
-    }
-    dashboardService.get(req, res);
-  }
-);
-
-router.get('/:company_id/members', (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json(response(false, errors.array()));
-  }
-  companyMemberService.get(req, res);
-});
-
 router.patch(
   '/:id/settings',
   [
@@ -205,6 +130,73 @@ router.patch(
     companySettingService.patch(req, res);
   }
 );
+
+router.post(
+  '/:id/settings',
+  [
+    check(
+      '*.notif_presence_overdue',
+      'notif presence overdue should not be empty'
+    )
+      .exists()
+      .matches(/^[\d]+$/i)
+      .withMessage('Only number that allowed'),
+    check(
+      '*.presence_overdue_limit',
+      'presence overdue limit should not be empty'
+    )
+      .exists()
+      .matches(/^[\d]+$/i)
+      .withMessage('Only number that allowed'),
+    check('*.overwork_limit', 'overwork limit should not be empty')
+      .exists()
+      .matches(/^[\d]+$/i)
+      .withMessage('Only number that allowed'),
+    check('*.notif_overwork', 'notif overwork should not be empty').exists(),
+    check('*.rest_limit', 'rest limit should not be empty')
+      .exists()
+      .matches(/^[\d]+$/i)
+      .withMessage('Only number that allowed'),
+    check('*.notif_work_schedule', 'notif work schedule should not be empty')
+      .exists()
+      .matches(/^[\d]+$/i)
+      .withMessage('Only number that allowed'),
+    check(
+      '*.automated_payroll',
+      'automated payroll should not be empty'
+    ).exists()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    companySettingService.create(req, res);
+  }
+);
+
+router.get(
+  '/:id/deposit-summary',
+  [
+    query('month', 'failed need query month and year').exists(),
+    query('year', 'failed need query month and year').exists()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    dashboardService.get(req, res);
+  }
+);
+
+router.get('/:company_id/members', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  companyMemberService.get(req, res);
+});
 
 router.post(
   '/:company_id/members',
