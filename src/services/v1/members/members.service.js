@@ -1,5 +1,5 @@
 require('module-alias/register');
-const { response } = require('@helpers');
+const { response, nodemailerMail } = require('@helpers');
 const {
   employees: Employee,
   users: User,
@@ -7,7 +7,6 @@ const {
   companies: Company
 } = require('@models');
 const crypt = require('bcrypt');
-const nodemailer = require('nodemailer');
 const Sequelize = require('sequelize');
 
 const memberService = {
@@ -134,15 +133,6 @@ const memberService = {
     //console.log(data);
     // res.local.users from auth middleware
     // check src/helpers/auth.js
-    const auth = {
-      host: 'smtp.mailtrap.io',
-      port: 2525,
-      auth: {
-        user: 'fd992b099d817f',
-        pass: '6b564816b97868'
-      }
-    };
-    const nodemailerMail = nodemailer.createTransport(auth);
 
     try {
       const companyData = await Company.findOne({ where: { id: company_id } });
@@ -170,7 +160,7 @@ const memberService = {
 
         nodemailerMail.sendMail(
           {
-            from: 'no-reply@gajiandulu.com',
+            from: 'no-reply@gajiandulu.id',
             to: data.email, // An array if you have multiple recipients.
             subject: `Member Invitation GajianDulu - ${companyData.name}`,
             //You can use "html:" to send HTML email content. It's magic!
@@ -231,7 +221,7 @@ const memberService = {
 
         nodemailerMail.sendMail(
           {
-            from: 'no-reply@gajiandulu.com',
+            from: 'no-reply@gajiandulu.id',
             to: data.email, // An array if you have multiple recipients.
             subject: `Member Invitation GajianDulu - ${companyData.name}`,
             //You can use "html:" to send HTML email content. It's magic!

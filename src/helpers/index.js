@@ -4,6 +4,7 @@ const auth = require('./auth');
 const notFound = require('./notFound');
 const authAdmin = require('./authAdmin');
 const compareCoordinates = require('./compareCoordinates');
+const nodemailerMail = require('./mailer');
 
 module.exports = {
   response,
@@ -11,5 +12,6 @@ module.exports = {
   auth,
   notFound,
   authAdmin,
-  compareCoordinates
+  compareCoordinates,
+  nodemailerMail
 };
