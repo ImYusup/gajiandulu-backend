@@ -5,7 +5,7 @@ const mg = require('nodemailer-mailgun-transport');
 let auth;
 let nodemailerMail;
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'production') {
   auth = {
     auth: {
       host: process.env.MAILGUN_HOST,
