@@ -36,6 +36,7 @@ const companyService = {
           { registration_complete: 1 },
           { where: { id: user_id } }
         );
+        await Employee.update({ flag: 3 }, { where: { user_id } });
 
         return res
           .status(200)
