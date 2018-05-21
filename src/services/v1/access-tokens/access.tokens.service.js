@@ -3,7 +3,8 @@ const { jwtHelpers, response } = require('@helpers');
 const {
   users: User,
   access_tokens: AccessToken,
-  employees: Employee
+  employees: Employee,
+  companies: Company
 } = require('@models');
 const crypt = require('bcrypt');
 const config = require('config');
@@ -93,9 +94,14 @@ const accessTokenService = {
           },
           include: [{ model: User, as: 'user' }]
         });
-        const employeesData = await Employee.findOne({ where: user.id });
+        const employeesData = await Employee.findOne({
+          where: user.id,
+          include: [{ model: Company }]
+        });
 
         accessToken = Object.assign({}, accessToken.dataValues, {
+          company_id: employeesData.company.id,
+          employee_id: employeesData.id,
           flag: employeesData.flag,
           role: employeesData.role
         });
