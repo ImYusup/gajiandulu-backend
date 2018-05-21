@@ -9,7 +9,7 @@ router.post(
   '/',
   [
     check('full_name', 'full name should be present')
-      .matches(/^[A-Za-z\s]+$/g)
+      .matches(/^[A-Za-z\s]+$/i)
       .withMessage('full name can only contain char and space')
       .exists()
       .isLength({
@@ -20,15 +20,16 @@ router.post(
       .exists()
       .isEmail()
       .withMessage('must be a valid email'),
-    check('phone', 'phone number should pe present')
+    check('phone')
       .exists()
-      .matches(/^[\d]+$/i)
-      .withMessage('Only number that allowed'),
+      .withMessage('phone number should pe present')
+      .isMobilePhone('id-ID')
+      .withMessage('Must be correct phone format'),
     check('birthday')
       .isISO8601()
       .withMessage('birthday format should be YYYY-MM-DD'),
-    check('password', 'passwords must be at least 5 chars long').isLength({
-      min: 5
+    check('password', 'passwords must be at least 6 chars long').isLength({
+      min: 6
     })
   ],
   (req, res) => {

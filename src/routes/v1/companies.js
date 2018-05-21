@@ -41,7 +41,7 @@ router.post(
   [
     check('*.name', 'name should not contain number')
       .exists()
-      .matches(/^[\D]+$/g)
+      .matches(/^[\D]+$/i)
       .isLength({
         min: 3
       })

@@ -47,7 +47,7 @@ const userService = {
    *
    */
   create: async (req, res) => {
-    const { password, email, full_name, birthday } = req.body;
+    const { password, email, full_name, birthday, phone } = req.body;
     try {
       // second parameter is salt for hash
       const hashPassword = crypt.hashSync(password, 15);
@@ -62,7 +62,8 @@ const userService = {
           email,
           birthday,
           password: hashPassword,
-          hash
+          hash,
+          phone
         }
       );
       let user = await User.findOne({ where: { email: email } });
