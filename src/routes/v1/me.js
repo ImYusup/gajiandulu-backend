@@ -82,8 +82,6 @@ router.patch(
       .isEmail()
       .withMessage('must be a valid email'),
 
-    check('*.adress', 'adress should be present').exists(),
-
     check('phone', 'phone number should pe present')
       .exists()
       .matches(/^[\d]+$/i)
