@@ -95,7 +95,7 @@ const accessTokenService = {
           include: [{ model: User, as: 'user' }]
         });
         const employeesData = await Employee.findOne({
-          where: user.id,
+          where: { user_id: user.id },
           include: [{ model: Company }]
         });
 
