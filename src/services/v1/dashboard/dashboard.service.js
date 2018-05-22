@@ -1,6 +1,10 @@
 require('module-alias/register');
 const { response } = require('@helpers');
-const { journals: Journals, employees: Employee } = require('@models');
+const {
+  journals: Journals,
+  employees: Employee,
+  companies: Company
+} = require('@models');
 const Sequelize = require('sequelize');
 
 const dashboardService = {
@@ -35,14 +39,17 @@ const dashboardService = {
               ]
             ],
             raw: true
+          },
+          {
+            model: Company
           }
         ]
       });
-
       const payload = Object.assign(
         {},
         {
           id: companyId,
+          codename: deposits[0]['company.codename'],
           month: month,
           year: year,
           total_salary: total_salary[0].dataValues.total_salaries,
