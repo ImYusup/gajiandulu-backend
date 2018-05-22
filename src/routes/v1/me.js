@@ -71,9 +71,12 @@ router.post(
 router.patch(
   '/',
   [
-    check('*.full_name', ' name should only has chars and space').isLength({
-      min: 3
-    }),
+    check('*.full_name', ' name should only has chars and space')
+      .matches(/^[A-Za-z\s]+$/i)
+      .exists()
+      .isLength({
+        min: 4
+      }),
     check('*.email')
       .optional({ nullable: true })
       .isEmail()
@@ -88,7 +91,9 @@ router.patch(
 
     check('*.timezone', 'timezone should be present').exists(),
 
-    check('*.birthday').isISO8601(),
+    check('*.birthday')
+      .isISO8601()
+      .withMessage('birthday format should be YYYY-MM-DD'),
 
     check(
       '*.old_password',
