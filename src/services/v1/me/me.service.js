@@ -57,6 +57,19 @@ const meService = {
           .status(400)
           .json(response(false, `User data with id ${userId} is not found`));
       }
+      if (data) {
+        let userSetting = await User.findOne({ where: { id: userId } });
+        if (!userSetting) {
+          return res
+            .status(400)
+            .json(response(false, `User with id ${userId} is not found`));
+        }
+        await User.update(data, {
+          where: {
+            id: userId
+          }
+        });
+      }
 
       // Update User Data
       const users = Object.assign({}, data);
@@ -82,7 +95,7 @@ const meService = {
 
       return res
         .status(200)
-        .json(response(true, 'Profile has been successfully updated'));
+        .json(response(true, 'Profile has been successfully updated', data));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
