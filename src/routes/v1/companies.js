@@ -3,20 +3,10 @@ const { response } = require('@helpers');
 const {
   companyService,
   companySettingService,
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> hot fix
   dashboardService,
   memberService,
   presenceService,
   companyMemberService
-<<<<<<< HEAD
-=======
-  dashboardService
->>>>>>> hot fix
-=======
->>>>>>> hot fix
 } = require('@services/v1');
 const express = require('express');
 const router = express.Router();
@@ -76,11 +66,9 @@ router.post(
   }
 );
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-router.patch('/:company_id',
+router.patch(
+  '/:company_id',
   [
-
     check('*.adress', 'adress should be present').exists(),
 
     check('*.phone', 'must be phone number')
@@ -93,17 +81,6 @@ router.patch('/:company_id',
       .exists()
       .matches(/^(\w+[/]\w+)+$/)
       .withMessage('timezone format must be "continent/city"')
-=======
-router.patch(
-  '/:company_id',
-  [
-    check('*.adress', 'adress should be present').exists(),
-
-    check('*.phone', 'must be phone number')
-      .isMobilePhone('id-ID')
-      .matches(/^[\d]+$/i),
-    check('*.timezone', 'timezone should be present').exists()
->>>>>>> hot fix
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -111,12 +88,8 @@ router.patch(
       return res.status(422).json(response(false, errors.array()));
     }
     companyService.patch(req, res);
-<<<<<<< HEAD
-  });
-=======
   }
 );
->>>>>>> hot fix
 
 router.get('/:company_id/settings', (req, res) => {
   const errors = validationResult(req);
@@ -175,8 +148,6 @@ router.patch(
   }
 );
 
-=======
->>>>>>> hot fix
 router.post(
   '/:id/settings',
   [
@@ -236,15 +207,10 @@ router.get(
   }
 );
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> hot fix
 router.get('/:company_id/members', (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json(response(false, errors.array()));
-<<<<<<< HEAD
   }
   companyMemberService.get(req, res);
 });
@@ -268,53 +234,4 @@ router.post(
   }
 );
 
-
-<<<<<<< HEAD
-=======
-=======
->>>>>>> hot fix
-router.patch(
-  '/:id',
-  [
-    check('*.adress', 'adress should be present').exists(),
-
-    check('phone', 'phone number should pe present')
-      .exists()
-      .matches(/^[\d]+$/i)
-      .withMessage('Only number that allowed'),
-
-    check('*.timezone', 'timezone should be present').exists()
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json(response(false, errors.array()));
-    }
-    companyService.patch(req, res);
-=======
->>>>>>> hot fix
-  }
-  companyMemberService.get(req, res);
-});
-
-router.post(
-  '/:company_id/members',
-  [
-    check('*.name', 'name should not be empty').exists(),
-    check('*.email', 'email should not be empty').exists(),
-    check('*.phone', 'phone should not be empty').exists(),
-    check('*.salary', 'salary should not be empty').exists(),
-    check('*.role', 'role should not be empty').exists(),
-    check('*.flag', 'flag limit should not be empty').exists()
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json(response(false, errors.array()));
-    }
-    memberService.create(req, res);
-  }
-);
-
->>>>>>> hot fix
 module.exports = router;
