@@ -39,7 +39,7 @@ router.get('/:company_id/presences', (req, res) => {
 router.post(
   '/',
   [
-    check('*.name', 'name should not contain number')
+    check('*.name', ' name should not contain number')
       .exists()
       .matches(/^[\D]+$/i)
       .isLength({
