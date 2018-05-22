@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + '.' + file.mimetype.split('/')[1]);
   }
 });
+
 const upload = multer({
   storage: storage,
   limits: { fileSize: 8000000, files: 3 }
