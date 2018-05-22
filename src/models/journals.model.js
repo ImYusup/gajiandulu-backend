@@ -20,15 +20,62 @@ module.exports = (sequelize, DataTypes) => {
       },
       type: {
         allowNull: false,
-        type: DataTypes.STRING(45)
+        type: DataTypes.STRING(45),
+        validate: {
+          notNull: { msg: 'Please insert the type.' }
+        }
       },
       debet: {
         allowNull: true,
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        validate: {
+          isNumeric: { msg: 'Only Numbers is accepted for Debit Card input.' },
+          luhnAlgorithmCheck(value) {
+            var nCheck = 0,
+              bEven = false;
+            value = `${value}`;
+
+            for (var n = value.length - 1; n >= 0; n--) {
+              var cDigit = value.charAt(n),
+                nDigit = parseInt(cDigit, 10);
+              if (bEven) {
+                if ((nDigit *= 2) > 9) nDigit -= 9;
+              }
+              nCheck += nDigit;
+              bEven = !bEven;
+            }
+
+            if (!(nCheck !== 0 && nCheck % 10 == 0)) {
+              throw new Error('Your Debit Card Number is Invalid.');
+            }
+          }
+        }
       },
       kredit: {
         allowNull: true,
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        validate: {
+          isNumeric: { msg: 'Only Numbers is accepted for credit card input.' },
+          luhnAlgorithmCheck(value) {
+            var nCheck = 0,
+              bEven = false;
+            value = `${value}`;
+
+            for (var n = value.length - 1; n >= 0; n--) {
+              var cDigit = value.charAt(n),
+                nDigit = parseInt(cDigit, 10);
+              if (bEven) {
+                if ((nDigit *= 2) > 9) nDigit -= 9;
+              }
+              nCheck += nDigit;
+              bEven = !bEven;
+            }
+
+            if (!(nCheck !== 0 && nCheck % 10 == 0)) {
+              throw new Error('Your Credit Card Number is Invalid.');
+            }
+          }
+        }
       },
       created_at: {
         allowNull: false,

@@ -19,10 +19,28 @@ module.exports = (sequelize, DataTypes) => {
         }
       },
       tax: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        validate: {
+          isInt: {
+            msg: 'Tax must be an Integer.'
+          },
+          min: {
+            args: 0,
+            msg: 'Tax cannot be a negative number.'
+          }
+        }
       },
       fee: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        validate: {
+          isInt: {
+            msg: 'Fee must be an Integer.'
+          },
+          min: {
+            args: 0,
+            msg: 'Fee cannot be a negative number.'
+          }
+        }
       },
       promo_id: {
         type: DataTypes.INTEGER
