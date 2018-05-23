@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING(45),
         validate: {
-          notNull: { msg: 'Please insert the type.' }
+          notNull: { msg: 'Please input type.' }
         }
       },
       debet: {
@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         type: DataTypes.INTEGER,
         validate: {
-          isNumeric: { msg: 'Only Numbers is accepted for credit card input.' },
+          isNumeric: { msg: 'Only Numbers is accepted for Credit Card input.' },
           luhnAlgorithmCheck(value) {
             var nCheck = 0,
               bEven = false;
