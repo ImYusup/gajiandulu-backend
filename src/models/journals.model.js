@@ -30,24 +30,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         validate: {
           isNumeric: { msg: 'Only Numbers is accepted for Debit Card input.' },
-          luhnAlgorithmCheck(value) {
-            var nCheck = 0,
-              bEven = false;
-            value = `${value}`;
-
-            for (var n = value.length - 1; n >= 0; n--) {
-              var cDigit = value.charAt(n),
-                nDigit = parseInt(cDigit, 10);
-              if (bEven) {
-                if ((nDigit *= 2) > 9) nDigit -= 9;
-              }
-              nCheck += nDigit;
-              bEven = !bEven;
-            }
-
-            if (!(nCheck !== 0 && nCheck % 10 == 0)) {
-              throw new Error('Your Debit Card Number is Invalid.');
-            }
+          min: {
+            args: 0,
+            msg: 'Input cannot be a negative number.'
           }
         }
       },
@@ -56,24 +41,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         validate: {
           isNumeric: { msg: 'Only Numbers is accepted for Credit Card input.' },
-          luhnAlgorithmCheck(value) {
-            var nCheck = 0,
-              bEven = false;
-            value = `${value}`;
-
-            for (var n = value.length - 1; n >= 0; n--) {
-              var cDigit = value.charAt(n),
-                nDigit = parseInt(cDigit, 10);
-              if (bEven) {
-                if ((nDigit *= 2) > 9) nDigit -= 9;
-              }
-              nCheck += nDigit;
-              bEven = !bEven;
-            }
-
-            if (!(nCheck !== 0 && nCheck % 10 == 0)) {
-              throw new Error('Your Credit Card Number is Invalid.');
-            }
+          min: {
+            args: 0,
+            msg: 'Input cannot be a negative number.'
           }
         }
       },
