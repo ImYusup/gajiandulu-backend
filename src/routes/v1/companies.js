@@ -66,13 +66,30 @@ router.post(
   }
 );
 
-router.patch('/:company_id', (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json(response(false, errors.array()));
+router.patch(
+  '/:company_id',
+  [
+    check('*.adress', 'adress should be present').exists(),
+
+    check('*.phone', 'must be phone number')
+      .optional({
+        nullable: true
+      })
+      .isMobilePhone('id-ID'),
+
+    check('*.timezone', 'timezone should be present')
+      .exists()
+      .matches(/^(\w+[/]\w+)+$/)
+      .withMessage('timezone format must be "continent/city"')
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    companyService.patch(req, res);
   }
-  companyService.patch(req, res);
-});
+);
 
 router.get('/:company_id/settings', (req, res) => {
   const errors = validationResult(req);

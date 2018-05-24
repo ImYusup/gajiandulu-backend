@@ -278,6 +278,7 @@ const memberService = {
           }
         );
       }
+        
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
