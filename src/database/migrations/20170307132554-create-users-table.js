@@ -18,7 +18,6 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true
       },
-      // REMOVE pin
       pin: {
         allowNull: true,
         type: Sequelize.STRING
