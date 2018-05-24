@@ -7,7 +7,8 @@ const {
   companies: Company,
   company_settings: CompanySetting,
   digital_assets: DigitalAsset,
-  presences: Presence
+  presences: Presence,
+  journals: Journal
 } = require('@models');
 const crypt = require('bcrypt');
 const path = require('path');
@@ -106,11 +107,6 @@ const meService = {
     const getEmployeeId = employeeId[0].dataValues.id;
 
     try {
-      const fines = await Presence.findAll({
-        where: { employee_id: getEmployeeId },
-        attributes: [[Sequelize.fn('SUM', Sequelize.col('fine')), 'fines']]
-      });
-
       const workhour = await Presence.findAll({
         where: { employee_id: getEmployeeId },
         attributes: [
@@ -120,18 +116,18 @@ const meService = {
 
       const presenceData = await Presence.findAll({
         where: { employee_id: getEmployeeId },
+        attributes: {
+          exclude: ['checkin_location', 'checkuout_location']
+        }
+      });
+
+      const journalData = await Journal.findAll({
+        where: { employee_id: getEmployeeId },
         attributes: [
-          'presence_date',
-          'presence_start',
-          'presence_end',
-          'rest_start',
-          'rest_end',
-          'presence_overdue',
-          'is_absence',
-          'is_leave',
-          'overwork',
-          'work_hours',
-          'fine'
+          'type',
+          'debet',
+          'kredit'
+          // 'description'
         ]
       });
 
@@ -160,11 +156,26 @@ const meService = {
         salary_summary: {
           month: month,
           year: year,
-          total_salary: salary[0].dataValues.salaries,
-          fine: fines[0].dataValues.fines,
+          net_salary: salary[0].dataValues.salaries,
+          mtd_gross_salary:
+            workhour[0].dataValues.workhour * salary[0].dataValues.salaries,
+          monthly_gross_salary:
+            workhour[0].dataValues.workhour * salary[0].dataValues.salaries,
           workhour: workhour[0].dataValues.workhour
         },
-        presences: presenceData
+        presences: {
+          presence_date: presenceData[0].presence_date,
+          presence_start: presenceData[0].presence_start,
+          presence_end: presenceData[0].presence_end,
+          rest_start: presenceData[0].rest_start,
+          rest_end: presenceData[0].rest_end,
+          presence_overdue: presenceData[0].presence_overdue,
+          is_absence: presenceData[0].is_absence,
+          is_leave: presenceData[0].is_leave,
+          overwork: presenceData[0].overwork,
+          work_hours: presenceData[0].work_hours,
+          journal: { journalData }
+        }
       };
 
       return res
