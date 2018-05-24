@@ -18,6 +18,7 @@ module.exports = {
         type: Sequelize.STRING,
         unique: true
       },
+      // REMOVE pin
       pin: {
         allowNull: true,
         type: Sequelize.STRING
@@ -45,7 +46,7 @@ module.exports = {
         type: Sequelize.TINYINT,
         defaultValue: 0
       },
-      is_confirmed_email: {
+      is_phone_confirmed: {
         allowNull: true,
         type: Sequelize.TINYINT,
         defaultValue: 0

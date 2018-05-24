@@ -64,7 +64,7 @@ module.exports = function(sequelize, DataTypes) {
         type: DataTypes.TINYINT,
         defaultValue: 0
       },
-      is_confirmed_email: {
+      is_phone_confirmed: {
         type: DataTypes.TINYINT,
         defaultValue: 0
       },
