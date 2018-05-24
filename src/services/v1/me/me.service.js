@@ -81,10 +81,13 @@ const meService = {
       } else {
         await User.update(users, { where: { id: userId } });
       }
-
-      return res
-        .status(200)
-        .json(response(true, 'Profile has been successfully updated'));
+      User.findOne({ where: { id: userId } }).then(result => {
+        return res
+          .status(200)
+          .json(
+            response(true, 'Profile has been successfully updated', result)
+          );
+      });
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));

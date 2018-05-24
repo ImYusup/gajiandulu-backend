@@ -68,10 +68,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         type: DataTypes.STRING
       },
-      fine: {
-        allowNull: true,
-        type: DataTypes.INTEGER
-      },
       created_at: {
         allowNull: false,
         type: DataTypes.DATE

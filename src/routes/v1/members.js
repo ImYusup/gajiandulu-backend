@@ -12,7 +12,6 @@ router.get('/:id', (req, res) => {
     return res.status(422).json(response(false, errors.array()));
   }
 });
-
 router.patch('/:id', [], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

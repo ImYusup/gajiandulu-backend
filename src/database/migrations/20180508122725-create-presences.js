@@ -67,10 +67,6 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
-      fine: {
-        allowNull: true,
-        type: Sequelize.INTEGER
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

@@ -155,9 +155,23 @@ const memberService = {
           delete data.email,
           { user_id: emailExist.id, company_id, active: true }
         );
-        const employee = await Employee.create(payload);
-        const results = Object.assign({}, { id: employee.id }, data);
+        let employee = await Employee.findOne({
+          where: { user_id: emailExist.id }
+        });
+        if (!employee) {
+          employee = await Employee.create(payload);
+        } else {
+          if (employee.flag.toString() === '3') {
+            return res
+              .status(400)
+              .json(
+                response(false, 'Inputted email already joined to company')
+              );
+          }
+          await Employee.update(payload, { where: { user_id: emailExist.id } });
+        }
 
+        const results = Object.assign({}, { id: employee.id }, data);
         nodemailerMail.sendMail(
           {
             from: 'no-reply@gajiandulu.id',
@@ -174,7 +188,7 @@ const memberService = {
               <p>Please do register again in GajianDulu Mobile Apps with those information.</p>
               <p>Then you must insert this company codename after you done registration</p>
               <p>--------------------------------------------------------------------------</p>
-              <h1>${companyData.codename}</h1>
+              <h2>${companyData.codename}</h2>
               <p>--------------------------------------------------------------------------</p>
               `
           },
@@ -235,7 +249,7 @@ const memberService = {
               <p>Please do register again in GajianDulu Mobile Apps with those information.</p>
               <p>Then you must insert this company codename after you done registration</p>
               <p>--------------------------------------------------------------------------</p>
-              <h1>${companyData.codename}</h1>
+              <h2>${companyData.codename}</h2>
               <p>--------------------------------------------------------------------------</p>
               `
           },
@@ -264,6 +278,7 @@ const memberService = {
           }
         );
       }
+        
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));

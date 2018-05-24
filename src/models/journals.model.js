@@ -20,15 +20,36 @@ module.exports = (sequelize, DataTypes) => {
       },
       type: {
         allowNull: false,
-        type: DataTypes.STRING(45)
+        type: DataTypes.STRING(45),
+        validate: {
+          notNull: { msg: 'Please input type.' }
+        }
       },
       debet: {
         allowNull: true,
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        validate: {
+          isNumeric: { msg: 'Only Numbers is accepted for Debit Card input.' },
+          min: {
+            args: 0,
+            msg: 'Input cannot be a negative number.'
+          }
+        }
       },
       kredit: {
         allowNull: true,
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        validate: {
+          isNumeric: { msg: 'Only Numbers is accepted for Credit Card input.' },
+          min: {
+            args: 0,
+            msg: 'Input cannot be a negative number.'
+          }
+        }
+      },
+      description: {
+        allowNull: true,
+        type: DataTypes.TEXT
       },
       created_at: {
         allowNull: false,

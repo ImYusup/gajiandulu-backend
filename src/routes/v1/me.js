@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + '.' + file.mimetype.split('/')[1]);
   }
 });
+
 const upload = multer({
   storage: storage,
   limits: { fileSize: 8000000, files: 3 }
@@ -70,6 +71,28 @@ router.post(
 router.patch(
   '/',
   [
+    check('*.full_name', ' name should only has chars and space')
+      .matches(/^[A-Za-z\s]+$/i)
+      .exists()
+      .isLength({
+        min: 4
+      }),
+    check('*.email')
+      .optional({ nullable: true })
+      .isEmail()
+      .withMessage('must be a valid email'),
+
+    check('phone', 'phone number should pe present')
+      .exists()
+      .matches(/^[\d]+$/i)
+      .withMessage('Only number that allowed'),
+
+    check('*.timezone', 'timezone should be present').exists(),
+
+    check('*.birthday')
+      .isISO8601()
+      .withMessage('birthday format should be YYYY-MM-DD'),
+
     check(
       '*.old_password',
       'old password required to change new password'

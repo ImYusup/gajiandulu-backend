@@ -35,6 +35,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         type: DataTypes.INTEGER
       },
+      workdays: {
+        allowNull: true,
+        type: DataTypes.INTEGER
+      },
+      daily_salary: {
+        allowNull: true,
+        type: DataTypes.INTEGER
+      },
       flag: {
         allowNull: false,
         type: DataTypes.INTEGER(11)
