@@ -25,7 +25,7 @@ module.exports = {
           phone: '082221149696',
           hash: crypt.hashSync(date.toString() + 'test@refactory.id', 10),
           is_active_notif: 1,
-          is_confirmed_email: 1,
+          // is_confirmed_email: 1,
           registration_complete: 1,
           created_at: date,
           updated_at: date
@@ -39,7 +39,7 @@ module.exports = {
           phone: '089686745353',
           hash: crypt.hashSync(date.toString() + 'member@refactory.id', 10),
           is_active_notif: 1,
-          is_confirmed_email: 1,
+          // is_confirmed_email: 1,
           registration_complete: 1,
           created_at: date,
           updated_at: date
@@ -53,7 +53,7 @@ module.exports = {
           phone: '08212411555',
           hash: crypt.hashSync(date.toString() + 'manager@company.com', 10),
           is_active_notif: 1,
-          is_confirmed_email: 1,
+          // is_confirmed_email: 1,
           registration_complete: 1,
           created_at: date,
           updated_at: date

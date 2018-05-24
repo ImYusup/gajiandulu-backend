@@ -4,63 +4,52 @@ const {
   employees: Employee,
   users: User,
   presences: Presence,
-  companies: Company
+  companies: Company,
+  journals: Journal
 } = require('@models');
 const crypt = require('bcrypt');
-const Sequelize = require('sequelize');
+require('sequelize');
+// const Sequelize = require('sequelize');
 
 const memberService = {
   get: async (req, res) => {
     const { id: userId } = req.params;
 
     try {
-      const fines = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [[Sequelize.fn('SUM', Sequelize.col('fine')), 'fines']]
-      });
-
-      const month = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [
-          [Sequelize.fn('month', Sequelize.col('presence_date')), 'month']
-        ]
-      });
-
-      const year = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [
-          [Sequelize.fn('year', Sequelize.col('presence_date')), 'year']
-        ]
-      });
-
-      const workhour = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [
-          [Sequelize.fn('SUM', Sequelize.col('work_hours')), 'workhour']
-        ]
-      });
-
-      const presenceData = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [
-          'presence_date',
-          'presence_start',
-          'presence_end',
-          'rest_start',
-          'rest_end',
-          'presence_overdue',
-          'is_absence',
-          'is_leave',
-          'overwork',
-          'work_hours',
-          'fine'
-        ]
-      });
-
-      const salary = await Employee.findAll({
+      const employeeId = await Employee.findOne({
         where: { user_id: userId },
-        attributes: [[Sequelize.fn('SUM', Sequelize.col('salary')), 'salaries']]
+        attributes: ['id']
+      }).then(res => res.id);
+
+      const presence = await Presence.findAll({
+        where: { employee_id: employeeId },
+        attributes: {
+          include: [
+            {
+              model: Journal,
+              where: { employee_id: employeeId }
+            }
+          ],
+          exclude: [
+            'id',
+            'employee_id',
+            'checkin_location',
+            'checkout_location',
+            'created_at',
+            'updated_at'
+          ]
+        }
       });
+
+      let presenceData = [];
+      presence.map(data => {
+        presenceData.push(data);
+      });
+
+      // const salary = await Employee.findAll({
+      //   where: { user_id: userId },
+      //   attributes: [[Sequelize.fn('SUM', Sequelize.col('salary')), 'salaries']]
+      // });
 
       const employeeData = await Employee.findAll({
         where: { user_id: userId },
@@ -72,26 +61,25 @@ const memberService = {
         attributes: ['full_name', 'email', 'phone']
       });
 
-      const memberData = Object.assign(
-        {},
-        {
-          id: userId,
-          full_name: userData[0]['full_name'],
-          email: userData[0]['email'],
-          phone: userData[0]['phone'],
-          flag: employeeData[0]['flag'],
+      const { full_name, email, phone } = userData[0].dataValues;
 
-          salary_summary: {
-            month: month[0].dataValues.month,
-            year: year[0].dataValues.year,
-            total_salary: salary[0].dataValues.salaries,
-            fine: fines[0].dataValues.fines,
-            workhour: workhour[0].dataValues.workhour
-          },
+      const memberData = {
+        id: userId,
+        full_name: full_name,
+        email: email,
+        phone: phone,
+        flag: employeeData[0]['flag'],
 
-          presences: presenceData
-        }
-      );
+        // salary_summary: {
+        //   month: month[0].dataValues.month,
+        //   year: year[0].dataValues.year,
+        //   total_salary: salary[0].dataValues.salaries,
+        //   fine: fines[0].dataValues.fines,
+        //   workhour: workhour[0].dataValues.workhour
+        // },
+
+        presences: presence
+      };
 
       return res
         .status(200)
@@ -278,7 +266,6 @@ const memberService = {
           }
         );
       }
-        
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
