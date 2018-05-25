@@ -206,6 +206,9 @@ const userService = {
         { where: { hash } }
       );
       user = await User.findOne({ where: { hash } });
+      accessToken = await AccessToken.findOne({
+        where: { user_id: user.id }
+      });
 
       if (accessToken) {
         return res
