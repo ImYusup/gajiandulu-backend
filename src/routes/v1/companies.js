@@ -14,7 +14,16 @@ const { check, query, validationResult } = require('express-validator/check');
 
 router.get(
   '/',
-  [query('codename', 'need query codename').exists()],
+  [
+    query('codename')
+      .exists()
+      .withMessage('need query codename included')
+      .not()
+      .isEmpty()
+      .withMessage('codename cannot be empty data')
+      .isLength({ min: 10 })
+      .withMessage('wrong length of codename digit')
+  ],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
