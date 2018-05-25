@@ -196,35 +196,32 @@ router.post('/checklog', (req, res) => {
 
     meService.checklog(req, res);
   });
-
-  /**
-   *  WITHDRAWS
-   *
-   */
-  router.post(
-    '/withdraws',
-    [
-      check(
-        '*total_amount',
-        'total_amount must be an integer and cannot be empty'
-      )
-        .isInt()
-        .not()
-        .isEmpty()
-        .trim(),
-      check('*promo_code', 'promo_code cannot be empty')
-        .not()
-        .isEmpty()
-        .trim()
-    ],
-    (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(422).json(response(false, errors.array()));
-      }
-      meService.withdraws(req, res);
-    }
-  );
 });
+
+/**
+ *  WITHDRAWS
+ *
+ */
+router.post(
+  '/withdraws',
+  [
+    check('total_amount', 'total_amount must be an integer and cannot be empty')
+      .isInt()
+      .not()
+      .isEmpty()
+      .trim(),
+    check('promo_code', 'promo_code cannot be empty')
+      .not()
+      .isEmpty()
+      .trim()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    meService.withdraws(req, res);
+  }
+);
 
 module.exports = router;
