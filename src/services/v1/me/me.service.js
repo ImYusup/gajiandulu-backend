@@ -14,7 +14,6 @@ const crypt = require('bcrypt');
 const path = require('path');
 const config = require('config');
 const fs = require('fs');
-const Sequelize = require('sequelize');
 
 const meService = {
   // find: async (req, res) => {
@@ -98,87 +97,105 @@ const meService = {
 
   deposit: async (req, res) => {
     const { id: userId } = res.local.users;
-    const { month, year } = req.query;
-
-    const employeeId = await Employee.findAll({
-      where: {
-        user_id: userId
-      },
-      attributes: ['id']
-    });
-
-    const getEmployeeId = employeeId[0].dataValues.id;
+    let { month, year } = req.query;
+    month = ('00' + month).slice(-2);
 
     try {
-      const workhour = await Presence.findAll({
-        where: { employee_id: getEmployeeId },
-        attributes: [
-          [Sequelize.fn('SUM', Sequelize.col('work_hours')), 'workhour']
-        ]
-      });
-
-      const presenceData = await Presence.findAll({
-        where: { employee_id: getEmployeeId },
-        attributes: {
-          exclude: ['checkin_location', 'checkuout_location']
-        }
-      });
-
-      const journalData = await Journal.findAll({
-        where: { employee_id: getEmployeeId },
-        attributes: [
-          'type',
-          'debet',
-          'kredit'
-          // 'description'
-        ]
-      });
-
-      const salary = await Employee.findAll({
+      const getEmployeeId = await Employee.findOne({
         where: { user_id: userId },
-        attributes: [[Sequelize.fn('SUM', Sequelize.col('salary')), 'salaries']]
+        attributes: ['id', 'salary', 'workdays', 'daily_salary', 'flag']
       });
+      const {
+        id: employeeId,
+        salary,
+        daily_salary,
+        flag
+      } = getEmployeeId.dataValues;
 
-      const employeeData = await Employee.findAll({
-        where: { user_id: userId },
-        attributes: ['flag']
-      });
-
-      const userData = await User.findAll({
+      const userData = await User.findOne({
         where: { id: userId },
         attributes: ['full_name', 'email', 'phone']
       });
+      const { full_name, email, phone } = userData.dataValues;
+
+      let presenceData = await Presence.findAll({
+        where: {
+          employee_id: employeeId
+        },
+        attributes: {
+          exclude: [
+            'id',
+            'employee_id',
+            'checkin_location',
+            'checkout_location',
+            'created_at',
+            'updated_at'
+          ]
+        }
+      });
+
+      presenceData = presenceData.filter(data => {
+        let getPresenceDate = data.presence_date.split('-');
+        return (
+          `${getPresenceDate[0]}-${getPresenceDate[1]}` == `${year}-${month}`
+        );
+      });
+
+      const journalData = await Journal.findAll({
+        where: { employee_id: employeeId },
+        attributes: ['type', 'debet', 'kredit', 'description', 'created_at']
+      }).then(res =>
+        res.map(data => {
+          return data.dataValues;
+        })
+      );
+      journalData.map(data => {
+        data['date'] = `${data.created_at.getFullYear()}-${(
+          '00' +
+          (data.created_at.getMonth() + 1)
+        ).slice(-2)}-${data.created_at.getDate()}`;
+      });
+
+      let monthlyPresence = [];
+      let workhour = 0;
+      let work_day = 0;
+      let debit = 0;
+      let credit = 0;
+
+      presenceData.map(async result => {
+        workhour += result.work_hours;
+        result.is_absence ? null : work_day++;
+        let journal = journalData.filter(fil => {
+          return fil.date == result.dataValues.presence_date;
+        });
+        journal.map(del => {
+          debit += del.debet;
+          credit += del.kredit;
+          delete del.date;
+        });
+        result.dataValues['journals'] = journal;
+        monthlyPresence.push(result);
+      });
+
+      const mtd_gross_salary = daily_salary * work_day;
+      const nett_salary = mtd_gross_salary + debit - credit;
 
       const result = {
         id: userId,
-        full_name: userData[0]['full_name'],
-        email: userData[0]['email'],
-        phone: userData[0]['phone'],
-        flag: employeeData[0]['flag'],
+        full_name: full_name,
+        email: email,
+        phone: phone,
+        flag: flag,
 
         salary_summary: {
           month: month,
           year: year,
-          net_salary: salary[0].dataValues.salaries,
-          mtd_gross_salary:
-            workhour[0].dataValues.workhour * salary[0].dataValues.salaries,
-          monthly_gross_salary:
-            workhour[0].dataValues.workhour * salary[0].dataValues.salaries,
-          workhour: workhour[0].dataValues.workhour
+          nett_salary: nett_salary,
+          mtd_gross_salary: mtd_gross_salary,
+          monthly_gross_salary: salary,
+          workhour: workhour
         },
-        presences: {
-          presence_date: presenceData[0].presence_date,
-          presence_start: presenceData[0].presence_start,
-          presence_end: presenceData[0].presence_end,
-          rest_start: presenceData[0].rest_start,
-          rest_end: presenceData[0].rest_end,
-          presence_overdue: presenceData[0].presence_overdue,
-          is_absence: presenceData[0].is_absence,
-          is_leave: presenceData[0].is_leave,
-          overwork: presenceData[0].overwork,
-          work_hours: presenceData[0].work_hours,
-          journal: { journalData }
-        }
+        presences: monthlyPresence
       };
 
       return res
