@@ -150,18 +150,13 @@ const userService = {
    */
   put: async (req, res) => {
     const { data } = req.body;
+    const expires = 60 * 60;
 
-    const { user_id: userId } = data;
+    const { phone, hash } = data;
     try {
-      let user = await User.findOne({ where: { id: userId } });
+      let user = await User.findOne({ where: { hash } });
       if (user === null) {
-        return res
-          .status(400)
-          .json(response(false, `User with id ${userId} not found`));
-      }
-      // Hash checking
-      if (user.hash !== data.hash) {
-        return res.status(404).json(response(false, 'Hash is mismatched'));
+        return res.status(400).json(response(false, 'User not found'));
       }
 
       // Check authorization code to facebook graph server
@@ -187,15 +182,31 @@ const userService = {
           id: user.id,
           full_name: user.full_name
         }),
-        config.authentication.secret
+        config.authentication.secret,
+        expires
       );
       const payload = {
         access_token: token,
         refresh_token: jwtHelpers.refreshToken(),
         provider: 'account-kit',
-        user_id: user.id
+        user_id: user.id,
+        expiry_in: expires
       };
-      const accessToken = await AccessToken.create(payload);
+      let accessToken = await AccessToken.findOne({
+        where: { user_id: user.id }
+      });
+      if (!accessToken) {
+        await AccessToken.create(payload);
+      } else {
+        await AccessToken.update(payload, {
+          where: { user_id: user.id }
+        });
+      }
+      user = await User.update(
+        { phone, is_phone_confirmed: 1 },
+        { where: { hash } }
+      );
+      user = await User.findOne({ where: { hash } });
 
       if (accessToken) {
         return res

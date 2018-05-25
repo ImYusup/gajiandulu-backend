@@ -81,7 +81,7 @@
     "sequelize-cli": "^4.0.0"
   },
   "lint-staged": {
-    "*.js": [
+    "*.{js}": [
       "prettier --config --write",
       "npm run eslint",
       "git add"

@@ -12,6 +12,7 @@ const forgotPassword = require('./forgot-password');
 const bankData = require('./bank-data');
 const companies = require('./companies');
 const members = require('./members');
+const refreshToken = require('./refresh-token');
 
 // Declare API Route and API Version
 const v1 = express.Router();
@@ -27,5 +28,6 @@ v1.use('/promos', promo);
 v1.use('/forgot-password', forgotPassword);
 v1.use('/companies', auth, companies);
 v1.use('/members', auth, members);
+v1.use('/refresh-token', refreshToken);
 
 module.exports = v1;

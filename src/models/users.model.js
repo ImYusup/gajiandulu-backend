@@ -37,10 +37,6 @@ module.exports = function(sequelize, DataTypes) {
           isEmail: true
         }
       },
-      pin: {
-        allowNull: true,
-        type: DataTypes.STRING
-      },
       password: {
         allowNull: true,
         type: DataTypes.STRING

@@ -49,7 +49,7 @@ router.put(
       'authorization_code should be present'
     ).exists(),
     body('*.hash', 'hash should be present').exists(),
-    body('*.user_id', 'user_id should be present').exists()
+    body('*.phone', 'phone should be present').exists()
   ],
   (req, res) => {
     const errors = validationResult(req);

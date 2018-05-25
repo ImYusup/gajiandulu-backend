@@ -31,6 +31,7 @@ const accessTokenService = {
 
   create: async (req, res) => {
     const { data } = req.body;
+    const expires = 24 * 60 * 60;
 
     try {
       const user = await User.findOne({
@@ -59,17 +60,20 @@ const accessTokenService = {
       if (crypt.compareSync(data.password, user.password)) {
         const token = jwtHelpers.createJWT(
           Object.assign({
-            email_phone: user.email_phone,
+            email: user.email,
+            phone: user.phone,
             id: user.id,
             full_name: user.full_name
           }),
-          config.authentication.secret
+          config.authentication.secret,
+          expires
         );
         const payload = {
           access_token: token,
           refresh_token: jwtHelpers.refreshToken(),
           provider: data.provider,
-          user_id: user.id
+          user_id: user.id,
+          expiry_in: expires
         };
 
         let accessToken = await AccessToken.findOne({
@@ -107,7 +111,7 @@ const accessTokenService = {
         });
 
         if (!accessToken) {
-          return res.status(400).json(response(true, 'Login failed'));
+          return res.status(400).json(response(false, 'Login failed'));
         }
 
         return res
@@ -131,8 +135,56 @@ const accessTokenService = {
     }
   },
 
-  update: async (id, data, params) => {
-    //
+  update: async (req, res) => {
+    const { data } = req.body;
+    const expires = 24 * 60 * 60;
+
+    try {
+      let accessToken = await AccessToken.findOne({
+        where: { refresh_token: data.refresh_token }
+      });
+      if (!accessToken) {
+        return res
+          .status(400)
+          .json(
+            response(false, 'invalid refresh token or access token not found')
+          );
+      }
+
+      const user = await User.findOne({ where: { id: accessToken.user_id } });
+
+      const token = jwtHelpers.createJWT(
+        Object.assign({
+          email: user.email,
+          phone: user.phone,
+          id: user.id,
+          full_name: user.full_name
+        }),
+        config.authentication.secret,
+        expires
+      );
+      const payload = {
+        access_token: token,
+        refresh_token: jwtHelpers.refreshToken(),
+        expiry_in: expires
+      };
+
+      accessToken = await AccessToken.update(payload, {
+        where: { refresh_token: data.refresh_token }
+      });
+      accessToken = await AccessToken.findOne({
+        where: { user_id: user.id }
+      });
+
+      return res
+        .status(200)
+        .json(response(true, 'Access token successfully updated', accessToken));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
   },
 
   remove: async (id, params) => {
