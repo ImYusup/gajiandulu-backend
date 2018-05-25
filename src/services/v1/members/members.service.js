@@ -1,4 +1,5 @@
 require('module-alias/register');
+require('sequelize');
 const { response, nodemailerMail } = require('@helpers');
 const {
   employees: Employee,
@@ -8,7 +9,6 @@ const {
   journals: Journal
 } = require('@models');
 const crypt = require('bcrypt');
-require('sequelize');
 
 const memberService = {
   get: async (req, res) => {
