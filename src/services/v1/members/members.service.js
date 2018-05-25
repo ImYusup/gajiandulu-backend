@@ -72,10 +72,12 @@ const memberService = {
 
       let monthlyPresence = [];
       let workhour = 0;
+      let workday = 0;
       let debit = 0;
       let credit = 0;
       presenceData.map(async data => {
         workhour += data.work_hours;
+        data.is_absence ? null : workday++;
         let journal = journalData.filter(fil => {
           return fil.date == data.dataValues.presence_date;
         });
@@ -88,7 +90,7 @@ const memberService = {
         monthlyPresence.push(data);
       });
 
-      const mtd_gross_salary = daily_salary * monthlyPresence.length;
+      const mtd_gross_salary = daily_salary * workday;
       const nett_salary = mtd_gross_salary + debit - credit;
 
       const salary_summary = {
