@@ -93,7 +93,6 @@ const companyService = {
     const { data } = req.body;
     // res.local.users from auth middleware
     // check src/helpers/auth.js
-    const { id: user_id } = res.local.users;
 
     try {
       let finalCode;
@@ -122,17 +121,7 @@ const companyService = {
         active: true
       });
       const company = await Company.create(payload);
-      await Employee.create({
-        company_id: company.id,
-        salary: 0,
-        user_id,
-        role: 1,
-        flag: 3
-      });
-      await User.update(
-        { registration_complete: 1 },
-        { where: { id: user_id } }
-      );
+
       if (company) {
         return res
           .status(201)

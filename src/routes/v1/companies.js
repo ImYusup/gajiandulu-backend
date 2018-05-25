@@ -12,13 +12,26 @@ const express = require('express');
 const router = express.Router();
 const { check, query, validationResult } = require('express-validator/check');
 
-router.get('/', (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json(response(false, errors.array()));
+router.get(
+  '/',
+  [
+    query('codename')
+      .exists()
+      .withMessage('need query codename included')
+      .not()
+      .isEmpty()
+      .withMessage('codename cannot be empty data')
+      .isLength({ min: 10 })
+      .withMessage('wrong length of codename digit')
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    companyService.get(req, res);
   }
-  companyService.get(req, res);
-});
+);
 
 router.get('/:company_id/presences/:presence_id', (req, res) => {
   const errors = validationResult(req);
@@ -39,9 +52,9 @@ router.get('/:company_id/presences', (req, res) => {
 router.post(
   '/',
   [
-    check('*.name', 'name should not contain number')
+    check('*.name')
       .exists()
-      .matches(/^[\D]+$/i)
+      .withMessage('company name should exist')
       .isLength({
         min: 3
       })
@@ -55,7 +68,13 @@ router.post(
     check('*.timezone', 'timezone should be present')
       .exists()
       .matches(/^(\w+[/]\w+)+$/)
-      .withMessage('timezone format must be "continent/city"')
+      .withMessage('timezone format must be "continent/city"'),
+    check('*.location')
+      .exists()
+      .withMessage('coordinate location needed')
+      .not()
+      .isEmpty()
+      .withMessage('location cannot be empty')
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -69,16 +88,11 @@ router.post(
 router.patch(
   '/:company_id',
   [
-    check('*.adress', 'adress should be present').exists(),
-
     check('*.phone', 'must be phone number')
-      .optional({
-        nullable: true
-      })
+      .optional({ nullable: true })
       .isMobilePhone('id-ID'),
-
-    check('*.timezone', 'timezone should be present')
-      .exists()
+    check('*.timezone')
+      .optional({ nullable: true })
       .matches(/^(\w+[/]\w+)+$/)
       .withMessage('timezone format must be "continent/city"')
   ],
