@@ -68,7 +68,13 @@ router.post(
     check('*.timezone', 'timezone should be present')
       .exists()
       .matches(/^(\w+[/]\w+)+$/)
-      .withMessage('timezone format must be "continent/city"')
+      .withMessage('timezone format must be "continent/city"'),
+    check('*.location')
+      .exists()
+      .withMessage('coordinate location needed')
+      .not()
+      .isEmpty()
+      .withMessage('location cannot be empty')
   ],
   (req, res) => {
     const errors = validationResult(req);
