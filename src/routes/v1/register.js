@@ -20,17 +20,15 @@ router.post(
       .exists()
       .isEmail()
       .withMessage('must be a valid email'),
-    check('phone')
-      .exists()
-      .withMessage('phone number should pe present')
-      .isMobilePhone('id-ID')
-      .withMessage('Must be correct phone format'),
     check('birthday')
+      .exists()
       .isISO8601()
       .withMessage('birthday format should be YYYY-MM-DD'),
-    check('password', 'passwords must be at least 6 chars long').isLength({
-      min: 6
-    })
+    check('password', 'passwords must be at least 6 chars long')
+      .exists()
+      .isLength({
+        min: 6
+      })
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -49,7 +47,7 @@ router.put(
       'authorization_code should be present'
     ).exists(),
     body('*.hash', 'hash should be present').exists(),
-    body('*.user_id', 'user_id should be present').exists()
+    body('*.phone', 'phone should be present').exists()
   ],
   (req, res) => {
     const errors = validationResult(req);

@@ -13,7 +13,10 @@ const jwtHelpers = {
    * Sign new jwt token from passed data.
    * @param {Object} data
    */
-  createJWT: (data, secret) => {
+  createJWT: (data, secret, expires) => {
+    if (expires) {
+      options.expiresIn = expires;
+    }
     try {
       const token = jwt.sign(data, secret, options);
       return token;

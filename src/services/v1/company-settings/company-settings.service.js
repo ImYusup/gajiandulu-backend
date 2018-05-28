@@ -71,6 +71,7 @@ const companySettingService = {
   create: async (req, res) => {
     const { data } = req.body;
     const { id: companyId } = req.params;
+    const { id: user_id } = res.local.users;
 
     try {
       let company = await CompanyModel.findOne({
@@ -87,6 +88,17 @@ const companySettingService = {
         company_id: companyId
       });
       company = await CompanySettingModel.create(payload);
+      await EmployeeModel.create({
+        company_id: company.id,
+        salary: 0,
+        user_id,
+        role: 1,
+        flag: 3
+      });
+      await UserModel.update(
+        { registration_complete: 1 },
+        { where: { id: user_id } }
+      );
       return res
         .status(200)
         .json(

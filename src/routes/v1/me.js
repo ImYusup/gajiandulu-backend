@@ -71,25 +71,31 @@ router.post(
 router.patch(
   '/',
   [
-    check('*.full_name', ' name should only has chars and space')
+    check('*.full_name')
+      .optional({ nullable: true })
       .matches(/^[A-Za-z\s]+$/i)
-      .exists()
+      .withMessage('name should only has chars and space')
       .isLength({
         min: 4
-      }),
+      })
+      .withMessage('name minimum 4 characters'),
     check('*.email')
       .optional({ nullable: true })
       .isEmail()
       .withMessage('must be a valid email'),
 
-    check('phone', 'phone number should pe present')
-      .exists()
+    check('*.phone')
+      .optional({ nullable: true })
       .matches(/^[\d]+$/i)
       .withMessage('Only number that allowed'),
 
-    check('*.timezone', 'timezone should be present').exists(),
+    check('*.timezone')
+      .optional({ nullable: true })
+      .matches(/^(\w+[/]\w+)+$/)
+      .withMessage('timezone format must be "continent/city"'),
 
     check('*.birthday')
+      .optional({ nullable: true })
       .isISO8601()
       .withMessage('birthday format should be YYYY-MM-DD'),
 

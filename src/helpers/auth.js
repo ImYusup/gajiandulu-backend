@@ -29,10 +29,11 @@ const auth = async (req, res, next) => {
     // just get res.local.users
     res.local.users = {
       email: user.email,
+      phone: user.phone,
       id: user.id
     };
   } catch (error) {
-    return res.status(403).json(response(false, error.message));
+    return res.status(401).json(response(false, error.message));
   }
   next();
 };
