@@ -4,8 +4,8 @@ const { users: User, access_tokens: AccessToken } = require('@models');
 const axios = require('axios');
 const crypt = require('bcrypt');
 const config = require('config');
-// const Sequelize = require('sequelize');
-// const { Op } = Sequelize;
+const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 
 const userService = {
   find: async (req, res) => {
@@ -47,14 +47,24 @@ const userService = {
    *
    */
   create: async (req, res) => {
-    const { password, email, full_name, birthday } = req.body;
+    const { password, email, full_name, birthday, phone } = req.body;
     try {
+      let user = await User.findOne({
+        where: { [Op.and]: [{ phone: phone }, { is_phone_confirmed: 1 }] }
+      });
+      if (user) {
+        return res
+          .status(400)
+          .json(
+            response(
+              false,
+              'Phone have already registered, please try another number'
+            )
+          );
+      }
       // second parameter is salt for hash
       const hashPassword = crypt.hashSync(password, 15);
       const hash = crypt.hashSync(new Date().toString() + email, 10);
-      // Additional requirement:
-      // if user is not completed their registration step delete the all user related record
-      // and created new user
       const payload = Object.assign(
         {},
         {
@@ -65,7 +75,7 @@ const userService = {
           hash
         }
       );
-      let user = await User.findOne({ where: { email: email } });
+      user = await User.findOne({ where: { email: email } });
       if (user) {
         // this should do cascade delete on associate models
         if (!user.registration_complete) {
@@ -86,7 +96,7 @@ const userService = {
             .json(
               response(
                 false,
-                'You have completed registration process please do login!'
+                'This email has been registered. Please try another email.'
               )
             );
         }
