@@ -15,6 +15,11 @@ const companyMemberService = {
 
     try {
       const dateNow = new Date();
+      const firstDateThisMonth = new Date(
+        dateNow.getFullYear(),
+        dateNow.getMonth(),
+        1
+      );
       const year = dateNow.getFullYear();
       const month = dateNow.getMonth() + 1;
 
@@ -29,12 +34,24 @@ const companyMemberService = {
               {
                 model: Journal,
                 attributes: ['debet', 'kredit'],
-                where: { created_at: { [Op.lt]: dateNow } }
+                where: {
+                  created_at: {
+                    [Op.gte]: firstDateThisMonth,
+                    [Op.lte]: dateNow
+                  }
+                },
+                required: false
               },
               {
                 model: Presence,
                 attributes: ['work_hours'],
-                where: { presence_date: { [Op.lt]: dateNow } }
+                where: {
+                  presence_date: {
+                    [Op.gte]: firstDateThisMonth,
+                    [Op.lte]: dateNow
+                  }
+                },
+                required: false
               }
             ]
           }

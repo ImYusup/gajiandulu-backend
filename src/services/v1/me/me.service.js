@@ -236,6 +236,9 @@ const meService = {
           presence_start: thisDate,
           checkin_location: req.body.location
         });
+        return res
+          .status(201)
+          .json(response(true, 'You have been successfully check-in'));
       } else if (req.body.type.toString() === 'checkout') {
         presenceProcess = await Presence.findOne({
           where: {
@@ -274,10 +277,11 @@ const meService = {
             }
           }
         );
+        return res
+          .status(201)
+          .json(response(true, 'You have been successfully check-out'));
       }
-      return res
-        .status(201)
-        .json(response(true, 'You have been successfully checking'));
+      return res.status(422).json(response(false, 'Wrong checklog type'));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));

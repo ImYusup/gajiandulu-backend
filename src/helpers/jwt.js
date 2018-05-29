@@ -33,6 +33,10 @@ const jwtHelpers = {
     try {
       return jwt.verify(token, config.authentication.secret, options);
     } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        error.message =
+          'Login token expired, please refresh token or do login again.';
+      }
       throw Error(error.message);
     }
   },
