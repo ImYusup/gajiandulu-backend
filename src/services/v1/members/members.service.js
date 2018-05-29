@@ -1,97 +1,116 @@
 require('module-alias/register');
+require('sequelize');
 const { response, nodemailerMail } = require('@helpers');
 const {
   employees: Employee,
   users: User,
   presences: Presence,
-  companies: Company
+  companies: Company,
+  journals: Journal
 } = require('@models');
 const crypt = require('bcrypt');
-const Sequelize = require('sequelize');
 
 const memberService = {
   get: async (req, res) => {
     const { id: userId } = req.params;
+    const today = new Date();
+    const month = ('00' + (today.getMonth() + 1)).slice(-2);
+    const year = today.getFullYear();
 
     try {
-      const fines = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [[Sequelize.fn('SUM', Sequelize.col('fine')), 'fines']]
-      });
-
-      const month = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [
-          [Sequelize.fn('month', Sequelize.col('presence_date')), 'month']
-        ]
-      });
-
-      const year = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [
-          [Sequelize.fn('year', Sequelize.col('presence_date')), 'year']
-        ]
-      });
-
-      const workhour = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [
-          [Sequelize.fn('SUM', Sequelize.col('work_hours')), 'workhour']
-        ]
-      });
-
-      const presenceData = await Presence.findAll({
-        where: { employee_id: userId },
-        attributes: [
-          'presence_date',
-          'presence_start',
-          'presence_end',
-          'rest_start',
-          'rest_end',
-          'presence_overdue',
-          'is_absence',
-          'is_leave',
-          'overwork',
-          'work_hours',
-          'fine'
-        ]
-      });
-
-      const salary = await Employee.findAll({
-        where: { user_id: userId },
-        attributes: [[Sequelize.fn('SUM', Sequelize.col('salary')), 'salaries']]
-      });
-
-      const employeeData = await Employee.findAll({
-        where: { user_id: userId },
-        attributes: ['flag']
-      });
-
-      const userData = await User.findAll({
+      const userData = await User.findOne({
         where: { id: userId },
         attributes: ['full_name', 'email', 'phone']
       });
+      const { full_name, email, phone } = userData.dataValues;
 
-      const memberData = Object.assign(
-        {},
-        {
-          id: userId,
-          full_name: userData[0]['full_name'],
-          email: userData[0]['email'],
-          phone: userData[0]['phone'],
-          flag: employeeData[0]['flag'],
+      const employeeid = await Employee.findOne({
+        where: { user_id: userId },
+        attributes: ['id', 'salary', 'daily_salary', 'flag']
+      });
+      const {
+        id: employeeId,
+        salary,
+        daily_salary,
+        flag
+      } = employeeid.dataValues;
 
-          salary_summary: {
-            month: month[0].dataValues.month,
-            year: year[0].dataValues.year,
-            total_salary: salary[0].dataValues.salaries,
-            fine: fines[0].dataValues.fines,
-            workhour: workhour[0].dataValues.workhour
-          },
-
-          presences: presenceData
+      let presenceData = await Presence.findAll({
+        where: {
+          employee_id: employeeId
+        },
+        attributes: {
+          exclude: [
+            'id',
+            'employee_id',
+            'checkin_location',
+            'checkout_location',
+            'created_at',
+            'updated_at'
+          ]
         }
+      });
+      presenceData = presenceData.filter(data => {
+        let x = data.presence_date.split('-');
+        return `${x[0]}-${x[1]}` == `${year}-${month}`;
+      });
+
+      const journalData = await Journal.findAll({
+        where: { employee_id: employeeId },
+        attributes: ['type', 'debet', 'kredit', 'description', 'created_at']
+      }).then(res =>
+        res.map(x => {
+          return x.dataValues;
+        })
       );
+      journalData.map(data => {
+        data['date'] = `${data.created_at.getFullYear()}-${(
+          '00' +
+          (data.created_at.getMonth() + 1)
+        ).slice(-2)}-${data.created_at.getDate()}`;
+      });
+
+      let monthlyPresence = [];
+      let workhour = 0;
+      let workday = 0;
+      let debit = 0;
+      let credit = 0;
+      presenceData.map(async data => {
+        workhour += data.work_hours;
+        data.is_absence ? null : workday++;
+        let journal = journalData.filter(fil => {
+          return fil.date == data.dataValues.presence_date;
+        });
+        journal.map(del => {
+          debit += del.debet;
+          credit += del.kredit;
+          delete del.date;
+        });
+        data.dataValues['journals'] = journal;
+        monthlyPresence.push(data);
+      });
+
+      const mtd_gross_salary = daily_salary * workday;
+      const nett_salary = mtd_gross_salary + debit - credit;
+
+      const salary_summary = {
+        month: month,
+        year: year,
+        nett_salary: nett_salary,
+        mtd_gross_salary: mtd_gross_salary,
+        monthly_gross_salary: salary,
+        workhour: workhour
+      };
+
+      const memberData = {
+        id: userId,
+        full_name: full_name,
+        email: email,
+        phone: phone,
+        flag: flag,
+        salary_summary: salary_summary,
+        presences: monthlyPresence
+      };
 
       return res
         .status(200)
@@ -278,7 +297,6 @@ const memberService = {
           }
         );
       }
-        
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));
