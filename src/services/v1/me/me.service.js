@@ -460,6 +460,9 @@ const meService = {
       const promo = await Promos.findOne({
         where: { code: promo_code }
       });
+      if (!promo) {
+        return res.json(response(false, 'Promo code does not exist'));
+      }
       const journal = await Journals.create({
         employee_id: userId,
         type: 'withdraw'
