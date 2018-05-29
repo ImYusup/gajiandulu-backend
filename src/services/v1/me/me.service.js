@@ -7,7 +7,8 @@ const {
   companies: Company,
   company_settings: CompanySetting,
   digital_assets: DigitalAsset,
-  presences: Presence
+  presences: Presence,
+  journals: Journal
 } = require('@models');
 const crypt = require('bcrypt');
 const path = require('path');
@@ -86,6 +87,126 @@ const meService = {
             response(true, 'Profile has been successfully updated', result)
           );
       });
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
+  },
+
+  deposit: async (req, res) => {
+    const { id: userId } = res.local.users;
+    let { month, year } = req.query;
+    month = ('00' + month).slice(-2);
+
+    try {
+      const getEmployeeId = await Employee.findOne({
+        where: { user_id: userId },
+        attributes: ['id', 'salary', 'workdays', 'daily_salary', 'flag']
+      });
+      const {
+        id: employeeId,
+        salary,
+        daily_salary,
+        flag
+      } = getEmployeeId.dataValues;
+
+      const userData = await User.findOne({
+        where: { id: userId },
+        attributes: ['full_name', 'email', 'phone']
+      });
+      const { full_name, email, phone } = userData.dataValues;
+
+      let presenceData = await Presence.findAll({
+        where: {
+          employee_id: employeeId
+        },
+        attributes: {
+          exclude: [
+            'id',
+            'employee_id',
+            'checkin_location',
+            'checkout_location',
+            'created_at',
+            'updated_at'
+          ]
+        }
+      });
+
+      presenceData = presenceData.filter(data => {
+        let getPresenceDate = data.presence_date.split('-');
+        return (
+          `${getPresenceDate[0]}-${getPresenceDate[1]}` == `${year}-${month}`
+        );
+      });
+
+      const journalData = await Journal.findAll({
+        where: { employee_id: employeeId },
+        attributes: ['type', 'debet', 'kredit', 'description', 'created_at']
+      }).then(res =>
+        res.map(data => {
+          return data.dataValues;
+        })
+      );
+      journalData.map(data => {
+        data['date'] = `${data.created_at.getFullYear()}-${(
+          '00' +
+          (data.created_at.getMonth() + 1)
+        ).slice(-2)}-${data.created_at.getDate()}`;
+      });
+
+      let monthlyPresence = [];
+      let workhour = 0;
+      let work_day = 0;
+      let debit = 0;
+      let credit = 0;
+
+      presenceData.map(async result => {
+        workhour += result.work_hours;
+        result.is_absence ? null : work_day++;
+        let journal = journalData.filter(fil => {
+          return fil.date == result.dataValues.presence_date;
+        });
+        journal.map(del => {
+          debit += del.debet;
+          credit += del.kredit;
+          delete del.date;
+        });
+        result.dataValues['journals'] = journal;
+        monthlyPresence.push(result);
+      });
+
+      const mtd_gross_salary = daily_salary * work_day;
+      const nett_salary = mtd_gross_salary + debit - credit;
+
+      const result = {
+        id: userId,
+        full_name: full_name,
+        email: email,
+        phone: phone,
+        flag: flag,
+
+        salary_summary: {
+          month: month,
+          year: year,
+          nett_salary: nett_salary,
+          mtd_gross_salary: mtd_gross_salary,
+          monthly_gross_salary: salary,
+          workhour: workhour
+        },
+        presences: monthlyPresence
+      };
+
+      return res
+        .status(200)
+        .json(
+          response(
+            true,
+            'Deposit summary list been successfully retrieved',
+            result
+          )
+        );
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));

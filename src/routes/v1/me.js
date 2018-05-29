@@ -9,7 +9,7 @@ const express = require('express');
 const multer = require('multer');
 const config = require('config');
 const router = express.Router();
-const { check, validationResult } = require('express-validator/check');
+const { check, query, validationResult } = require('express-validator/check');
 
 const storage = multer.diskStorage({
   destination: config.uploads,
@@ -133,6 +133,21 @@ router.get('/notifications', (req, res) => {
   }
   meService.get(req, res);
 });
+
+router.get(
+  '/deposit-summary',
+  [
+    query('month', 'failed need query month and year').exists(),
+    query('year', 'failed need query month and year').exists()
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    meService.deposit(req, res);
+  }
+);
 
 router.post('/checklog', (req, res) => {
   // Before pass the request to service, we need to handle error
