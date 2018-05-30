@@ -16,38 +16,6 @@ const config = require('config');
 const fs = require('fs');
 
 const meService = {
-  // find: async (req, res) => {
-  //   const { id: userId } = res.local.users;
-  //   try {
-  //     const userData = await User.findOne({ where: { id: userId } });
-  //     const familyData = await UserFamily.findOne({
-  //       where: { user_id: userId }
-  //     });
-  //     const occupationData = await Occupation.findOne({
-  //       where: { user_id: userId }
-  //     });
-  //     if (!userData || !occupationData || !familyData) {
-  //       return res
-  //         .status(400)
-  //         .json(response(false, `Me data with id ${userId} is not found`));
-  //     }
-  //     const meData = {
-  //       userData,
-  //       family: familyData,
-  //       occupation: occupationData
-  //     };
-
-  //     return res
-  //       .status(200)
-  //       .json(response(true, 'Me data retrieved successfully', meData, null));
-  //   } catch (error) {
-  //     if (error.errors) {
-  //       return res.status(400).json(response(false, error.errors));
-  //     }
-  //     return res.status(400).json(response(false, error.message));
-  //   }
-  // },
-
   patch: async (req, res) => {
     const { id: userId } = res.local.users;
     const { data } = req.body;
@@ -403,6 +371,76 @@ const meService = {
           .json(response(true, 'You have been successfully check-out'));
       }
       return res.status(422).json(response(false, 'Wrong checklog type'));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
+  },
+
+  rest: async (req, res) => {
+    const { data } = req.body;
+    const { id: userId } = res.local.users;
+    const thisDate = new Date();
+
+    try {
+      const employee = await Employee.findOne({ where: { user_id: userId } });
+      if (!employee) {
+        return res
+          .status(400)
+          .json(response(false, 'Failed to find employee data'));
+      }
+      let presences = await Presence.findOne({
+        where: {
+          employee_id: employee.id,
+          presence_date: `${thisDate.getFullYear()}-${thisDate.getMonth() +
+            1}-${thisDate.getDate()}`
+        }
+      });
+      if (!presences) {
+        return res
+          .status(400)
+          .json(response(false, 'You have not yet checkin today'));
+      }
+
+      if (data.type.toString() === 'rest_start') {
+        if (presences.rest_start) {
+          return res
+            .status(400)
+            .json(response(false, 'You have already started rest today'));
+        }
+        presences = Presence.update(
+          { rest_start: thisDate },
+          {
+            where: {
+              employee_id: employee.id,
+              presence_date: `${thisDate.getFullYear()}-${thisDate.getMonth() +
+                1}-${thisDate.getDate()}`
+            }
+          }
+        );
+      } else if (data.type.toString() === 'rest_end') {
+        if (presences.rest_end) {
+          return res
+            .status(400)
+            .json(response(false, 'You have already ended rest today'));
+        }
+        presences = Presence.update(
+          { rest_end: thisDate },
+          {
+            where: {
+              employee_id: employee.id,
+              presence_date: `${thisDate.getFullYear()}-${thisDate.getMonth() +
+                1}-${thisDate.getDate()}`
+            }
+          }
+        );
+      }
+
+      return res
+        .status(201)
+        .json(response(true, 'You have been successfully starting rest'));
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));

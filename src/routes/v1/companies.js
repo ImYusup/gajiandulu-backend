@@ -41,13 +41,21 @@ router.get('/:company_id/presences/:presence_id', (req, res) => {
   presenceService.get(req, res);
 });
 
-router.get('/:company_id/presences', (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json(response(false, errors.array()));
+router.get(
+  '/:company_id/presences',
+  [
+    query('date')
+      .exists()
+      .withMessage('query date required')
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    presenceService.find(req, res);
   }
-  presenceService.find(req, res);
-});
+);
 
 router.post(
   '/',

@@ -149,6 +149,22 @@ router.get(
   }
 );
 
+router.post(
+  '/checklog/rest',
+  [
+    check('*.type')
+      .exists()
+      .withMessage('Must specify rest type')
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json(response(false, errors.array()));
+    }
+    meService.rest(req, res);
+  }
+);
+
 router.post('/checklog', (req, res) => {
   // Before pass the request to service, we need to handle error
   upload(req, res, function(error) {
