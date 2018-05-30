@@ -202,6 +202,14 @@ router.post('/checklog', (req, res) => {
  *  WITHDRAWS
  *
  */
+router.get('/withdraws', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  meService.getWithdraws(req, res);
+});
+
 router.post(
   '/withdraws',
   [

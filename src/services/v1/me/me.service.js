@@ -112,7 +112,7 @@ const meService = {
         );
       });
 
-      const journalData = await Journal.findAll({
+      const journalData = await Journals.findAll({
         where: { employee_id: employeeId },
         attributes: ['type', 'debet', 'kredit', 'description', 'created_at']
       }).then(res =>
@@ -451,6 +451,40 @@ const meService = {
       return res.status(400).json(response(false, error.message));
     }
   },
+
+  getWithdraws: async (req, res) => {
+    const { id: userId } = res.local.users;
+
+    try {
+      const employee = await Employee.findOne({ where: { user_id: userId } });
+      const withdrawHistory = await Journals.findAll({
+        where: { type: 'withdraw', employee_id: employee.id },
+        attributes: { exclude: ['created_at', 'updated_at'] },
+        include: [
+          {
+            model: JournalDetails,
+            attributes: ['total', 'status', 'created_at']
+          }
+        ]
+      });
+
+      return res
+        .status(200)
+        .json(
+          response(
+            true,
+            'Withdraws histories been successfully retrieved',
+            withdrawHistory
+          )
+        );
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
+  },
+
   withdraws: async (req, res) => {
     const { id: userId } = res.local.users;
     const { total_amount, promo_code } = req.body;
