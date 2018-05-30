@@ -8,8 +8,11 @@ const {
   company_settings: CompanySetting,
   digital_assets: DigitalAsset,
   presences: Presence,
-  journals: Journal
+  journals: Journals,
+  journal_details: JournalDetails,
+  promos: Promos
 } = require('@models');
+
 const crypt = require('bcrypt');
 const path = require('path');
 const config = require('config');
@@ -109,7 +112,7 @@ const meService = {
         );
       });
 
-      const journalData = await Journal.findAll({
+      const journalData = await Journals.findAll({
         where: { employee_id: employeeId },
         attributes: ['type', 'debet', 'kredit', 'description', 'created_at']
       }).then(res =>
@@ -441,6 +444,86 @@ const meService = {
       return res
         .status(201)
         .json(response(true, 'You have been successfully starting rest'));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
+  },
+
+  getWithdraws: async (req, res) => {
+    const { id: userId } = res.local.users;
+
+    try {
+      const employee = await Employee.findOne({ where: { user_id: userId } });
+      const withdrawHistory = await Journals.findAll({
+        where: { type: 'withdraw', employee_id: employee.id },
+        attributes: { exclude: ['created_at', 'updated_at'] },
+        include: [
+          {
+            model: JournalDetails,
+            attributes: ['total', 'status', 'created_at']
+          }
+        ]
+      });
+
+      return res
+        .status(200)
+        .json(
+          response(
+            true,
+            'Withdraws histories been successfully retrieved',
+            withdrawHistory
+          )
+        );
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
+  },
+
+  withdraws: async (req, res) => {
+    const { id: userId } = res.local.users;
+    const { total_amount, promo_code } = req.body;
+    const tax = 30000;
+    const fee = tax * 0.1;
+    try {
+      const promo = await Promos.findOne({
+        where: { code: promo_code }
+      });
+      if (!promo) {
+        return res.json(response(false, 'Promo code does not exist'));
+      }
+      const journal = await Journals.create({
+        employee_id: userId,
+        type: 'withdraw'
+      });
+      const journalDetails = await JournalDetails.create({
+        journal_id: journal.id,
+        tax: tax,
+        fee: fee,
+        promo_id: promo.id,
+        promo_applied: promo.discount / 100 * total_amount,
+        total: total_amount,
+        total_nett:
+          total_amount + promo.discount / 100 * total_amount - tax - fee
+      });
+
+      if (journal === null && journalDetails === null) {
+        return res.status(400).json(response(true, 'Can not create withdraw'));
+      }
+      return res
+        .status(200)
+        .json(
+          response(
+            true,
+            'Withdraw has been successfully created',
+            journalDetails
+          )
+        );
     } catch (error) {
       if (error.errors) {
         return res.status(400).json(response(false, error.errors));

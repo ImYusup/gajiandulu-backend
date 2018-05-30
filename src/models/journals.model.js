@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING(45),
         validate: {
-          notNull: { msg: 'Please input type.' }
+          notEmpty: true
         }
       },
       debet: {
