@@ -104,6 +104,13 @@ module.exports = function(sequelize, DataTypes) {
       foreignKey: 'user_id',
       onDelete: 'CASCADE'
     });
+    User.hasMany(models.digital_assets, {
+      foreignKey: 'uploadable_id',
+      scope: {
+        uploadable_type: 'users'
+      },
+      as: 'assets'
+    });
   };
 
   User.prototype.toJSON = function() {

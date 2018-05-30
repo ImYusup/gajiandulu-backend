@@ -60,6 +60,13 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
       as: 'setting'
     });
+    Company.hasMany(models.digital_assets, {
+      foreignKey: 'uploadable_id',
+      scope: {
+        uploadable_type: 'companies'
+      },
+      as: 'assets'
+    });
   };
   return Company;
 };

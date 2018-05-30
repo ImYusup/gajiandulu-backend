@@ -92,6 +92,13 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'employee_id',
       onDelete: 'CASCADE'
     });
+    Employee.hasMany(models.digital_assets, {
+      foreignKey: 'uploadable_id',
+      scope: {
+        uploadable_type: 'employees'
+      },
+      as: 'assets'
+    });
   };
   return Employee;
 };
