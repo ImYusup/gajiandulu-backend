@@ -12,28 +12,25 @@ const crypt = require('bcrypt');
 
 const memberService = {
   get: async (req, res) => {
-    const { id: userId } = req.params;
+    const { id: memberId } = req.params;
     const today = new Date();
     const month = ('00' + (today.getMonth() + 1)).slice(-2);
     const year = today.getFullYear();
 
     try {
-      const userData = await User.findOne({
-        where: { id: userId },
-        attributes: ['full_name', 'email', 'phone']
+      const employee = await Employee.findOne({
+        where: { id: memberId },
+        attributes: ['id', 'salary', 'daily_salary', 'flag'],
+        include: [
+          {
+            model: User,
+            attributes: ['full_name', 'email', 'phone']
+          }
+        ]
       });
-      const { full_name, email, phone } = userData.dataValues;
 
-      const employeeid = await Employee.findOne({
-        where: { user_id: userId },
-        attributes: ['id', 'salary', 'daily_salary', 'flag']
-      });
-      const {
-        id: employeeId,
-        salary,
-        daily_salary,
-        flag
-      } = employeeid.dataValues;
+      const { id: employeeId, salary, daily_salary, flag, user } = employee;
+      const { full_name, email, phone } = user;
 
       let presenceData = await Presence.findAll({
         where: {
@@ -103,7 +100,7 @@ const memberService = {
       };
 
       const memberData = {
-        id: userId,
+        id: employeeId,
         full_name: full_name,
         email: email,
         phone: phone,
@@ -129,9 +126,10 @@ const memberService = {
     const userId = req.params.id;
     const { data } = req.body;
     try {
-      let employee = await Employee.findOne({ where: { id: userId } });
+      let employee = await Employee.findOne({ where: { user_id: userId } });
 
-      Employee.update(data, { where: { id: userId } });
+      await Employee.update(data, { where: { user_id: userId } });
+      employee = await Employee.findOne({ where: { user_id: userId } });
       if (employee.flag == '3') {
         return res
           .status(200)
