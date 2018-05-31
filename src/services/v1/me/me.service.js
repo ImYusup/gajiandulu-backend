@@ -456,16 +456,25 @@ const meService = {
     const { id: userId } = res.local.users;
 
     try {
-      const employee = await Employee.findOne({ where: { user_id: userId } });
-      const withdrawHistory = await Journals.findAll({
-        where: { type: 'withdraw', employee_id: employee.id },
-        attributes: { exclude: ['created_at', 'updated_at'] },
-        include: [
-          {
-            model: JournalDetails,
-            attributes: ['total', 'status', 'created_at']
-          }
-        ]
+      const employeesId = await Employee.findOne({
+        where: { user_id: userId }
+      });
+      const jurnalId = await Journals.findAll({
+        where: { type: 'withdraw', employee_id: employeesId.dataValues.id },
+        attributes: {
+          exclude: [
+            'debet',
+            'kredit',
+            'description',
+            'created_at',
+            'updated_at'
+          ]
+        }
+      });
+
+      const journaldetails = await JournalDetails.findAll({
+        where: { journal_id: jurnalId[0].dataValues.id },
+        attributes: ['total', 'status']
       });
 
       return res
@@ -474,7 +483,7 @@ const meService = {
           response(
             true,
             'Withdraws histories been successfully retrieved',
-            withdrawHistory
+            journaldetails
           )
         );
     } catch (error) {
@@ -506,10 +515,10 @@ const meService = {
         tax: tax,
         fee: fee,
         promo_id: promo.id,
-        promo_applied: promo.discount / 100 * total_amount,
+        promo_applied: (promo.discount / 100) * total_amount,
         total: total_amount,
         total_nett:
-          total_amount + promo.discount / 100 * total_amount - tax - fee
+          total_amount + (promo.discount / 100) * total_amount - tax - fee
       });
 
       if (journal === null && journalDetails === null) {
