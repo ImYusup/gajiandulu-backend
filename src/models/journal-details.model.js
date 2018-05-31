@@ -49,7 +49,9 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER
       },
       status: {
-        type: DataTypes.TINYINT(2)
+        allowNull: false,
+        type: DataTypes.TINYINT(2),
+        defaultValue: 0
       },
       created_at: {
         allowNull: false,

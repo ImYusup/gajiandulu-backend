@@ -4,8 +4,10 @@ const {
   digital_assets: DigitalAsset,
   employees: Employee,
   users: User,
-  presences: Presence
+  presences: Presence,
+  journals: Journal
 } = require('@models');
+const Sequelize = require('sequelize');
 
 const presenceService = {
   get: async (req, res) => {
@@ -23,6 +25,38 @@ const presenceService = {
                 model: User
               },
               {
+                model: Journal,
+                required: false,
+                where: [
+                  Sequelize.where(
+                    Sequelize.fn(
+                      'DATE_FORMAT',
+                      Sequelize.col('employee->journals.created_at'),
+                      '%Y%c%d'
+                    ),
+                    Sequelize.fn(
+                      'DATE_FORMAT',
+                      Sequelize.col('presences.presence_date'),
+                      '%Y%c%d'
+                    )
+                  ),
+                  {
+                    $or: [
+                      { type: 'salary' },
+                      { type: 'fine' },
+                      { type: 'notes' }
+                    ]
+                  }
+                ],
+                attributes: [
+                  'type',
+                  'debet',
+                  'kredit',
+                  'description',
+                  'created_at'
+                ]
+              },
+              {
                 model: DigitalAsset,
                 required: false,
                 attributes: ['url', 'type'],
@@ -35,6 +69,20 @@ const presenceService = {
           }
         ]
       });
+      let totalSalary = 0;
+      let totalFine = 0;
+      let notesList = [];
+      for (let i = 0; i < presences.employee.journals.length; i++) {
+        if (presences.employee.journals[i].type === 'salary') {
+          totalSalary += presences.employee.journals[i].debet;
+        }
+        if (presences.employee.journals[i].type === 'fine') {
+          totalFine += presences.employee.journals[i].kredit;
+        }
+        if (presences.employee.journals[i].type === 'notes') {
+          notesList.push(presences.employee.journals[i]);
+        }
+      }
       let result = Object.assign({
         id: presences.id,
         presence_date: presences.presence_date,
@@ -47,8 +95,9 @@ const presenceService = {
         is_leave: presences.is_leave,
         overwork: presences.overwork,
         work_hours: presences.work_hours,
-        salary: presences.salary,
-        fine: presences.fine,
+        salary: totalSalary,
+        fine: totalFine,
+        notes: notesList,
         employee: {
           id: presences.employee.id,
           role: presences.employee.role,
