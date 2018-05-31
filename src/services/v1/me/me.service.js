@@ -9,8 +9,7 @@ const {
   digital_assets: DigitalAsset,
   presences: Presence,
   journals: Journals,
-  journal_details: JournalDetails,
-  promos: Promos
+  journal_details: JournalDetails
 } = require('@models');
 
 const crypt = require('bcrypt');
@@ -457,13 +456,16 @@ const meService = {
 
     try {
       const employee = await Employee.findOne({ where: { user_id: userId } });
-      const withdrawHistory = await Journals.findAll({
-        where: { type: 'withdraw', employee_id: employee.id },
-        attributes: { exclude: ['created_at', 'updated_at'] },
+      if (!employee) {
+        return res.status(400).json(response(false, 'Employee data not found'));
+      }
+      const withdrawHistory = await JournalDetails.findAll({
+        attributes: ['total', 'status', 'created_at'],
         include: [
           {
-            model: JournalDetails,
-            attributes: ['total', 'status', 'created_at']
+            model: Journals,
+            where: { type: 'withdraw', employee_id: employee.id },
+            attributes: ['id', 'employee_id', 'type']
           }
         ]
       });
@@ -487,32 +489,27 @@ const meService = {
 
   withdraws: async (req, res) => {
     const { id: userId } = res.local.users;
-    const { total_amount, promo_code } = req.body;
+    const { total_amount } = req.body.data;
     const tax = 30000;
     const fee = tax * 0.1;
     try {
-      const promo = await Promos.findOne({
-        where: { code: promo_code }
-      });
-      if (!promo) {
-        return res.json(response(false, 'Promo code does not exist'));
+      const employee = await Employee.findOne({ where: { user_id: userId } });
+      if (!employee) {
+        return res.status(400).json(response(false, 'Employee data not found'));
       }
       const journal = await Journals.create({
-        employee_id: userId,
+        employee_id: employee.id,
         type: 'withdraw'
       });
       const journalDetails = await JournalDetails.create({
         journal_id: journal.id,
         tax: tax,
         fee: fee,
-        promo_id: promo.id,
-        promo_applied: promo.discount / 100 * total_amount,
         total: total_amount,
-        total_nett:
-          total_amount + promo.discount / 100 * total_amount - tax - fee
+        total_nett: total_amount - tax - fee
       });
 
-      if (journal === null && journalDetails === null) {
+      if (!journal && !journalDetails) {
         return res.status(400).json(response(true, 'Can not create withdraw'));
       }
       return res
