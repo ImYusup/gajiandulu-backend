@@ -213,12 +213,11 @@ router.get('/withdraws', (req, res) => {
 router.post(
   '/withdraws',
   [
-    check('total_amount', 'total_amount must be an integer and cannot be empty')
+    check(
+      '*.total_amount',
+      'total_amount must be an integer and cannot be empty'
+    )
       .isInt()
-      .not()
-      .isEmpty()
-      .trim(),
-    check('promo_code', 'promo_code cannot be empty')
       .not()
       .isEmpty()
       .trim()
