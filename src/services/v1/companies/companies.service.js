@@ -8,9 +8,11 @@ const {
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
 
+const { events, EVENT } = require('../../../eventemitter');
+
 const companyService = {
   get: async (req, res) => {
-    const { id: user_id } = res.local.users;
+    const { id: user_id, employeeId } = res.local.users;
 
     try {
       if (req.query.codename) {
@@ -37,6 +39,16 @@ const companyService = {
           { where: { id: user_id } }
         );
         await Employee.update({ flag: 3 }, { where: { user_id } });
+
+        events.sendWelcomeNotification(EVENT.SEND_WELCOME, {
+          userId: user_id,
+          employeeId
+        });
+        events.sendWelcomeNotification(EVENT.NEW_EMPLOYEE_JOINED, {
+          userId: user_id,
+          employeeId,
+          companyId: isCompany.id
+        });
 
         return res
           .status(200)

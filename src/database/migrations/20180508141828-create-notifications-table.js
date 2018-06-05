@@ -21,6 +21,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.TEXT
       },
+      is_read: {
+        allowNull: false,
+        type: Sequelize.TINYINT,
+        defaultValue: 0
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

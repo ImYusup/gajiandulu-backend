@@ -5,6 +5,7 @@ const notFound = require('./notFound');
 const authAdmin = require('./authAdmin');
 const compareCoordinates = require('./compareCoordinates');
 const nodemailerMail = require('./mailer');
+const oneSignalApi = require('./onesignal');
 
 module.exports = {
   response,
@@ -13,5 +14,6 @@ module.exports = {
   notFound,
   authAdmin,
   compareCoordinates,
-  nodemailerMail
+  nodemailerMail,
+  oneSignalApi
 };
