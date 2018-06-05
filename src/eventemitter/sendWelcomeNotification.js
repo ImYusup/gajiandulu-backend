@@ -53,7 +53,9 @@ const sendWelcomeNotification = async (bindName, data) => {
     const managerData = await Employee.findAll({
       where: { company_id: data.companyId, role: '1' }
     });
-
+    const HEADING_MESSAGE = `${
+      employeeData.user.full_name
+    } baru saja bergabung`;
     const BODY_MESSAGE = `${
       employeeData.user.full_name
     } baru saja bergabung ke ${employeeData.company.name} sebagai ${
@@ -71,7 +73,7 @@ const sendWelcomeNotification = async (bindName, data) => {
       /* eslint-disable quotes */
       filters.push({"field": "tag", "key": "employeeId", "relation": "=", "value": managerData[i].id}, {"operator": "OR"});
     }
-
+    filters.splice(-1, 1);
     await Notif.bulkCreate(payloadNotif);
 
     // prettier-ignore
@@ -79,7 +81,7 @@ const sendWelcomeNotification = async (bindName, data) => {
     const payload = {
       "app_id": "680226d3-4d46-4a02-acd0-31e408fa0255",
       "filters": filters,
-      "headings": {"en": "Selamat Datang di GajianDulu"},
+      "headings": {"en": HEADING_MESSAGE},
       "contents": {"en": BODY_MESSAGE}
     };
     oneSignalApi.post('/notifications', payload, {
