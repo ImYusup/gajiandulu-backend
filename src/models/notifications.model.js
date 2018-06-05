@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.TEXT
       },
+      is_read: {
+        allowNull: false,
+        type: DataTypes.TINYINT,
+        defaultValue: 0
+      },
       created_at: {
         allowNull: false,
         type: DataTypes.DATE

@@ -1,6 +1,6 @@
 require('module-alias/register');
 const { response } = require('@helpers');
-const { digital_assets: DigitalAsset, users: User } = require('@models');
+const { digital_assets: DigitalAsset } = require('@models');
 const config = require('config');
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
@@ -60,18 +60,17 @@ const digitalAssetService = {
 
   // @TODO refactor later for better readybility
   create: async (req, res) => {
-    // res.local.users from auth middleware
-    // check src/helpers/auth.js
-    const { id: user_id } = res.local.users;
-    const host = process.env.NODE_ENV !== 'production'
-      ? `http://${config.host}:${config.port}/`
-      : `http://${config.host}/`;
+    const host =
+      process.env.NODE_ENV !== 'production'
+        ? `http://${config.host}:${config.port}/`
+        : `http://${config.host}/`;
 
     let location;
 
     let payload = {
-      user_id,
-      type: req.body.type
+      type: req.body.type,
+      uploadable_id: req.body.uploadable_id,
+      uploadable_type: req.body.uploadable_type
     };
 
     // This will handle file as encoded base64 from client
@@ -106,7 +105,11 @@ const digitalAssetService = {
     try {
       let digitalAsset = await DigitalAsset.findOne({
         where: {
-          [Op.and]: [{ user_id: user_id }, { type: req.body.type }]
+          [Op.and]: [
+            { uploadable_type: req.body.uploadable_type },
+            { uploadable_id: req.body.uploadable_id },
+            { type: req.body.type }
+          ]
         }
       });
 
@@ -119,14 +122,22 @@ const digitalAssetService = {
       if (digitalAsset) {
         digitalAsset = await DigitalAsset.update(payload, {
           where: {
-            [Op.and]: [{ user_id: user_id }, { type: req.body.type }]
+            [Op.and]: [
+              { uploadable_type: req.body.uploadable_type },
+              { uploadable_id: req.body.uploadable_id },
+              { type: req.body.type }
+            ]
           }
         });
 
         // since update not returning the record we need to get the record
         digitalAsset = await DigitalAsset.findOne({
           where: {
-            [Op.and]: [{ user_id: user_id }, { type: req.body.type }]
+            [Op.and]: [
+              { uploadable_type: req.body.uploadable_type },
+              { uploadable_id: req.body.uploadable_id },
+              { type: req.body.type }
+            ]
           }
         });
       }
@@ -140,13 +151,6 @@ const digitalAssetService = {
               `Sorry, digital assets type ${req.body.type} not created!`
             )
           );
-      }
-
-      if (req.body.type === 'signature') {
-        await User.update(
-          { registration_complete: true },
-          { where: { id: user_id } }
-        );
       }
 
       return res

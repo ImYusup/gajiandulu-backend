@@ -37,7 +37,14 @@ const accessTokenService = {
       const user = await User.findOne({
         where: {
           [Op.or]: [{ email: data.email_phone }, { phone: data.email_phone }]
-        }
+        },
+        include: [
+          {
+            model: Employee,
+            attributes: ['id', 'flag', 'role'],
+            include: [{ model: Company, attributes: ['id'] }]
+          }
+        ]
       });
 
       if (user === null) {
@@ -57,13 +64,19 @@ const accessTokenService = {
       //     .json(response(false, 'We sent you an email confirmation, please do confirm your email first!'));
       // }
 
+      let accessToken = await AccessToken.findOne({
+        where: {
+          [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
+        }
+      });
+
       if (crypt.compareSync(data.password, user.password)) {
         const token = jwtHelpers.createJWT(
           Object.assign({
             email: user.email,
             phone: user.phone,
             id: user.id,
-            full_name: user.full_name
+            employeeId: user.employees[0].id
           }),
           config.authentication.secret,
           expires
@@ -75,12 +88,6 @@ const accessTokenService = {
           user_id: user.id,
           expiry_in: expires
         };
-
-        let accessToken = await AccessToken.findOne({
-          where: {
-            [Op.and]: [{ user_id: user.id }, { provider: data.provider }]
-          }
-        });
 
         if (!accessToken) {
           await AccessToken.create(payload);
@@ -98,16 +105,12 @@ const accessTokenService = {
           },
           include: [{ model: User, as: 'user' }]
         });
-        const employeesData = await Employee.findOne({
-          where: { user_id: user.id },
-          include: [{ model: Company }]
-        });
 
         accessToken = Object.assign({}, accessToken.dataValues, {
-          company_id: employeesData.company.id,
-          employee_id: employeesData.id,
-          flag: employeesData.flag,
-          role: employeesData.role
+          company_id: user.employees[0].company.id,
+          employee_id: user.employees[0].id,
+          flag: user.employees[0].flag,
+          role: user.employees[0].role
         });
 
         if (!accessToken) {
