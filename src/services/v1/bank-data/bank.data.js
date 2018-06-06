@@ -50,6 +50,29 @@ const bankDataService = {
       }
       return res.status(400).json(response(false, error.message));
     }
+  },
+
+  get: async (req, res) => {
+    const { id: user_id } = res.local.users;
+
+    try {
+      const bankData = await BankData.findOne({
+        where: { user_id, active: true }
+      });
+      if (!bankData) {
+        return res
+          .status(400)
+          .json(response(false, 'Cannot find any active bank data'));
+      }
+      return res
+        .status(200)
+        .json(response(true, 'Bank data successfully retrieved', bankData));
+    } catch (error) {
+      if (error.errors) {
+        return res.status(400).json(response(false, error.errors));
+      }
+      return res.status(400).json(response(false, error.message));
+    }
   }
 };
 
