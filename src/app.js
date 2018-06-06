@@ -11,6 +11,7 @@ const express = require('express');
 const config = require('config');
 const GraphHTTP = require('express-graphql');
 const adminSchema = require('./graphql');
+const { events } = require('./eventemitter');
 
 const app = express();
 
@@ -25,6 +26,10 @@ app.use(express.urlencoded({ extended: true }));
 // Host the public folder
 // app.use('/', express.static(config.public));
 app.use('/uploads', express.static(config.uploads));
+
+// Event Listener
+events.UserRegistered.listenUserRegistered();
+events.UserRegistered.listenUserJoined();
 
 // Route for API
 // auth is middleware for authentication
