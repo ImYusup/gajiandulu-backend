@@ -74,7 +74,7 @@ const companySettingService = {
   create: async (req, res) => {
     const { data } = req.body;
     const { id: companyId } = req.params;
-    const { id: user_id, employeeId } = res.local.users;
+    const { id: user_id } = res.local.users;
 
     try {
       let company = await CompanyModel.findOne({
@@ -123,7 +123,7 @@ const companySettingService = {
       // SEND NOTIFICATION WELCOME
       observe.emit(EVENT.SEND_WELCOME, {
         userId: user_id,
-        employeeId
+        employeeId: employee.id
       });
 
       return res
