@@ -13,7 +13,7 @@ const { observe } = require('../../../eventemitter');
 
 const companyService = {
   get: async (req, res) => {
-    const { id: user_id, employeeId } = res.local.users;
+    const { id: user_id } = res.local.users;
     try {
       if (req.query.codename) {
         const { codename } = req.query;
@@ -40,18 +40,18 @@ const companyService = {
         );
         await Employee.update({ flag: 3 }, { where: { user_id } });
 
+        isCompany.employee_id = isInvited.id;
+
         //Emit the events
         observe.emit(EVENT.SEND_WELCOME, {
           userId: user_id,
-          employeeId
+          employeeId: isInvited.id
         });
         observe.emit(EVENT.NEW_EMPLOYEE_JOINED, {
           userId: user_id,
-          employeeId,
+          employeeId: isInvited.id,
           companyId: isCompany.id
         });
-
-        isCompany.employee_id = isInvited.id;
 
         return res
           .status(200)
