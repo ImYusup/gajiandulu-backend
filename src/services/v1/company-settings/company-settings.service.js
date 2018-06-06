@@ -8,7 +8,8 @@ const {
   users: UserModel
 } = require('@models');
 
-const { events, EVENT } = require('../../../eventemitter');
+const EVENT = require('../../../eventemitter/constants');
+const { observe, events } = require('../../../eventemitter');
 
 const companySettingService = {
   get: async (req, res) => {
@@ -118,7 +119,8 @@ const companySettingService = {
       );
 
       // SEND NOTIFICATION WELCOME
-      events.sendWelcomeNotification(EVENT.SEND_WELCOME, {
+      events.UserRegistered.listenUserRegistered();
+      observe.emit(EVENT.SEND_WELCOME, {
         userId: user_id,
         employeeId
       });
