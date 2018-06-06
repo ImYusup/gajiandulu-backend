@@ -9,7 +9,7 @@ const Sequelize = require('sequelize');
 const { Op } = Sequelize;
 
 const EVENT = require('../../../eventemitter/constants');
-const { observe, events } = require('../../../eventemitter');
+const { observe } = require('../../../eventemitter');
 
 const companyService = {
   get: async (req, res) => {
@@ -40,9 +40,6 @@ const companyService = {
         );
         await Employee.update({ flag: 3 }, { where: { user_id } });
 
-        // Listen the events
-        events.UserRegistered.listenUserRegistered();
-        events.UserRegistered.listenUserJoined();
         //Emit the events
         observe.emit(EVENT.SEND_WELCOME, {
           userId: user_id,
@@ -53,6 +50,8 @@ const companyService = {
           employeeId,
           companyId: isCompany.id
         });
+
+        isCompany.employee_id = isInvited.id;
 
         return res
           .status(200)

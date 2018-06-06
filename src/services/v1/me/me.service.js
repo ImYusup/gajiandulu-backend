@@ -191,7 +191,7 @@ const meService = {
       const notifications = await Notification.findAll({
         where: { employee_id: employeeId },
         order: [['created_at', 'DESC']],
-        attributes: { exclude: ['employee_id', 'updated_at'] }
+        attributes: ['id', ['body', 'message'], 'is_read', 'created_at']
       });
       if (!notifications) {
         return res.status(400).json(response(false, 'Notifications not found'));

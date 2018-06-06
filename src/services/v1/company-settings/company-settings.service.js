@@ -9,7 +9,7 @@ const {
 } = require('@models');
 
 const EVENT = require('../../../eventemitter/constants');
-const { observe, events } = require('../../../eventemitter');
+const { observe } = require('../../../eventemitter');
 
 const companySettingService = {
   get: async (req, res) => {
@@ -106,7 +106,7 @@ const companySettingService = {
       }
       company = await CompanySettingModel.create(payload);
 
-      await EmployeeModel.create({
+      const employee = await EmployeeModel.create({
         company_id: company.id,
         salary: 0,
         user_id,
@@ -118,8 +118,9 @@ const companySettingService = {
         { where: { id: user_id } }
       );
 
+      company.employee_id = employee.id;
+
       // SEND NOTIFICATION WELCOME
-      events.UserRegistered.listenUserRegistered();
       observe.emit(EVENT.SEND_WELCOME, {
         userId: user_id,
         employeeId
