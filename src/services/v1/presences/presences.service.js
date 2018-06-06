@@ -126,31 +126,59 @@ const presenceService = {
   find: async (req, res) => {
     const { company_id: companyId } = req.params;
     const presence_date = req.query.date;
+    const { employeeRole, employeeId } = res.local.users;
 
     try {
-      const presences = await Presence.findAll({
-        where: { presence_date: req.query.date },
-        include: [
-          {
-            model: Employee,
-            where: { company_id: companyId },
-            include: [
-              {
-                model: User
-              },
-              {
-                model: DigitalAsset,
-                required: false,
-                attributes: ['url', 'type'],
-                where: {
-                  type: 'avatar'
+      let presences;
+      if (employeeRole.toString() === '2') {
+        presences = await Presence.findAll({
+          where: { presence_date: req.query.date, employee_id: employeeId },
+          include: [
+            {
+              model: Employee,
+              where: { company_id: companyId },
+              include: [
+                {
+                  model: User
                 },
-                as: 'assets'
-              }
-            ]
-          }
-        ]
-      });
+                {
+                  model: DigitalAsset,
+                  required: false,
+                  attributes: ['url', 'type'],
+                  where: {
+                    type: 'avatar'
+                  },
+                  as: 'assets'
+                }
+              ]
+            }
+          ]
+        });
+      } else {
+        presences = await Presence.findAll({
+          where: { presence_date: req.query.date },
+          include: [
+            {
+              model: Employee,
+              where: { company_id: companyId },
+              include: [
+                {
+                  model: User
+                },
+                {
+                  model: DigitalAsset,
+                  required: false,
+                  attributes: ['url', 'type'],
+                  where: {
+                    type: 'avatar'
+                  },
+                  as: 'assets'
+                }
+              ]
+            }
+          ]
+        });
+      }
       let presenceList = [];
       presences.map(data => {
         let result = Object.assign({

@@ -1,6 +1,8 @@
-const EVENT = require('./constants');
-const sendWelcomeNotification = require('./sendWelcomeNotification');
+const EventEmitter = require('events').EventEmitter;
+const UserRegistered = require('./UserRegistered');
 
-const events = { sendWelcomeNotification };
+let observe = new EventEmitter();
 
-module.exports = { EVENT, events };
+const events = { UserRegistered: new UserRegistered(observe) };
+
+module.exports = { observe, events };

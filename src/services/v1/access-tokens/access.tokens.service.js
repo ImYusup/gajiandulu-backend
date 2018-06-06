@@ -76,7 +76,8 @@ const accessTokenService = {
             email: user.email,
             phone: user.phone,
             id: user.id,
-            employeeId: user.employees[0].id
+            employeeId: user.employees[0].id,
+            employeeRole: user.employees[0].role
           }),
           config.authentication.secret,
           expires
