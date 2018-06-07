@@ -13,6 +13,7 @@ const {
   createDigitalAssets,
   deleteAssets
 } = require('./digital-assets-mutations');
+const { createEmployee, deleteEmployee } = require('./employee-mutations');
 
 module.exports = {
   createAdmin,
@@ -27,5 +28,7 @@ module.exports = {
   updateFamily,
   updateIdentityCard,
   createDigitalAssets,
-  deleteAssets
+  deleteAssets,
+  createEmployee,
+  deleteEmployee
 };

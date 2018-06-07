@@ -1,14 +1,11 @@
 const { makeExecutableSchema } = require('graphql-tools');
-const { books, employees, users } = require('./queries');
+const { employees } = require('./queries');
 const typeDefs = require('./types');
 
-// The resolvers
+// The resolvers,
 const resolvers = {
   Query: {
-    employees: () => employees,
-    books: () => books,
-    // getAdmins: () => getAdmins,
-    users: () => users
+    employees: () => employees
   }
 };
 

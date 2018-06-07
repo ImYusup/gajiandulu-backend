@@ -1,7 +1,6 @@
-const books = require('./books');
-// const employees = require('./employee_types')
-//const users = require('./users')
+const employees = require('./employees');
+//const employees = require('./employee_types')
 
-const typeDefs = [books].join('');
+const typeDefs = [employees].join('');
 
 module.exports = typeDefs;
