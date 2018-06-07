@@ -5,6 +5,14 @@ const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator/check');
 
+router.get('/', (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json(response(false, errors.array()));
+  }
+  bankDataService.get(req, res);
+});
+
 router.post(
   '/',
   [

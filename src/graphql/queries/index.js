@@ -1,14 +1,9 @@
-const { user, users } = require('./user-queries');
-const { getAdmins } = require('./admin-management-queries');
-const { loan, loans } = require('./loans-queries');
-const { employee, employees } = require('./employee-queries');
+const books = require('./books');
+const employees = require('./employee-queries');
+const users = require('./user-queries');
 
 module.exports = {
-  user,
-  users,
-  getAdmins,
-  loan,
-  loans,
-  employee,
-  employees
+  books,
+  employees,
+  users
 };

@@ -8,6 +8,9 @@ const {
   users: UserModel
 } = require('@models');
 
+const EVENT = require('../../../eventemitter/constants');
+const { observe } = require('../../../eventemitter');
+
 const companySettingService = {
   get: async (req, res) => {
     const { company_id } = req.params;
@@ -87,8 +90,23 @@ const companySettingService = {
       const payload = Object.assign({}, data, {
         company_id: companyId
       });
+
+      company = await CompanySettingModel.findOne({
+        where: { company_id: companyId }
+      });
+      if (company) {
+        return res
+          .status(400)
+          .json(
+            response(
+              false,
+              `Failed, company settings with id ${companyId} has already exist`
+            )
+          );
+      }
       company = await CompanySettingModel.create(payload);
-      await EmployeeModel.create({
+
+      const employee = await EmployeeModel.create({
         company_id: company.id,
         salary: 0,
         user_id,
@@ -99,6 +117,15 @@ const companySettingService = {
         { registration_complete: 1 },
         { where: { id: user_id } }
       );
+
+      company.employee_id = employee.id;
+
+      // SEND NOTIFICATION WELCOME
+      observe.emit(EVENT.SEND_WELCOME, {
+        userId: user_id,
+        employeeId: employee.id
+      });
+
       return res
         .status(200)
         .json(

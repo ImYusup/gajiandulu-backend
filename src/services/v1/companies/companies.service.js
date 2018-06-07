@@ -8,10 +8,12 @@ const {
 const Sequelize = require('sequelize');
 const { Op } = Sequelize;
 
+const EVENT = require('../../../eventemitter/constants');
+const { observe } = require('../../../eventemitter');
+
 const companyService = {
   get: async (req, res) => {
     const { id: user_id } = res.local.users;
-
     try {
       if (req.query.codename) {
         const { codename } = req.query;
@@ -37,6 +39,19 @@ const companyService = {
           { where: { id: user_id } }
         );
         await Employee.update({ flag: 3 }, { where: { user_id } });
+
+        isCompany.employee_id = isInvited.id;
+
+        //Emit the events
+        observe.emit(EVENT.SEND_WELCOME, {
+          userId: user_id,
+          employeeId: isInvited.id
+        });
+        observe.emit(EVENT.NEW_EMPLOYEE_JOINED, {
+          userId: user_id,
+          employeeId: isInvited.id,
+          companyId: isCompany.id
+        });
 
         return res
           .status(200)

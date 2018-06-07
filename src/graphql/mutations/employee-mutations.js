@@ -21,7 +21,7 @@ const createEmployee = {
     role: {
       type: GraphQLNonNull(GraphQLString)
     },
-    slary: {
+    salary: {
       type: GraphQLNonNull(GraphQLString)
     },
     workdays: {

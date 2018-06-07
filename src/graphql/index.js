@@ -1,15 +1,21 @@
-const { GraphQLObjectType, GraphQLSchema } = require('graphql');
-const queries = require('./queries');
-const mutations = require('./mutations');
+const { makeExecutableSchema } = require('graphql-tools');
+const { books, employees, users } = require('./queries');
+const typeDefs = require('./types');
 
-module.exports = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: 'Query',
-    fields: queries
-  }),
+// The resolvers
+const resolvers = {
+  Query: {
+    employees: () => employees,
+    books: () => books,
+    // getAdmins: () => getAdmins,
+    users: () => users
+  }
+};
 
-  mutation: new GraphQLObjectType({
-    name: 'Mutation',
-    fields: mutations
-  })
+// Put together a schema
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers
 });
+
+module.exports = schema;

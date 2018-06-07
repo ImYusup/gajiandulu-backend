@@ -1,16 +1,19 @@
 require('module-alias/register');
-const { authAdmin, notFound } = require('@helpers');
 // const path = require('path');
 // const favicon = require('serve-favicon');
 const compress = require('compression');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const routes = require('./routes');
 const express = require('express');
 const config = require('config');
-const GraphHTTP = require('express-graphql');
+const bodyParser = require('body-parser');
+const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
+
+const { /** authAdmin , */ notFound } = require('@helpers');
+const routes = require('./routes');
 const adminSchema = require('./graphql');
+const { events } = require('./eventemitter');
 
 const app = express();
 
@@ -26,18 +29,25 @@ app.use(express.urlencoded({ extended: true }));
 // app.use('/', express.static(config.public));
 app.use('/uploads', express.static(config.uploads));
 
+// Event Listener
+events.UserRegistered.listenUserRegistered();
+events.UserRegistered.listenUserJoined();
+
 // Route for API
 // auth is middleware for authentication
+// Initiate Admin GraphQl Endpoint
 app.use(
-  '/admins',
-  authAdmin,
-  GraphHTTP((req, res) => ({
-    schema: adminSchema,
-    rootValue: { req, res },
-    pretty: process.env.NODE_ENV !== 'production',
-    graphiql: process.env.NODE_ENV !== 'production'
-  }))
+  '/admin',
+  //authAdmin, // enable Authentification for admin here
+  bodyParser(),
+  graphqlExpress({
+    schema: adminSchema
+  })
 );
+// Initiate GraphiQL Endpoint on Development ENV
+if (process.env.NODE_ENV !== 'production') {
+  app.use('/graphiql', graphiqlExpress({ endpointURL: '/admin' }));
+}
 
 // API Version
 app.use('/api/v1', routes.v1);

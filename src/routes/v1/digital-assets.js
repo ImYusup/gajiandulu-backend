@@ -44,13 +44,32 @@ router.post('/', (req, res) => {
       return res.status(422).json(response(false, error.message));
     }
 
-    if (!req.body.type) {
+    if (!req.body.type || req.body.type.toString() !== 'avatar') {
+      return res
+        .status(422)
+        .json(
+          response(false, 'Please specify the type first, type must be avatar')
+        );
+    }
+
+    if (!req.body.uploadable_type) {
       return res
         .status(422)
         .json(
           response(
             false,
-            'Please specify the type first, type can be signature, avatar, card, etc'
+            'Please specify the uploadable_type first, type can be employees or companies or users, following the table name referenced'
+          )
+        );
+    }
+
+    if (!req.body.uploadable_id) {
+      return res
+        .status(422)
+        .json(
+          response(
+            false,
+            'Please specify the uploadable_id first, the id number based on id number in the table name you set for uploadable_type'
           )
         );
     }

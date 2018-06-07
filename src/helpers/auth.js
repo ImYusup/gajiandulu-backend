@@ -30,7 +30,9 @@ const auth = async (req, res, next) => {
     res.local.users = {
       email: user.email,
       phone: user.phone,
-      id: user.id
+      id: user.id,
+      employeeId: user.employeeId,
+      employeeRole: user.employeeRole
     };
   } catch (error) {
     return res.status(401).json(response(false, error.message));

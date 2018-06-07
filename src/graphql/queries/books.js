@@ -1,4 +1,4 @@
-const employees = [
+const books = [
   {
     title: 'Harry Potter and the Sorcerer' + 's stone',
     author: 'J.K. Rowling'
@@ -9,4 +9,4 @@ const employees = [
   }
 ];
 
-module.exports = employees;
+module.exports = books;
